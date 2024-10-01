@@ -7,6 +7,19 @@
   --foreground: #171717;
 }
 
+@font-face {
+  font-family: 'STIX Two Text';
+  src: url('/fonts/STIXTwoText-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+}
+
+@font-face {
+  font-family: 'Dancing Script';
+  src: url('/fonts/DancingScript-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+}
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -24,4 +37,20 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Hide scrollbar for WebKit-based browsers */
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Hide scrollbar for Firefox */
+html, body {
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Internet Explorer 10+ and Edge */
+html, body {
+  -ms-overflow-style: none; /* IE and Edge */
 }
