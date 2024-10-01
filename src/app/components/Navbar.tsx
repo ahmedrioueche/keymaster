@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -9,19 +10,23 @@ import UserModal from './UserModal';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window? window.innerWidth <= 640 : false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 640);
-    };
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 640);
+  };
 
-    window.addEventListener('resize', handleResize);
+  useEffect(() => {
+    // Set the initial isMobile state
     handleResize();
 
+    // Attach the resize event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup event listener on unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -120,11 +125,10 @@ const Navbar: React.FC = () => {
           </div>
         )}
       </div>
-        <UserModal
-          isOpen={isUserModalOpen}
-          onClose={() => setIsUserModalOpen(false)}
-          />
-
+      <UserModal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+      />
     </nav>
   );
 };

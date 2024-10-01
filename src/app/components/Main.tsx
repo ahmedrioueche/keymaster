@@ -48,84 +48,94 @@ const MainContainer: React.FC = () => {
       setTextToType(response);
     }
   };
-
   const handleTextCompletion = (speed: number) => {
     setIsFinished(true);
     const date = new Date().toLocaleString();
-  
-    if (currentUser) {
-      setUsers((prev) => {
-        const updatedUsers = [...(prev || [])];
-        const existingUserIndex = updatedUsers.findIndex(user => user.name === currentUser.name);
-        let updatedUser: User;
-  
-        if (existingUserIndex > -1) {
-          const existingUser = updatedUsers[existingUserIndex];
-          const newEntry: TypingStat = { speed, date };
-          const updatedEntries = [...(existingUser.typingStats || []), newEntry];
-          const bestSpeedEntry = updatedEntries.reduce((best, entry) =>
-            entry.speed > best.speed ? entry : best,
-          updatedEntries[0]);
-  
-          updatedUser = {
-            ...existingUser,
-            typingStats: updatedEntries,
-            speed: bestSpeedEntry.speed,
-            lastEntryDate: date,
-          };
-  
-          updatedUsers[existingUserIndex] = updatedUser;
-        } else {
-          updatedUser = {
-            name: currentUser.name,
-            speed,
-            lastEntryDate: date,
-            typingStats: [{ speed, date }],
-          };
-  
-          updatedUsers.push(updatedUser);
-        }
-  
-        const rankedUsers = updatedUsers
-          .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
-          .map((user, index) => ({ ...user, rank: index + 1 }));
-  
-        localStorage.setItem("users", JSON.stringify(rankedUsers));
-  
-        return rankedUsers;
-      });
-    } else {
-      // Prompt the user to enter their name if not set
-      const userName = prompt("Enter your name");
-  
-      if (userName) {
-        const newUser : User = {
-          name: userName,
-          speed,
-          lastEntryDate: date,
-          typingStats: [{ speed, date }],
-        };
-  
-        setCurrentUser(newUser);
-        localStorage.setItem("currentUser", JSON.stringify(newUser));
 
-        setUsers((prev) => {
-          const updatedUsers = [...(prev || []), newUser];
-  
-          const rankedUsers = updatedUsers
+    setUsers((prevUsers) => {
+        const updatedUsers = [...(prevUsers || [])];
+        let updatedUser: User;
+
+        if (currentUser) {
+            // Find the current user in the users list
+            const existingUserIndex = updatedUsers.findIndex(user => user.name === currentUser.name);
+
+            // Create a new entry for the typing stat
+            const newEntry: TypingStat = { speed, date };
+
+            if (existingUserIndex > -1) {
+                // If the user already exists, update their stats
+                const existingUser = updatedUsers[existingUserIndex];
+
+                // Append the new entry to their typingStats
+                const updatedTypingStats = [...(existingUser.typingStats || []), newEntry];
+
+                // Determine the best speed
+                const bestSpeedEntry = updatedTypingStats.reduce((best, entry) =>
+                    entry.speed > best.speed ? entry : best,
+                    updatedTypingStats[0]
+                );
+
+                // Update the user object with new stats
+                updatedUser = {
+                    ...existingUser,
+                    typingStats: updatedTypingStats,
+                    speed: bestSpeedEntry.speed,
+                    lastEntryDate: date,
+                };
+
+                // Update the user in the array
+                updatedUsers[existingUserIndex] = updatedUser;
+            } else {
+                // If the user does not exist in the list, create a new user
+                updatedUser = {
+                    name: currentUser.name,
+                    speed,
+                    lastEntryDate: date,
+                    typingStats: [newEntry],
+                };
+
+                // Add the new user to the users array
+                updatedUsers.push(updatedUser);
+            }
+        } else {
+            // If currentUser is not set, ask for the user's name
+            const userName = prompt("Enter your name");
+
+            if (userName) {
+                updatedUser = {
+                    name: userName,
+                    speed,
+                    lastEntryDate: date,
+                    typingStats: [{ speed, date }],
+                };
+
+                // Set the current user to the new user
+                setCurrentUser(updatedUser);
+                localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+                // Add the new user to the users array
+                updatedUsers.push(updatedUser);
+            } else {
+                return prevUsers; // Return if user did not enter a name
+            }
+        }
+
+        // Sort and rank users based on their best speed
+        const rankedUsers = updatedUsers
             .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
             .map((user, index) => ({ ...user, rank: index + 1 }));
-  
-          localStorage.setItem("users", JSON.stringify(rankedUsers));
 
-          return rankedUsers;
-        });
-      }
-    }
-  };
-  
-  
-  
+        // Update local storage with the ranked users
+        localStorage.setItem("users", JSON.stringify(rankedUsers));
+
+        // Update the current user state with the updated user
+        setCurrentUser(updatedUser);
+
+        return rankedUsers; // Return the updated user list
+    });
+};
+
   const handleUserTyped = () => {
     setUserTyped(true);
   };
@@ -182,20 +192,20 @@ const MainContainer: React.FC = () => {
         </div>
 
         {/* Typing Area - Always rendered but conditionally enabled */}
-        {(!isSmallScreen || isStarted) && (
           <div className="w-full md:w-2/3 lg:w-3/4">
-            <TypingArea
-              textToType={textToType}
-              isStarted={isStarted}
-              onComplete={(speed) => handleTextCompletion(speed)}
-              onUserTyped={handleUserTyped}
-            />
+            {(!isSmallScreen || isStarted) && (
+              <TypingArea
+                textToType={textToType}
+                isStarted={isStarted}
+                onComplete={(speed) => handleTextCompletion(speed)}
+                onUserTyped={handleUserTyped}
+              />
+            )}
             {/* Leaderboard - Displayed under the Typing Area */}
             <div className="bg-light-secondary dark:bg-dark-secondary">
              <Leaderboard leaderboardData={users} />
             </div>
           </div>
-        )}
       </div>
     </div>
   );

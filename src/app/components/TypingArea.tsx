@@ -5,7 +5,7 @@ interface TypingAreaProps {
   textToType: string;
   isStarted?: boolean;
   onComplete?: (speed: number) => void;
-  onUserTyped?: () => void;
+  onUserTyped?: () => void; // Add this line
 }
 
 const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComplete, onUserTyped }) => {
@@ -18,7 +18,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   const [lastInputTime, setLastInputTime] = useState<number | null>(null);
   const typingRef = useRef<HTMLDivElement>(null);
 
-  const trimmedTextToType = (textToType && textToType.trimEnd()) || (window.innerWidth < 768 ? `Loading text...` : `Press "Start" button to start typing`);
+  const trimmedTextToType = textToType && textToType.trimEnd()?  textToType.trimEnd() : null;
 
   const calculateSpeed = (text: string, timeInSeconds: number) => {
     const words = text.trim().split(/\s+/).length;
@@ -26,12 +26,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     return Math.round(words / minutes);
   };
 
+  // Reset all states when textToType changes
   useEffect(() => {
     setUserInput('');
     setIsCompleted(false);
-    setStartTime(null);
-    setLastInputTime(null);
-    setCurrentSpeed(0);
+    setStartTime(null); // Reset the start time
+    setLastInputTime(null); // Reset last input time
+    setCurrentSpeed(0); // Reset speed counter
   }, [textToType, isStarted]);
 
   const handleInputChange = (e: React.FormEvent<HTMLDivElement>) => {
@@ -39,26 +40,29 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
       const inputText = e.currentTarget.textContent || "";
       const currentTime = Date.now();
 
-      if (inputText.length <= trimmedTextToType.length) {
-        if (userInput.length === 0 && inputText.length > 0 && onUserTyped) {
-          onUserTyped();
-        }
+      if(trimmedTextToType){
+        if (inputText.length <=  trimmedTextToType?.length) {
+          // Call onUserTyped if the first letter is being typed
+          if (userInput.length === 0 && inputText.length > 0 && onUserTyped) {
+            onUserTyped();
+          }
 
-        if (startTime === null) {
-          setStartTime(currentTime);
-        }
-        setUserInput(inputText);
-        setCursorPosition(inputText.length);
-        setLastInputTime(currentTime);
+          if (startTime === null) {
+            setStartTime(currentTime); // Start timing when first input happens
+          }
+          setUserInput(inputText);
+          setCursorPosition(inputText.length);
+          setLastInputTime(currentTime);
 
-        const elapsedTime = (currentTime - (startTime || currentTime)) / 1000;
-        const speed = calculateSpeed(inputText, elapsedTime);
-        setCurrentSpeed(speed);
+          const elapsedTime = (currentTime - (startTime || currentTime)) / 1000;
+          const speed = calculateSpeed(inputText, elapsedTime);
+          setCurrentSpeed(speed);
 
-        if (inputText === trimmedTextToType) {
-          setIsCompleted(true);
-          onComplete?.(currentSpeed);
-        }
+          if (inputText === trimmedTextToType) {
+            setIsCompleted(true);
+            onComplete?.(currentSpeed);
+          }
+      }
       } else {
         e.preventDefault();
         typingRef.current!.textContent = userInput; // Prevent exceeding the text length
@@ -111,12 +115,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   }, [cursorPosition]);
 
   const renderText = () => {
-    return trimmedTextToType.split("").map((char, index) => {
+    return trimmedTextToType?.split("").map((char, index) => {
       if (index < userInput.length) {
         const isCorrect = userInput[index] === char;
         return (
-          <span
-            key={index}
+          <span 
+            key={index} 
             className={`text-lg ${isCorrect ? (isDarkMode ? 'text-white' : 'text-black') : 'text-red-500'}`}
             style={{ fontFamily: 'STIX' }}
           >
@@ -134,7 +138,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto p-6 border-2 rounded-lg border-light-secondary dark:border-dark-secondary">
+    <div className="relative w-full max-w-5xl mx-auto p-6 border-2 rounded-lg border-light-secondary dark:border-dark-secondary mb-6">
       <div className="absolute top-6 left-6 right-6 bottom-12 pointer-events-none whitespace-pre-wrap font-stix leading-normal">
         {renderText()}
       </div>
@@ -153,16 +157,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
           color: 'transparent',
           zIndex: 1,
         }}
-        dangerouslySetInnerHTML={{ __html: userInput }} // Use this to avoid React managing content
-      />
+      >
+        {userInput}
+      </div>
 
-      {!isCompleted && (
-        <div className="absolute bottom-2 left-6 text-sm">
-          Speed : {currentSpeed} WPM
-        </div>
-      )}
+      <div className="absolute bottom-2 left-6 text-sm">
+        Speed : {currentSpeed} WPM
+      </div>
+      
       <div className="absolute bottom-2 right-6 text-sm">
-        {userInput.length} / {trimmedTextToType.length} characters
+        {userInput.length} / {trimmedTextToType?.length} characters
       </div>
     </div>
   );

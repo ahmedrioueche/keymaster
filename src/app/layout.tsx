@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
         <body
-          className={`font-dancing scrollbar-hide`}
+          className={`font-dancing`}
         >
          <ThemeProvider>
           <Navbar/>

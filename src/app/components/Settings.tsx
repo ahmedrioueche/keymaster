@@ -80,6 +80,8 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
   };
 
   const handleStop = () => {
+    setIsStarted(false);
+    
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -134,7 +136,7 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
           className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
             isDarkMode
               ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
-              : 'bg-light-primary text-light-foreground hover:bg-light-background'
+              : 'bg-light-primary text-dark-foreground hover:bg-light-background'
           }`}
           >
           Start
@@ -145,7 +147,7 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
           className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
             isDarkMode
               ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
-              : 'bg-light-primary text-light-foreground hover:bg-light-background'
+              : 'bg-light-primary text-dark-foreground hover:bg-dark-background'
           }`}
         >
           Stop

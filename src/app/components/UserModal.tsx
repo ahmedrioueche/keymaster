@@ -12,15 +12,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   const [isEditing, setIsEditing] = useState(false); // Track if user is adding/changing
 
   useEffect(() => {
-    //get users and current user from local storage
+    // Get users and current user from local storage
     const storedUser = localStorage.getItem("currentUser");
-    const currentUser : User = storedUser? JSON.parse(storedUser) : null;
-    if(currentUser && currentUser.name){
-        setCurrentUser(currentUser.name);
+    const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
+    if (currentUser && currentUser.name) {
+      setCurrentUser(currentUser.name);
     }
+  }, []);
 
-  }, [])
-  
   const handleUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -28,10 +27,26 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     if (name) {
       setCurrentUser(name); // Set the entered name as the current user
       setIsEditing(false); // Exit editing mode
-      const currentUser : User = {
+
+      const newUser: User = {
         name: name,
+      };
+
+      // Save the current user to localStorage
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+
+      // Retrieve users from localStorage or initialize an empty array
+      const storedUsers = localStorage.getItem("users");
+      const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
+
+      // Check if user already exists
+      const existingUserIndex = users.findIndex(user => user.name === name);
+
+      if (existingUserIndex === -1) {
+        // If user doesn't exist, add the new user
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users)); // Update users in localStorage
       }
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
     }
   };
 
@@ -79,9 +94,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
         ) : currentUser ? (
           <div>
             <div className='flex justify-center'>
-                <p className="text-lg text-light-foreground dark:text-dark-foreground font-stix">
-                    Current User: <strong>{currentUser}</strong>
-                </p>
+              <p className="text-lg text-light-foreground dark:text-dark-foreground font-stix">
+                Current User: <strong>{currentUser}</strong>
+              </p>
             </div>
             <button
               onClick={handleAddUser}
