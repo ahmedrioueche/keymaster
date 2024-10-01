@@ -3,11 +3,11 @@ export interface User {
   name: string;
   rank?: number;
   speed?: number;
-  lastEntryDate?: String;
+  lastEntryDate?: string;
   typingStats?: TypingStat[];
 }
 
 export interface TypingStat {
   speed: number;
-  date: String;
+  date: string;
 }
