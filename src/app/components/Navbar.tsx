@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 640);
     };
