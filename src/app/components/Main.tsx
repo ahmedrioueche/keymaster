@@ -111,7 +111,7 @@ const MainContainer: React.FC = () => {
               onUserTyped={handleUserTyped}
             />
             {/* Leaderboard - Displayed under the Typing Area */}
-            <div className="bg-gray-300 dark:bg-gray-600">
+            <div className="bg-gray-300 dark:bg-gray-500">
              <Leaderboard leaderboardData={leaderboardData} />
 
             </div>

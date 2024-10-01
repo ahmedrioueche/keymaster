@@ -18,7 +18,7 @@
     const { isDarkMode } = useTheme();
 
     // Ensure trimmedTextToType is updated based on the available textToType
-    const trimmedTextToType = textToType.trimEnd() || (window.innerWidth < 768 ? `Loading text...` : `Press "Start" button to start typing`);
+    const trimmedTextToType = (textToType && textToType.trimEnd()) || (window.innerWidth < 768 ? `Loading text...` : `Press "Start" button to start typing`);
 
     const calculateSpeed = (text: string, timeInSeconds: number) => {
       const words = text.trim().split(/\s+/).length;
