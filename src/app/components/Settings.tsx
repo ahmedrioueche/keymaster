@@ -9,6 +9,7 @@ import { TypingStat } from '../types/types';
 interface SettingsAndStatsProps {
   onStart: () => void;
   userTyped: boolean;
+  isFinished: boolean;
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   topic: string;
@@ -19,17 +20,19 @@ interface SettingsAndStatsProps {
 const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
   onStart,
   userTyped,
+  isFinished,
   language,
   setLanguage,
   topic,
   setTopic,
-  typingStats, // Receive typing stats as a prop
+  typingStats, 
 }) => {
   const { isDarkMode } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isTypingStatsCollapsed, setIsTypingStatsCollapsed] = useState(false);
+  const [isTypingStatsCollapsed, setIsTypingStatsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [timerVisible, setTimerVisible] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -45,13 +48,7 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
     }
   };
 
-//  const handleTypingEnd = () => {
-//    if (timerRef.current) {
-//      clearInterval(timerRef.current);
-//      timerRef.current = null;
-//    }
-//  };
-//
+
   useEffect(() => {
     const handleResize = () => {
       const newIsMobile = window.innerWidth <= 640;
@@ -79,7 +76,15 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
   const handleStart = () => {
     onStart();
     setIsCollapsed(true);
+    setIsStarted(true);
   };
+
+  const handleStop = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }
 
   useEffect(() => {
     if (userTyped) {
@@ -97,8 +102,19 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
     return `${hours > 0 ? `${hours}h ` : ''}${minutes > 0 ? `${minutes}m ` : ''}${seconds}s`;
   };
 
+  useEffect(() => {
+    if (isFinished) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+
+      setIsStarted(false);
+    }
+  }, [isFinished]);
+  
   // Calculate overall speed from typing stats
-  const overallSpeed =
+  const averageSpeed =
     typingStats && typingStats.length > 0
       ? typingStats.reduce((sum, stat) => sum + stat.speed, 0) / typingStats.length
       : 0;
@@ -112,16 +128,30 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
       } rounded-lg shadow-md overflow-hidden`}
     >
       <div className="flex justify-between items-center p-4 py-3">
-        <button
+        {!isStarted? (
+          <button
           onClick={handleStart}
           className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
             isDarkMode
               ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
               : 'bg-light-primary text-light-foreground hover:bg-light-background'
           }`}
-        >
+          >
           Start
+          </button>
+        ) : (
+          <button
+          onClick={handleStop}
+          className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
+            isDarkMode
+              ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
+              : 'bg-light-primary text-light-foreground hover:bg-light-background'
+          }`}
+        >
+          Stop
         </button>
+        )}
+       
         {timerVisible && (
           <div className="flex-1 flex justify-center">
             <p className="text-lg font-bold">{formatTimeElapsed()}</p>
@@ -203,15 +233,15 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
             
             </div>
 
-            {/* Always show overall speed */}
-            <p className="text-sm mb-1">Overall Speed: {overallSpeed.toFixed(2)} WPM</p>
+            {/* Always show Average speed */}
+            <p className="text-sm mb-1">Average Speed: {averageSpeed.toFixed(2)} WPM</p>
 
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
               <div>
                 {typingStats.map((stat, index) => (
                   <div key={index} className="flex justify-between py-1">
-                    <p className="text-sm">Speed: {stat.speed} WPM</p>
+                    <p className="text-sm">Recorded Speed: {stat.speed} WPM On {stat.date}</p>
                   </div>
                 ))}
               </div>

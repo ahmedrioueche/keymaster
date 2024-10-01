@@ -6,28 +6,41 @@ import SettingsAndStats from "./Settings"; // Adjust the import path if necessar
 import Leaderboard from "./Leaderboard"; // Import the Leaderboard component
 import { useTheme } from "../context/ThemeContext"; // Adjust the import path if necessary
 import { apiPromptGemini } from "../utils/apiHelper";
-import { TypingStat } from "../types/types";
+import { TypingStat, User } from "../types/types";
 
 const MainContainer: React.FC = () => {
+  const [currentUser, setCurrentUser] = useState<User>();
+  const [users, setUsers] = useState<User[]>([]);
   const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const [userTyped, setUserTyped] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { isDarkMode } = useTheme();
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
 
-  // Leaderboard state
-  const [leaderboardData, setLeaderboardData] = useState([
-    { rank: 1, name: "Alice", speed: 85, date: "2024-09-25" },
-    { rank: 2, name: "Bob", speed: 78, date: "2024-09-22" },
-    { rank: 3, name: "Charlie", speed: 90, date: "2024-09-20" },
-  ]);  
+  useEffect(() => {
+    //get users and current user from local storage
+    //localStorage.clear();
+    const storedUsers = localStorage.getItem("users");
+    const users : User[] = storedUsers? JSON.parse(storedUsers) : null;
+    if(users){
+      setUsers(users);
+    }
+    const storedUser = localStorage.getItem("currentUser");
+    const currentUser : User = storedUser? JSON.parse(storedUser) : null;
+    if(currentUser){
+      setCurrentUser(currentUser);
+    }
+
+  }, [])
 
   const handleStart = async () => {
     setIsStarted(true); // Enable the typing area
+    setTextToType("Loading Text...");
     console.log("Starting with:", { language, topic });
-    const prompt = `With no introductions nor conclusions, give a paragraph of 150 letters (including spaces)
+    const prompt = `With no introductions nor conclusions, give a paragraph of 40 letters (including spaces)
                     in a ${topic} topic in ${language} language, do not exceed the required length.`;
     const response = await apiPromptGemini(prompt);
     console.log("response:", response);
@@ -37,19 +50,82 @@ const MainContainer: React.FC = () => {
   };
 
   const handleTextCompletion = (speed: number) => {
-    console.log("speed in handleTextCompletion", speed);
-    
-    // Add the player's result to the leaderboard
-    const playerName = prompt("Enter your name:");
-    const date = new Date().toLocaleDateString();
-    if (playerName) {
-      setLeaderboardData((prev) => [
-        ...prev,
-        { rank: 0, name: playerName, speed, date },
-      ]);
+    setIsFinished(true);
+    const date = new Date().toLocaleString();
+  
+    if (currentUser) {
+      setUsers((prev) => {
+        const updatedUsers = [...(prev || [])];
+        const existingUserIndex = updatedUsers.findIndex(user => user.name === currentUser.name);
+        let updatedUser: User;
+  
+        if (existingUserIndex > -1) {
+          const existingUser = updatedUsers[existingUserIndex];
+          const newEntry: TypingStat = { speed, date };
+          const updatedEntries = [...(existingUser.typingStats || []), newEntry];
+          const bestSpeedEntry = updatedEntries.reduce((best, entry) =>
+            entry.speed > best.speed ? entry : best,
+          updatedEntries[0]);
+  
+          updatedUser = {
+            ...existingUser,
+            typingStats: updatedEntries,
+            speed: bestSpeedEntry.speed,
+            lastEntryDate: date,
+          };
+  
+          updatedUsers[existingUserIndex] = updatedUser;
+        } else {
+          updatedUser = {
+            name: currentUser.name,
+            speed,
+            lastEntryDate: date,
+            typingStats: [{ speed, date }],
+          };
+  
+          updatedUsers.push(updatedUser);
+        }
+  
+        const rankedUsers = updatedUsers
+          .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
+          .map((user, index) => ({ ...user, rank: index + 1 }));
+  
+        localStorage.setItem("users", JSON.stringify(rankedUsers));
+  
+        return rankedUsers;
+      });
+    } else {
+      // Prompt the user to enter their name if not set
+      const userName = prompt("Enter your name");
+  
+      if (userName) {
+        const newUser : User = {
+          name: userName,
+          speed,
+          lastEntryDate: date,
+          typingStats: [{ speed, date }],
+        };
+  
+        setCurrentUser(newUser);
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+
+        setUsers((prev) => {
+          const updatedUsers = [...(prev || []), newUser];
+  
+          const rankedUsers = updatedUsers
+            .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
+            .map((user, index) => ({ ...user, rank: index + 1 }));
+  
+          localStorage.setItem("users", JSON.stringify(rankedUsers));
+
+          return rankedUsers;
+        });
+      }
     }
   };
-
+  
+  
+  
   const handleUserTyped = () => {
     setUserTyped(true);
   };
@@ -67,7 +143,9 @@ const MainContainer: React.FC = () => {
     };
 }, []);
 
-  const TypingStats : TypingStat[] = []
+  const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
+  console.log("TypingStats", TypingStats)
+  console.log("currentUser", currentUser)
 
   return (
     <div
@@ -83,8 +161,8 @@ const MainContainer: React.FC = () => {
       </h1>
 
       {/* Subtitle - Responsive font size */}
-      <h2 className="text-xl md:text-2xl font-stix text-center mb-8">
-        Improve your typing speed and master the keyboard!
+      <h2 className="text-2xl md:text-3xl font-dancing text-center mb-8">
+        How type can you fast?
       </h2>
 
       {/* Main Content Area */}
@@ -94,6 +172,7 @@ const MainContainer: React.FC = () => {
           <SettingsAndStats
             onStart={handleStart}
             userTyped={userTyped}
+            isFinished={isFinished}
             language={language}
             setLanguage={setLanguage}
             topic={topic}
@@ -107,13 +186,13 @@ const MainContainer: React.FC = () => {
           <div className="w-full md:w-2/3 lg:w-3/4">
             <TypingArea
               textToType={textToType}
+              isStarted={isStarted}
               onComplete={(speed) => handleTextCompletion(speed)}
               onUserTyped={handleUserTyped}
             />
             {/* Leaderboard - Displayed under the Typing Area */}
-            <div className="bg-gray-300 dark:bg-gray-500">
-             <Leaderboard leaderboardData={leaderboardData} />
-
+            <div className="bg-light-secondary dark:bg-dark-secondary">
+             <Leaderboard leaderboardData={users} />
             </div>
           </div>
         )}

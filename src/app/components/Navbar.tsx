@@ -5,10 +5,12 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Link from 'next/link';
 import { useTheme } from '../context/ThemeContext'; 
+import UserModal from './UserModal';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isMobile, setIsMobile] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +48,10 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
+  const handleUserClick = () => {
+    setIsUserModalOpen(true);
+  }
+
   return (
     <nav className="bg-light-background dark:bg-dark-background p-4 shadow">
       <div className="flex justify-between items-center">
@@ -80,10 +86,13 @@ const Navbar: React.FC = () => {
                     <Link href="/" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Home</Link>
                   </li>
                   <li onClick={handleMenuClose}>
+                    <Link href="/" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">User</Link>
+                  </li>
+                  <li onClick={handleMenuClose}>
                     <Link href="/lessons" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Lessons</Link>
                   </li>
                   <li onClick={handleMenuClose}>
-                    <Link href="/practice" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Practice</Link>
+                    <Link href="/" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Settings</Link>
                   </li>
                   <li onClick={handleMenuClose}>
                     <Link href="/about" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">About</Link>
@@ -95,8 +104,9 @@ const Navbar: React.FC = () => {
         ) : (
           <div className="flex items-center space-x-8">
             <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Home</Link>
+            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">User</Link>
             <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Lessons</Link>
-            <Link href="/practice" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Practice</Link>
+            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Settings</Link>
             <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">About</Link>
             
             {/* Theme Toggle Icon */}
@@ -110,6 +120,11 @@ const Navbar: React.FC = () => {
           </div>
         )}
       </div>
+        <UserModal
+          isOpen={isUserModalOpen}
+          onClose={() => setIsUserModalOpen(false)}
+          />
+
     </nav>
   );
 };
