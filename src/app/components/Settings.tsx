@@ -86,7 +86,7 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
       setTimeElapsed(0); // Reset the timer when the user starts
       handleTypingStart(); // Start the timer on the first keypress
     }
-  }, [userTyped, handleTypingStart]);
+  }, [userTyped]);
 
   // Convert time elapsed into hours, minutes, and seconds
   const formatTimeElapsed = () => {
