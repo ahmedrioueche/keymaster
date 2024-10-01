@@ -1,6 +1,6 @@
 
-export const apiPromptGemini = async (prompt : string) : Promise<any> => {
-    try {
+export const apiPromptGemini = async (prompt: string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  try {
       const response = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

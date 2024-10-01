@@ -10,7 +10,6 @@ const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -37,7 +36,7 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
+        setIsMenuOpen(false);
       }
     };
 

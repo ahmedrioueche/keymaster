@@ -45,13 +45,13 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
     }
   };
 
-  const handleTypingEnd = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  };
-
+//  const handleTypingEnd = () => {
+//    if (timerRef.current) {
+//      clearInterval(timerRef.current);
+//      timerRef.current = null;
+//    }
+//  };
+//
   useEffect(() => {
     const handleResize = () => {
       const newIsMobile = window.innerWidth <= 640;
@@ -86,7 +86,7 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
       setTimeElapsed(0); // Reset the timer when the user starts
       handleTypingStart(); // Start the timer on the first keypress
     }
-  }, [userTyped]);
+  }, [userTyped, handleTypingStart]);
 
   // Convert time elapsed into hours, minutes, and seconds
   const formatTimeElapsed = () => {

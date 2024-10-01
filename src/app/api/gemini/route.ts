@@ -3,7 +3,7 @@ import { getGeminiAnswer } from '../../services/geminiService';
 
 export async function POST(request: Request) {
     try {
-        let { prompt } = await request.json();
+        const { prompt } = await request.json();
 
         const result = await getGeminiAnswer(prompt);
         
