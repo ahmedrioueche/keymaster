@@ -155,6 +155,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   };
 
   const handleConfirmPassword = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setConfirmPassword(inputValue);
     if(password !== confirmPassword){
       setPasswordsDontMatch({status: true, message: "Passwords do not match, please check again!"})
     }
