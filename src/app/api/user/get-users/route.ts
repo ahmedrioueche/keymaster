@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { getUsers } from '../../../services/userService';
 
 export async function POST(request: Request) {
+    console.log("request", request)
     try {
-
         const result = await getUsers();
         console.log("result in get-users route", result)
         return NextResponse.json(result, { status: 200 });
