@@ -1,9 +1,5 @@
-// Import Prisma Client
-import { PrismaClient } from '@prisma/client';
 import { User } from "../types/types";
-
-// Initialize Prisma Client
-const prisma = new PrismaClient();
+import prisma from "../utils/prisma";
 
 export const insertUser = async (user: User) => {
   try {
