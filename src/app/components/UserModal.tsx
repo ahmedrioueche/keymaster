@@ -206,7 +206,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       placeholder="Enter your username"
                       required
                     />
-                  <div className={usernameStatus === "Available" ? 'text-blue-500' : 'text-red-500'}>{usernameStatus}</div>
+                    {usernameStatus != "Available" && (
+                      <div className={`{${usernameStatus} === "Already taken" ? 'text-red-500' : 'text-blue-500'} p-2`}>{usernameStatus}</div>
+                    )}
                   </div>
                   <div>
                     <input
