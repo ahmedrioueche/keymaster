@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaTimes, FaUser, FaUserPlus } from 'react-icons/fa';
 import { User } from "../types/types";
+import { apiInsertUser } from '../utils/apiHelper';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     }
   }, []);
 
-  const handleUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUserSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get('username')?.toString().trim();
@@ -34,7 +35,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
 
       // Save the current user to localStorage
       localStorage.setItem("currentUser", JSON.stringify(newUser));
-
+      const response = await apiInsertUser(newUser);
+      console.log("response", response)
       // Retrieve users from localStorage or initialize an empty array
       const storedUsers = localStorage.getItem("users");
       const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];

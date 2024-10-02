@@ -9,5 +9,6 @@ export interface User {
 
 export interface TypingStat {
   speed: number;
+  accuracy?: number;
   date: string;
 }

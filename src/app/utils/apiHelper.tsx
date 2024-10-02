@@ -1,3 +1,4 @@
+import { User } from "../types/types";
 
 export const apiPromptGemini = async (prompt: string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
@@ -8,7 +9,7 @@ export const apiPromptGemini = async (prompt: string): Promise<any> => { // esli
       });
   
       if (!response.ok) {
-        throw new Error('Failed to prompt Gemini');
+        throw new Error('Failed to prompt Gemini in api');
       }
   
       const responseData = await response.json();
@@ -16,8 +17,34 @@ export const apiPromptGemini = async (prompt: string): Promise<any> => { // esli
       return responseData;
   
     } catch (error) {
-      console.error('Failed to prompt Gemini:', error);
+      console.error('Failed to prompt Gemini in api:', error);
       
       return { status: 'error', message: 'An error occurred' };
     }
   }
+
+  
+export const apiInsertUser = async (user: User): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  try {
+      const response = await fetch('/api/user/insert-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({user}),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to insert user in api');
+      }
+  
+      const responseData = await response.json();
+      
+      return responseData;
+  
+    } catch (error) {
+      console.error('Failed to insert user in api:', error);
+      
+      return { status: 'error', message: 'An error occurred' };
+    }
+  }
+
+  
