@@ -29,15 +29,19 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
 
   const handleUserSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newUser: User = {
+    let newUser: User = {
       name: username,
       password: password,
     };
 
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
 
     const response = await apiInsertUser(newUser);
     console.log("response", response);
+    if(response){
+      newUser.id = response.id;
+    }
+    
+    localStorage.setItem("currentUser", JSON.stringify(newUser));
 
     setCurrentUser(username);
     setUsername('');
