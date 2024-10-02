@@ -23,6 +23,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
   const [users, setUsers] = useState<User[]>([]);
   const [usernameTaken, setUsernameTaken] = useState<{status : boolean, message : string}>({status : false, message : ""});
   const [passwordsDontMatch, setPasswordsDontMatch] = useState<{status : boolean, message : string}>({status: false, message:''});
+  const [loginFailed, setLoginFailed] = useState<{status : boolean, message : string}>({status: false, message:''});
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState<"login" | "signup" | "changeUser" | "logout" | "null">("null");
 
@@ -37,11 +38,13 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
     if (currentUser && currentUser.username) {
       setCurrentUser(currentUser);
     }
+
+    setLoginFailed({status: false, message: ""})
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoginFailed({status: false, message: ""})
     setIsLoading("login");
     const userData: User = {
       username: username,
@@ -59,11 +62,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
       setPassword('');
     }
     else {
-      setIsAlertOpen(true);
-      setStatus({success : "Error!", message: "A problem occured!"})
-      setTimeout(() => {
-        setIsAlertOpen(false);
-      }, 3000)
+      setLoginFailed({status: true, message: "Login Failed, please check your credentials!"})
+      setIsLoading("null");
     }
   };
 
@@ -83,11 +83,17 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
 
     const response = await apiInsertUser(newUser);
     console.log("response", response);
-    if(response){
+    if(response.userData){
       newUser.id = response.id;
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       setCurrentUser(newUser);
       onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
+      setIsAlertOpen(true);
+      setStatus({success : "Success!", message: `Welcome ${newUser.username}!`})
+      setIsLoading("null");
+      setTimeout(() => {
+        setIsAlertOpen(false);
+      }, 3000)
       setUsername('');  
       setPassword('');
       setConfirmPassword(''); 
@@ -182,7 +188,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center text-light-foreground dark:text-dark-foreground">
             <Image src='/icons/profile.png' height={30} width={30} className="text-3xl mr-3" alt="Profile" />
-            <h2 className="text-xl font-bold mt-1 font-stix">User</h2>
+            <h2 className="text-xl font-bold mt-1 font-dancing">User</h2>
           </div>
           <button
             onClick={onClose}
@@ -243,7 +249,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                       required
                     />
                     {usernameTaken?.status && (
-                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-3 font-stix">{usernameTaken?.message}</div>
+                      <div className="text-light-accent dark:text-dark-secondary px-2 mt-3 font-stix">{usernameTaken?.message}</div>
                     )}
                   </div>
                   <div>
@@ -269,14 +275,16 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                     />
                   </div>
                   {passwordsDontMatch?.status && (
-                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{passwordsDontMatch.message}</div>
+                      <div className="text-light-accent dark:text-dark-secondary px-2 mt-1 font-stix">{passwordsDontMatch.message}</div>
                   )}
                   <button
                     type="submit"
-                    className={`${isSignupDisabled ? "disabled" :''} w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
+                    className={`${isSignupDisabled ? "disabled" :''} flex justify-center w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
                   >
+                    
                     {isLoading === "signup"? <FaSpinner className="animate-spin" /> : "Sign Up"} 
                   </button>
+                    
                 </form>
                 <div className="mt-4 text-center text-lg">
                   <p className="text-gray-600 dark:text-gray-300">Already have an account? <span className="text-light-secondary cursor-pointer hover:underline" onClick={toggleSignup}>Login</span></p>
@@ -315,10 +323,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                       </div>
                       <button
                         type="submit"
-                        className="w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2"
+                        className="w-full px-4 py-3 mt-5 flex justify-center bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2"
                       >
                        {isLoading === "login"? <FaSpinner className="animate-spin" /> : "Login"} 
                       </button>
+
+                      {loginFailed?.status && (
+                        <div className="text-light-accent dark:text-dark-secondary px-2 mt-3 mb-3 font-stix">{loginFailed?.message}</div>
+                     )}
                     </form>
                     <div className="mt-4 text-center  text-lg">
                       <p className="text-gray-600 dark:text-gray-300">Do not have an account? <span className="text-light-secondary cursor-pointer  hover:underline" onClick={toggleSignup}>Sign Up</span></p>
