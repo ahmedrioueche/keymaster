@@ -133,7 +133,11 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     setUsername(inputValue);
   
     // Check if any user name matches the input value
-    const isTaken = users.some((user: User) => user.name === inputValue);
+    const isTaken = users.some((user: User) => {
+      console.log("user.name", user.name )
+      console.log("inputValue", inputValue )
+      return user.name === inputValue
+    });
   
     if (isTaken) {
       setUsernameStatus("Already taken");
