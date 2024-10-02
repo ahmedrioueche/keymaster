@@ -132,6 +132,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     const inputValue = e.target.value;
     setUsername(inputValue);
     console.log("usernameStatus", usernameStatus )
+    console.log("users", users )
+
     // Check if any user name matches the input value
     const isTaken = users.some((user: User) => {
       console.log("user.name", user.name )
