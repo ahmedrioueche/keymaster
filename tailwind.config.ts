@@ -23,7 +23,7 @@ const config: Config = {
           foreground: "#ffffff", // Dark foreground (text)
           primary: "#2563eb",    // Dark primary color (blue)
           secondary: "#f59e0b",  // Dark secondary color (yellow)
-          accent: "#65a30d",     // Dark accent color (green)
+          accent: "#f59e0b",     // Dark accent color (green)
         },
       },
       fontFamily: {
