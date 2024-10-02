@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { User } from "../types/types";
 import { apiInsertUser } from '../utils/apiHelper';
+import Image from 'next/image';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -77,7 +78,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
       <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-md max-h-[95vh] overflow-y-auto hide-scrollbar">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center text-light-foreground dark:text-dark-foreground">
-            <img src='/icons/profile.png' height={30} width={30} className="text-3xl mr-3" alt="Profile" />
+           <Image src='/icons/profile.png' height={30} width={30} className="text-3xl mr-3" alt="Profile" />
             <h2 className="text-xl font-bold mt-1 font-stix">User</h2>
           </div>
           <button
@@ -92,7 +93,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
         {isChangingUser ? (
           <>
             <div className="text-center">
-              <img src="/storysets/add-user.svg" alt="Add user illustration" className="w-full h-48 object-contain" />
+              <Image src="/storysets/add-user.svg" alt="Add user illustration" className="w-full h-48 object-contain" />
               <h3 className="text-xl font-bold mb-4 text-dark-background dark:text-light-background ">Select a User</h3>
               <div className="space-y-2">
                 {previousUsers.map((user, index) => (
@@ -127,7 +128,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
             {!currentUser && (
               <>
                 <div className="">
-                  <img src="/storysets/login.svg" alt="Login illustration" className="w-full h-48 object-contain" />
+                  <Image src="/storysets/login.svg" alt="Login illustration" className="w-full h-48 object-contain" />
                 </div>
 
                 <form onSubmit={handleUserSubmit} className="space-y-4">
@@ -166,7 +167,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
             {currentUser && (
               <div className="mt-6 text-center">
                 <div className="mb-2">
-                  <img src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" />
+                  <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" />
                 </div>            
                 <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
                   Logged in as: <strong>{currentUser}</strong>
