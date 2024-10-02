@@ -10,26 +10,29 @@ import UserModal from './UserModal';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [isMobile, setIsMobile] = useState(window? window.innerWidth <= 640 : false);
+  const [isMobile, setIsMobile] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleResize = () => {
-    setIsMobile(window.innerWidth <= 640);
-  };
-
   useEffect(() => {
-    // Set the initial isMobile state
-    handleResize();
+    if (typeof window !== 'undefined') {
+      // Safe to access window here
+      const handleResize = () => {
+        setIsMobile(window.innerWidth <= 640);
+      };
 
-    // Attach the resize event listener
-    window.addEventListener('resize', handleResize);
+      // Set the initial isMobile state
+      handleResize();
+
+      // Attach the resize event listener
+      window.addEventListener('resize', handleResize);
     
-    // Cleanup event listener on unmount
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+      // Cleanup event listener on unmount
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   }, []);
 
   const handleMenuClick = () => {
