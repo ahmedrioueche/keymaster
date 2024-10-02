@@ -58,28 +58,32 @@
       throw error;
     }
   };
-
   export const updateUser = async (id: number, data: Partial<User>) => {
     try {
-      const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
+      const updateData: any = {
         name: data.name,
         password: data.password,
         speed: data.speed,
         rank: data.rank,
-        lastEntryDate: data.lastEntryDate,
       };
+  
+      // Convert lastEntryDate to ISO-8601 if present
+      if (data.lastEntryDate) {
+        const date = new Date(data.lastEntryDate);
+        updateData.lastEntryDate = date.toISOString(); // Convert to ISO-8601
+      }
   
       // Handle updating typingStats separately
       if (data.typingStats) {
         updateData.typingStats = {
           upsert: data.typingStats.map((stat) => ({
-            where: { id: stat.id }, // Assuming each TypingStat has an id for the update
-            create: { // Fields to create a new TypingStat if not found
+            where: { id: stat.id || -1 }, // Ensure id exists or provide a fallback
+            create: {
               accuracy: stat.accuracy,
               speed: stat.speed,
               userId: id, // Reference to the user being updated
             },
-            update: { // Fields to update if TypingStat exists
+            update: {
               accuracy: stat.accuracy,
               speed: stat.speed,
             },
