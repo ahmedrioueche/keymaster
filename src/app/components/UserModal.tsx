@@ -234,7 +234,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       required
                     />
                     {usernameTaken?.status && (
-                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{usernameTaken?.message}</div>
+                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-2 font-stix">{usernameTaken?.message}</div>
                     )}
                   </div>
                   <div>
