@@ -7,9 +7,10 @@ import Image from 'next/image';
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onUserChange?: (user : User) => void;
 }
 
-const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
+const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) => {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -42,7 +43,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     }
 
     localStorage.setItem("currentUser", JSON.stringify(newUser));
-
+    onUserChange? onUserChange(newUser) : null;
     setCurrentUser(username);
     setUsername('');
     setPassword('');

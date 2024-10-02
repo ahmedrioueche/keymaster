@@ -232,7 +232,6 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
                 {isTypingStatsCollapsed ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
               </button>
               )}
-            
             </div>
 
             {/* Always show Average speed */}
@@ -241,13 +240,13 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
               <div>
-             {typingStats.map((stat, index) => (
-              <div key={index} className="flex justify-between py-1">
-                <p className="text-sm">
-                  Recorded Speed: {stat.speed} WPM On {new Date(stat.date).toLocaleDateString()} {new Date(stat.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
-              </div>
-            ))}
+                {typingStats.map((stat, index) => (
+                  <div key={index} className="flex justify-between py-1">
+                    <p className="text-sm">
+                      Recorded Speed: {stat.speed} WPM On {new Date(stat.date).toLocaleDateString()} {new Date(stat.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                ))}
               </div>
             )}
           </div>

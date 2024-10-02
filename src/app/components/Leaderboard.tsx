@@ -30,7 +30,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
               <td className="border-b py-2 px-5">{player.rank}</td>
               <td className="border-b py-2 px-4">{player.name}</td>
               <td className="border-b py-2 px-4">{player.speed}</td>
-              <td className="border-b py-2 px-4 text-sm ">{player.lastEntryDate}</td>
+              <td className="border-b py-2 px-4 text-sm ">{player?.lastEntryDate? new Date(player?.lastEntryDate).toLocaleDateString([], { hour: '2-digit', minute: '2-digit' }) : null}</td>
             </tr>
           ))}
         </tbody>
