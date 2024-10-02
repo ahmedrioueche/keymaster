@@ -50,7 +50,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
 
     const response = await apiAuthenticateUser(userData);
     console.log("response", response);
-    if(response){
+    if(response.userData){
       userData.id = response.id;
       localStorage.setItem("currentUser", JSON.stringify(userData));
       onSetUser ? onSetUser(userData) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions

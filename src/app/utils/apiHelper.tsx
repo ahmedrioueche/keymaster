@@ -45,7 +45,6 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
       return { status: 'error', message: 'An error occurred' };
     }
   }
-
   
   export const apiAuthenticateUser = async (user: User): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
     try {

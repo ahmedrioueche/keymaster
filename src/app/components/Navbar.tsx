@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   // Detect if the device is mobile
   const checkIsMobile = () => {
     const userAgent = typeof window !== 'undefined' ? navigator.userAgent || navigator.vendor : '';
-    const isMobileWidth = window.innerWidth <= 640; // You can adjust the breakpoint if needed
+    const isMobileWidth = window.innerWidth <= 768; // You can adjust the breakpoint if needed
     const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
 
     // Combine width and device detection for more reliable results
@@ -145,25 +145,25 @@ const Navbar: React.FC = () => {
           </>
         ) : (
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+            <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaHome className="mr-2" /> Home
             </Link>
-            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaUser className="mr-2" /> User
             </Link>
-            <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+            <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaBook className="mr-2" /> Lessons
             </Link>
-            <Link onClick={() => {}} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+            <Link onClick={() => {}} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaCog className="mr-2" /> Settings
             </Link>
-            <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+            <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaExclamationCircle className="mr-2" /> About
             </Link>            
             {/* Theme Toggle Icon */}
             <button
               onClick={toggleTheme}
-              className="text-light-foreground dark:text-dark-foreground focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700 p-2 rounded"
+              className="text-light-foreground dark:text-dark-foreground focus:outline-none hover:bg-light-secondary dark:hover:bg-dark-secondary p-2 rounded"
               aria-label="Toggle Theme"
             >
               {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
