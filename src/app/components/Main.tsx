@@ -5,7 +5,7 @@ import TypingArea from "./TypingArea"; // Adjust the import path if necessary
 import SettingsAndStats from "./Settings"; // Adjust the import path if necessary
 import Leaderboard from "./Leaderboard"; // Import the Leaderboard component
 import { useTheme } from "../context/ThemeContext"; // Adjust the import path if necessary
-import { apiPromptGemini } from "../utils/apiHelper";
+import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
 import { TypingStat, User } from "../types/types";
 
 const MainContainer: React.FC = () => {
@@ -21,18 +21,15 @@ const MainContainer: React.FC = () => {
   const [topic, setTopic] = useState("General");
 
   useEffect(() => {
-    //get users and current user from local storage
-    //localStorage.clear();
-    const storedUsers = localStorage.getItem("users");
-    const users : User[] = storedUsers? JSON.parse(storedUsers) : null;
-    if(users){
-      setUsers(users);
-    }
+    //get current user
     const storedUser = localStorage.getItem("currentUser");
     const currentUser : User = storedUser? JSON.parse(storedUser) : null;
     if(currentUser){
       setCurrentUser(currentUser);
     }
+    
+    //get users
+    getUsers();
 
   }, [])
 
@@ -48,13 +45,13 @@ const MainContainer: React.FC = () => {
       setTextToType(response);
     }
   };
-  const handleTextCompletion = (speed: number) => {
+
+  const handleTextCompletion = async (speed: number) => {
     setIsFinished(true);
     const date = new Date().toLocaleString();
-
+    let updatedUser: User;
     setUsers((prevUsers) => {
         const updatedUsers = [...(prevUsers || [])];
-        let updatedUser: User;
 
         if (currentUser) {
             // Find the current user in the users list
@@ -134,7 +131,21 @@ const MainContainer: React.FC = () => {
 
         return rankedUsers; // Return the updated user list
     });
+
 };
+
+  useEffect(() => {
+    //update the user's data in db
+    const updateUser = async () => {
+      if(currentUser){
+        const response = currentUser?.id? await apiUpdateUser(currentUser?.id, {...currentUser}) : null;
+        console.log("response", response)
+      }
+    }
+
+    updateUser();
+  
+  }, [currentUser])
 
   const handleUserTyped = () => {
     setUserTyped(true);
@@ -153,9 +164,20 @@ const MainContainer: React.FC = () => {
     };
 }, []);
 
+  setTimeout(() => {
+    getUsers();
+  }, 10000)
+
+  const getUsers = async () => {
+    const response = await apiGetUsers();
+    console.log("response", response);
+    if(response){
+      setUsers(response);
+      localStorage.setItem("users", JSON.stringify(response));
+    }
+  }
+  
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
-  console.log("TypingStats", TypingStats)
-  console.log("currentUser", currentUser)
 
   return (
     <div

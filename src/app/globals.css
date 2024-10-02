@@ -55,3 +55,9 @@ html, body {
 html, body {
   -ms-overflow-style: none; /* IE and Edge */
 }
+
+/* Hide scrollbar manually */
+.hide-scrollbar::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+  display: none;
+}

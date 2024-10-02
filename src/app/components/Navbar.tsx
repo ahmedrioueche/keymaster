@@ -7,6 +7,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Link from 'next/link';
 import { useTheme } from '../context/ThemeContext'; 
 import UserModal from './UserModal';
+import { FaBook, FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -64,6 +65,9 @@ const Navbar: React.FC = () => {
 
   const handleUserClick = () => {
     setIsUserModalOpen(true);
+    if(isMenuOpen){
+      setIsMenuOpen(false);
+    }
   }
 
   return (
@@ -94,24 +98,48 @@ const Navbar: React.FC = () => {
             </div>
        
             {isMenuOpen && (
-              <div ref={dropdownRef} className="absolute right-0 mt-2 p-10 bg-light-background dark:bg-dark-background rounded-md shadow-lg z-10">
-                <ul className="flex flex-col p-10">
-                  <li onClick={handleMenuClose}>
-                    <Link href="/" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Home</Link>
-                  </li>
-                  <li onClick={handleMenuClose}>
-                    <Link href="/" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">User</Link>
-                  </li>
-                  <li onClick={handleMenuClose}>
-                    <Link href="/lessons" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Lessons</Link>
-                  </li>
-                  <li onClick={handleMenuClose}>
-                    <Link href="/" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">Settings</Link>
-                  </li>
-                  <li onClick={handleMenuClose}>
-                    <Link href="/about" className="block px-4 py-2 text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700">About</Link>
-                  </li>
-                </ul>
+             <div
+             ref={dropdownRef}
+             className="md:hidden overflow-y-auto mt-5 z-[100] absolute top-[2.8rem] right-[1.4rem] w-[15.6rem] bg-light-background dark:bg-dark-background border text-dark-background dark:text-light-background border-gray-300 dark:border-gray-600 rounded-lg shadow-lg flex flex-col py-1 space-y-4"
+           >
+             <div className="flex flex-col items-start w-full space-y-2">
+               <Link
+                 href="/"
+                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleMenuClose}
+               >
+                 <FaHome className="mr-3 text-lg" /> Home
+               </Link>
+               <Link
+                 href="/"
+                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleMenuClose}
+               >
+                 <FaBook className="mr-3 text-lg" /> Lessons
+               </Link> 
+               <Link
+                 href="/"
+                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleUserClick}
+               >
+                 <FaUser className="mr-3 text-lg" /> User
+               </Link> 
+              
+               <Link
+                 href="/"
+                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleMenuClose}
+               >
+                 <FaCog className="mr-3 text-lg" /> Settings
+               </Link>
+               <Link
+                 href="/"
+                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleMenuClose}
+               >
+                 <FaExclamationCircle className="mr-3 text-lg" /> About
+               </Link>
+               </div>
               </div>
             )}
           </>
@@ -120,7 +148,7 @@ const Navbar: React.FC = () => {
             <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Home</Link>
             <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">User</Link>
             <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Lessons</Link>
-            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Settings</Link>
+            <Link onClick={() =>{}} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Settings</Link>
             <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">About</Link>
             
             {/* Theme Toggle Icon */}

@@ -1,6 +1,8 @@
   
 export interface User {
+  id?: number;
   name: string;
+  password?: string;
   rank?: number;
   speed?: number;
   lastEntryDate?: string;
@@ -8,6 +10,7 @@ export interface User {
 }
 
 export interface TypingStat {
+  id?: number;
   speed: number;
   accuracy?: number;
   date: string;

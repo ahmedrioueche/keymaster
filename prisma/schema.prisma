@@ -11,6 +11,7 @@ generator client {
 model User {
   id             Int          @id @default(autoincrement()) // Auto-incrementing primary key
   name           String
+  password       String?
   rank           Int?         // Optional rank
   speed          Int?         // Optional speed
   lastEntryDate  DateTime?    // Optional last entry date (converted to DateTime)

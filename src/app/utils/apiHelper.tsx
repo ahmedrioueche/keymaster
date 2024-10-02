@@ -56,7 +56,7 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
         });
     
         if (!response.ok) {
-          throw new Error('Failed to insert user in api');
+          throw new Error('Failed to get users in api');
         }
     
         const responseData = await response.json();
@@ -64,10 +64,34 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
         return responseData;
     
       } catch (error) {
-        console.error('Failed to insert user in api:', error);
+        console.error('Failed to get users in api:', error);
         
         return { status: 'error', message: 'An error occurred' };
       }
-    }
+  }
+
+  
+  export const apiUpdateUser = async (id : number, data: Partial<User>): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/user/update-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({id, data}),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update user in api');
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error('Failed to update user in api:', error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }
+  
   
     
