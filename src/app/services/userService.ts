@@ -58,6 +58,7 @@
       throw error;
     }
   };
+
   export const updateUser = async (id: number, data: Partial<User>) => {
     try {
       const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -81,7 +82,6 @@
             create: {
               accuracy: stat.accuracy,
               speed: stat.speed,
-              userId: id, // Reference to the user being updated
             },
             update: {
               accuracy: stat.accuracy,
