@@ -137,6 +137,7 @@ const MainContainer: React.FC = () => {
   useEffect(() => {
     //update the user's data in db
     const updateUser = async () => {
+      console.log("currentUser", currentUser)
       if(currentUser){
         const response = currentUser?.id? await apiUpdateUser(currentUser?.id, {...currentUser}) : null;
         console.log("response", response)
