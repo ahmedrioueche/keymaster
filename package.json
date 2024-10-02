@@ -15,6 +15,7 @@
     "@google/generative-ai": "^0.20.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
+    "@prisma/adapter-pg": "^5.20.0",
     "@prisma/client": "^5.20.0",
     "@supabase/supabase-js": "^2.45.4",
     "next": "14.2.13",
