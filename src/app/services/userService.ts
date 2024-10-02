@@ -129,7 +129,7 @@
       }
   
       // If authentication is successful, return the user data (omit password for security)
-      const { password, ...userData } = existingUser; // Exclude password from the returned data
+      const { password, ...userData } = existingUser; //eslint-disable-line @typescript-eslint/no-unused-vars
       return userData;
   
     } catch (error) {

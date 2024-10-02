@@ -4,7 +4,7 @@ interface AlertProps {
   title: string | undefined;
   message: string | undefined;
   bg?: string;
-  onClose: () => void;
+  onClose: () => void;  
 }
 
 const Alert: React.FC<AlertProps> = ({ title, message, bg, onClose }) => {
