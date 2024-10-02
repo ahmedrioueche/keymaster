@@ -22,15 +22,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
           </tr>
         </thead>    
         <tbody>
-          {leaderboardData.map((player: User, index: number) => (
-            player.speed ? ( 
-              <tr className="hover:scale-105 transition duration-500" key={index}>
-                <td className="border-b py-2 px-5">{player.rank}</td>
-                <td className="border-b py-2 px-4">{player.name}</td>
-                <td className="border-b py-2 px-4">{player.speed}</td>
-                <td className="border-b py-2 px-4 text-sm">{player.lastEntryDate}</td>
-              </tr>
-            ) : null 
+          {leaderboardData.map((player : User, index : number) => (
+            <tr className="hover:scale-105 transition duration-500" key={index}>
+              <td className="border-b py-2 px-5">{player.rank}</td>
+              <td className="border-b py-2 px-4">{player.name}</td>
+              <td className="border-b py-2 px-4">{player.speed}</td>
+              <td className="border-b py-2 px-4 text-sm ">{player.lastEntryDate}</td>
+            </tr>
           ))}
         </tbody>
       </table>
