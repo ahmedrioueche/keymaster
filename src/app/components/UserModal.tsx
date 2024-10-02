@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaTimes, FaUser, FaUserPlus } from 'react-icons/fa';
 import { User } from "../types/types";
-import { apiInsertUser } from '../utils/apiHelper';
+import { apiGetUsers, apiInsertUser } from '../utils/apiHelper';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -14,6 +14,13 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     // Get users and current user from local storage
+    const getUsers = async () => {
+      const response = await apiGetUsers();
+      console.log("Response in UserModal", response);
+    }
+
+    getUsers();
+    
     const storedUser = localStorage.getItem("currentUser");
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
     if (currentUser && currentUser.name) {

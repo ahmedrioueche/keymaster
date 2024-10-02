@@ -47,4 +47,27 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
     }
   }
 
+  export const apiGetUsers = async (): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/user/get-users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to insert user in api');
+        }
+    
+        const responseData = await response.json();
+        console.log("responseData in apiGetUsers", responseData)
+        return responseData;
+    
+      } catch (error) {
+        console.error('Failed to insert user in api:', error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+    }
   
+    

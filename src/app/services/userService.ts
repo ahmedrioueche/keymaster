@@ -27,3 +27,34 @@
      throw error;
    }
   };
+
+  export const getUsers = async () => {
+      try {
+        const users = await prisma.user.findMany(); // Use findMany to get all users
+        return users;
+      } catch (error) {
+        console.error('Error getting users:', error);
+        throw error;
+      }
+  };
+
+    // Get a user by their ID
+  export const getUserById = async (id: number) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id }, // Find user by id
+        include: { typingStats: true }, // Optionally include related typingStats
+      });
+
+      if (!user) {
+        throw new Error(`User with id ${id} not found`);
+      }
+
+      return user;
+    } catch (error) {
+      console.error('Error getting user by ID:', error);
+      throw error;
+    }
+  };
+
+    
