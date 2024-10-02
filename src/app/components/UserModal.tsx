@@ -129,18 +129,21 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   }, [isSignup])
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-    users.map((user : User) => {
-      console.log("e.target.value", e.target.value)
-      console.log("user.name", user.name)
-
-      if(e.target.value === user.name){
-        setUsernameStatus("Already taken");
-        setIsSignupDisabled(true);
-      }
-    })
-  }
-
+    const inputValue = e.target.value;
+    setUsername(inputValue);
+  
+    // Check if any user name matches the input value
+    const isTaken = users.some((user: User) => user.name === inputValue);
+  
+    if (isTaken) {
+      setUsernameStatus("Already taken");
+      setIsSignupDisabled(true);
+    } else {
+      setUsernameStatus("Available");
+      setIsSignupDisabled(false);
+    }
+  };
+  
   return (
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-transform duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
