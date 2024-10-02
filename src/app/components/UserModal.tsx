@@ -20,6 +20,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [isSignup, setIsSignup] = useState(false); // State for toggling between login and signup
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [status, setStatus] = useState<{ success: string; message: string; bg? : string}>();
+  const [users, setUsers] = useState<User[]>([]);
+  const [usernameStatus, setUsernameStatus] = useState<"Available" | "Already taken">("Available");
+  const [isSignupDisabled, setIsSignupDisabled] = useState(false);
 
   // Placeholder users array
   const previousUsers: User[] = [
@@ -116,13 +119,24 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   useEffect(() => {
     const getUsers = async () => {
       if(isSignup){
-        const response = await apiGetUsers();
-        console.log("response in getUsers in UserModal", response)
+        const users = await apiGetUsers();
+        console.log("response in getUsers in UserModal", users)
       }
+      setUsers(users);
     }
  
     getUsers();
   }, [isSignup])
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+    users.map((user : User) => {
+      if(e.target.value === user.name){
+        setUsernameStatus("Already taken");
+        setIsSignupDisabled(true);
+      }
+    })
+  }
 
   return (
     <div
@@ -186,12 +200,13 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     <input
                       id="username"
                       value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      onChange={(e) => handleUsernameChange(e)}
                       type="text"
                       className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                       placeholder="Enter your username"
                       required
                     />
+                  <div className={usernameStatus === "Available" ? 'text-blue-500' : 'text-red-500'}>{usernameStatus}</div>
                   </div>
                   <div>
                     <input
@@ -217,7 +232,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                   </div>
                   <button
                     type="submit"
-                    className="w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2"
+                    className={`${isSignupDisabled ? "disabled bg-light-secondary-disabled hover:bg-light-secondary-disabled dark:bg-dark-secondary-disabled dark:hover:bg-light-secondary-disabled outline-none" :''} w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
                   >
                     Sign Up
                   </button>

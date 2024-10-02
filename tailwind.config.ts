@@ -16,6 +16,7 @@ const config: Config = {
           primary: "#3b82f6",    // Light primary color (blue)
           secondary: "#fbbf24",  // Light secondary color (yellow)
           accent: "#eab308",     // Light accent color (green)
+          "secondary-disabled": "#fce7b2", // Light secondary-disabled color
         },
         // Define color variables for dark mode
         dark: {
@@ -24,6 +25,7 @@ const config: Config = {
           primary: "#2563eb",    // Dark primary color (blue)
           secondary: "#f59e0b",  // Dark secondary color (yellow)
           accent: "#f59e0b",     // Dark accent color (green)
+          "secondary-disabled": "#7a5e27", // Dark secondary-disabled color
         },
       },
       fontFamily: {
