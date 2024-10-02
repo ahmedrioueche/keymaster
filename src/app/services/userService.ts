@@ -60,7 +60,7 @@
   };
   export const updateUser = async (id: number, data: Partial<User>) => {
     try {
-      const updateData: any = {
+      const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
         name: data.name,
         password: data.password,
         speed: data.speed,
