@@ -10,19 +10,29 @@ import UserModal from './UserModal';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [isMobile, setIsMobile] = useState(false); // Initially set to false
+  const [isMobile, setIsMobile] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Detect if the device is mobile
+  const checkIsMobile = () => {
+    const userAgent = typeof window !== 'undefined' ? navigator.userAgent || navigator.vendor : '';
+    const isMobileWidth = window.innerWidth <= 640; // You can adjust the breakpoint if needed
+    const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+
+    // Combine width and device detection for more reliable results
+    return isMobileWidth || isMobileDevice;
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (typeof window !== 'undefined') {
-        setIsMobile(window.innerWidth <= 640);
+        setIsMobile(checkIsMobile());
       }
     };
 
-    // Set isMobile state after the component has mounted on the client
+    // Set initial mobile state after the component mounts
     handleResize();
 
     window.addEventListener('resize', handleResize);
