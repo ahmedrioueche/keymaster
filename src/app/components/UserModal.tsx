@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { User } from "../types/types";
-import { apiInsertUser } from '../utils/apiHelper';
+import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
 import Image from 'next/image';
+import Alert from './Alert';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [confirmPassword, setConfirmPassword] = useState<string>(''); // State for confirm password
   const [isChangingUser, setIsChangingUser] = useState(false);
   const [isSignup, setIsSignup] = useState(false); // State for toggling between login and signup
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [status, setStatus] = useState<{ success: string; message: string; bg? : string}>();
 
   // Placeholder users array
   const previousUsers: User[] = [
@@ -31,7 +34,33 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     }
   }, []);
 
-  const handleUserSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const userData: User = {
+      name: username,
+      password: password,
+    };
+
+    const response = await apiAuthenticateUser(userData);
+    console.log("response", response);
+    if(response){
+      userData.id = response.id;
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      onUserChange ? onUserChange(userData) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
+      setCurrentUser(username);
+      setUsername('');  
+      setPassword('');
+    }
+    else {
+      setIsAlertOpen(true);
+      setStatus({success : "Error!", message: "A problem occured!"})
+      setTimeout(() => {
+        setIsAlertOpen(false);
+      }, 3000)
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newUser: User = {
       name: username,
@@ -42,15 +71,20 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     console.log("response", response);
     if(response){
       newUser.id = response.id;
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+      setCurrentUser(username);
+      setUsername('');  
+      setPassword('');
+      setConfirmPassword(''); 
     }
-
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
-    onUserChange ? onUserChange(newUser) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
-    setCurrentUser(username);
-    setUsername('');  
-    setPassword('');
-    setConfirmPassword(''); // Reset confirm password
-  };
+    else {
+      setIsAlertOpen(true);
+      setStatus({success : "Error!", message: "A problem occured!"})
+      setTimeout(() => {
+        setIsAlertOpen(false);
+      }, 3000)
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -58,14 +92,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     onClose();
   };
 
-  //const handleChangeUser = () => {
-  //  if (previousUsers.length === 0) {
-  //    setIsChangingUser(false);
-  //  } else {
-  //    handleLogout();
-  //    setIsChangingUser(true);
-  //  }
-  //};
+  const handleChangeUser = () => {
+    if (previousUsers.length === 0) {
+      setIsChangingUser(false);
+    } else {
+      handleLogout();
+      setIsChangingUser(true);
+    }
+  };
 
   const handleBackToLogin = () => {
     setIsChangingUser(false);
@@ -78,6 +112,17 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     setPassword(''); // Clear the password field
     setConfirmPassword(''); // Clear the confirm password field
   };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      if(isSignup){
+        const response = await apiGetUsers();
+        console.log("response in getUsers in UserModal", response)
+      }
+    }
+ 
+    getUsers();
+  }, [isSignup])
 
   return (
     <div
@@ -136,7 +181,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                 <div className="mt-0">
                   <Image src="/storysets/user.svg" alt="Signup illustration" className="w-full h-48 object-contain" height={48} width={38}/>
                 </div>
-                <form onSubmit={handleUserSubmit} className="space-y-4">
+                <form onSubmit={handleSignup} className="space-y-4">
                   <div>
                     <input
                       id="username"
@@ -177,8 +222,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     Sign Up
                   </button>
                 </form>
-                <div className="mt-4 text-center">
-                  <p className="text-gray-600 dark:text-gray-300">Already have an account? <span className="text-light-secondary cursor-pointer" onClick={toggleSignup}>Login</span></p>
+                <div className="mt-4 text-center text-lg">
+                  <p className="text-gray-600 dark:text-gray-300">Already have an account? <span className="text-light-secondary cursor-pointer hover:underline" onClick={toggleSignup}>Login</span></p>
                 </div>
               </>
             ) : (
@@ -189,7 +234,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       <Image src="/storysets/user.svg" alt="Login illustration" className="w-full h-48 object-contain" height={48} width={38}/>
                     </div>
 
-                    <form onSubmit={handleUserSubmit} className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-4">
                       <div>
                         <input
                           id="username"
@@ -219,27 +264,50 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                         Login
                       </button>
                     </form>
-                    <div className="mt-4 text-center">
-                      <p className="text-gray-600 dark:text-gray-300">Do not have an account? <span className="text-light-secondary cursor-pointer" onClick={toggleSignup}>Sign Up</span></p>
+                    <div className="mt-4 text-center  text-lg">
+                      <p className="text-gray-600 dark:text-gray-300">Do not have an account? <span className="text-light-secondary cursor-pointer  hover:underline" onClick={toggleSignup}>Sign Up</span></p>
                     </div>
                   </>
                 )}
-                {currentUser && (
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold mb-4 text-dark-background dark:text-light-background">Welcome, {currentUser}!</h3>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-4 py-3 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
+                  {currentUser && (
+              <div className="mt-6 text-center">
+                <div className="mb-2">
+                  <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" height={48} width={38}/>
+                </div>            
+                <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
+                  Logged in as: <strong>{currentUser}</strong>
+                </p>
+                <div className='flex flex-row justify-between mt-5'>
+                  <button
+                    type="button"
+                    className="flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
+                    onClick={handleChangeUser}
+                  >
+                    Change User
+                  </button>
+                  <button
+                    type="button"
+                    className="flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
+                    onClick={handleLogout}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              </div>
+            )}
               </>
             )}
           </div>
         )}
       </div>
+      {isAlertOpen && (
+            <Alert 
+              title={status?.success} 
+              message={status?.message} 
+              bg={status?.bg} 
+              onClose={() => setIsAlertOpen(false)}
+            />
+      )}
     </div>
   );
 };

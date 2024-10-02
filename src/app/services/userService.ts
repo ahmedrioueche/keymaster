@@ -8,7 +8,7 @@
      // Insert user into the database
      const newUser = await prisma.user.create({
        data: {
-         name: user.name,
+         username: user.name,
          password: hashedPassword,
          rank: user.rank ?? null, // Optional field
          speed: user.speed ?? null, // Optional field
@@ -62,7 +62,7 @@
   export const updateUser = async (id: number, data: Partial<User>) => {
     try {
       const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
-        name: data.name,
+        username: data.name,
         password: data.password,
         speed: data.speed,
         rank: data.rank,
@@ -106,4 +106,36 @@
       throw error;
     }
   };
+
+  export const authenticateUser = async (user: User) => {
+    try {
+      // Fetch the user from the database
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          username: user.name, 
+        },
+      });
+  
+      // Check if the user exists
+      if (!existingUser) {
+        throw new Error('User not found');
+      }
+  
+      // Compare the provided password with the hashed password in the database
+      const isPasswordValid = (user.password &&  existingUser.password)? await bcrypt.compare(user.password, existingUser.password) : null;
+      
+      if (!isPasswordValid) {
+        throw new Error('Invalid password');
+      }
+  
+      // If authentication is successful, return the user data (omit password for security)
+      const { password, ...userData } = existingUser; // Exclude password from the returned data
+      return userData;
+  
+    } catch (error) {
+      console.error('Error authenticating user:', error);
+      throw error; // Rethrow the error to be handled by the calling function
+    } 
+  };
+
   

@@ -23,7 +23,6 @@ export const apiPromptGemini = async (prompt: string): Promise<any> => { // esli
     }
   }
 
-  
 export const apiInsertUser = async (user: User): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
       const response = await fetch('/api/user/insert-user', {
@@ -46,6 +45,30 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
       return { status: 'error', message: 'An error occurred' };
     }
   }
+
+  
+  export const apiAuthenticateUser = async (user: User): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/user/auth-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({user}),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to authenticate user in api');
+        }
+    
+        const responseData = await response.json();
+        
+        return responseData;
+    
+      } catch (error) {
+        console.error('Failed to authenticate user in api:', error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+    }
 
   export const apiGetUsers = async (): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
     try {

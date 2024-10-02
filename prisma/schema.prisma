@@ -10,7 +10,7 @@ generator client {
 
 model User {
   id             Int          @id @default(autoincrement()) // Auto-incrementing primary key
-  name           String
+  username       String       @unique
   password       String?
   rank           Int?         // Optional rank
   speed          Int?         // Optional speed
