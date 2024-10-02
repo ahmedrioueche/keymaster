@@ -91,7 +91,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
         setCurrentUser(newUser);
         onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
         setIsAlertOpen(true);
-        setStatus({success : "Success!", message: `Welcome ${newUser.username}!`})
+        setStatus({success : "Success!", message: `Welcome ${newUser.username}!`, bg: 'bg-blue-500'})
         setIsLoading("null");
         setTimeout(() => {
           setIsAlertOpen(false);
@@ -100,6 +100,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
         setPassword('');
         setConfirmPassword(''); 
         setIsLoading("null");
+        onClose();
       }
       else {
         setIsAlertOpen(true);

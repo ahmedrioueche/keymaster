@@ -24,6 +24,7 @@ const MainContainer: React.FC = () => {
 
   useEffect(() => {
     //get current user
+    localStorage.clear();
     const storedUser = localStorage.getItem("currentUser");
     const currentUser : User = storedUser? JSON.parse(storedUser) : null;
     if(currentUser){
