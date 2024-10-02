@@ -127,7 +127,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
           <>
             {!currentUser && (
               <>
-                <div className="">
+                <div className="mt-0">
                   <Image src="/storysets/login.svg" alt="Login illustration" className="w-full h-48 object-contain" />
                 </div>
 
