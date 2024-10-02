@@ -55,7 +55,7 @@ const MainContainer: React.FC = () => {
 
         if (currentUser) {
             // Find the current user in the users list
-            const existingUserIndex = updatedUsers.findIndex(user => user.name === currentUser.name);
+            const existingUserIndex = (updatedUsers && updatedUsers.length > 0) ? updatedUsers.findIndex(user => user.name === currentUser.name) : -1;
 
             // Create a new entry for the typing stat
             const newEntry: TypingStat = { speed, date };
@@ -113,6 +113,7 @@ const MainContainer: React.FC = () => {
 
                 // Add the new user to the users array
                 updatedUsers.push(updatedUser);
+                localStorage.setItem("users", JSON.stringify(updatedUsers));
             } else {
                 return prevUsers; // Return if user did not enter a name
             }
@@ -128,7 +129,7 @@ const MainContainer: React.FC = () => {
 
         // Update the current user state with the updated user
         setCurrentUser(updatedUser);
-                
+
         return rankedUsers; // Return the updated user list
     });
 

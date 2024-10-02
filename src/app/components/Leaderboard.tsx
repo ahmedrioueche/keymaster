@@ -10,6 +10,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
   if(!leaderboardData || leaderboardData.length == 0){
     return null
   }
+
+  console.log("leaderboardData", leaderboardData);
+
   return (
     <div className="border-t pt-0">
       <table className="min-w-full border-collapse">
@@ -22,7 +25,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
           </tr>
         </thead>    
         <tbody>
-          {leaderboardData.map((player : User, index : number) => (
+          {leaderboardData && leaderboardData.length > 0 && leaderboardData.map((player : User, index : number) => (
             <tr className="hover:scale-105 transition duration-500" key={index}>
               <td className="border-b py-2 px-5">{player.rank}</td>
               <td className="border-b py-2 px-4">{player.name}</td>

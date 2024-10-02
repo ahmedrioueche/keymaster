@@ -42,7 +42,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     }
 
     localStorage.setItem("currentUser", JSON.stringify(newUser));
-    
+
     setCurrentUser(username);
     setUsername('');
     setPassword('');
@@ -91,7 +91,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
         {isChangingUser ? (
           <>
             <div className="text-center">
-              <Image src="/storysets/add-user.svg" alt="Add user illustration" className="w-full h-48 object-contain" />
+              <Image src="/storysets/add-user.svg" alt="Add user illustration" className="w-full h-48 object-contain" height={48} width={38}/>
               <h3 className="text-xl font-bold mb-4 text-dark-background dark:text-light-background ">Select a User</h3>
               <div className="space-y-2">
                 {previousUsers.map((user, index) => (
@@ -126,7 +126,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
             {!currentUser && (
               <>
                 <div className="mt-0">
-                  <Image src="/storysets/user.svg" alt="Login illustration" className="w-full h-48 object-contain" />
+                  <Image src="/storysets/user.svg" alt="Login illustration" className="w-full h-48 object-contain" height={48} width={38}/>
                 </div>
 
                 <form onSubmit={handleUserSubmit} className="space-y-4">
@@ -165,7 +165,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
             {currentUser && (
               <div className="mt-6 text-center">
                 <div className="mb-2">
-                  <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" />
+                  <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" height={48} width={38}/>
                 </div>            
                 <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
                   Logged in as: <strong>{currentUser}</strong>
