@@ -219,7 +219,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       required
                     />
                     {usernameStatus != "Available" && (
-                      <div className="text-red-500 px-2 py-1 font-stix">{usernameStatus}</div>
+                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{usernameStatus}</div>
                     )}
                   </div>
                   <div>
