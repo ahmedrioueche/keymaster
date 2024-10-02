@@ -119,10 +119,10 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   useEffect(() => {
     const getUsers = async () => {
       if(isSignup){
-        const users = await apiGetUsers();
-        console.log("response in getUsers in UserModal", users)
+        const response = await apiGetUsers();
+        console.log("response in getUsers in UserModal", response)
+        setUsers(response);
       }
-      setUsers(users);
     }
  
     getUsers();
