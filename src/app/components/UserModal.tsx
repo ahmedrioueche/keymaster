@@ -45,9 +45,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     }
 
     localStorage.setItem("currentUser", JSON.stringify(newUser));
-    onUserChange ? onUserChange(newUser) : null;
+    onUserChange ? onUserChange(newUser) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
     setCurrentUser(username);
-    setUsername('');
+    setUsername('');  
     setPassword('');
     setConfirmPassword(''); // Reset confirm password
   };
