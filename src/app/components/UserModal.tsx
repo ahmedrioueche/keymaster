@@ -146,7 +146,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     });
   
     if (isTaken) {
-      setUsernameTaken({status: true, message: "Username Already taken, please choose another one!"});
+      setUsernameTaken({status: true, message: "Username is already taken!"});
       setIsSignupDisabled(true);
     } else {
       setUsernameTaken({status: false, message: "Available"});
