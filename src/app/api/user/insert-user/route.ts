@@ -7,7 +7,7 @@ export async function POST(request: Request) {
 
         const result = await insertUser(user);
         
-        return NextResponse.json(result, { status: 200 });
+        return NextResponse.json({userData: result}, { status: 200 });
     } catch (error) {
         console.error('Error inserting user in route:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
