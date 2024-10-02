@@ -21,9 +21,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [status, setStatus] = useState<{ success: string; message: string; bg? : string}>();
   const [users, setUsers] = useState<User[]>([]);
-  const [usernameTaken, setUsernameTaken] = useState<{status : boolean, message : string}>();
+  const [usernameTaken, setUsernameTaken] = useState<{status : boolean, message : string}>({status : false, message : ""});
+  const [passwordsDontMatch, setPasswordsDontMatch] = useState<{status : boolean, message : string}>({status: false, message:''});
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
-  const [passwordsDontMatch, setPasswordsDontMatch] = useState<{status : boolean, message : string}>();
 
   // Placeholder users array
   const previousUsers: User[] = [

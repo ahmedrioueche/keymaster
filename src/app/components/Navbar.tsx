@@ -145,12 +145,21 @@ const Navbar: React.FC = () => {
           </>
         ) : (
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Home</Link>
-            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">User</Link>
-            <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Lessons</Link>
-            <Link onClick={() =>{}} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">Settings</Link>
-            <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded">About</Link>
-            
+            <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+              <FaHome className="mr-2" /> Home
+            </Link>
+            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+              <FaUser className="mr-2" /> User
+            </Link>
+            <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+              <FaBook className="mr-2" /> Lessons
+            </Link>
+            <Link onClick={() => {}} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+              <FaCog className="mr-2" /> Settings
+            </Link>
+            <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 text-lg rounded flex items-center">
+              <FaExclamationCircle className="mr-2" /> About
+            </Link>            
             {/* Theme Toggle Icon */}
             <button
               onClick={toggleTheme}
