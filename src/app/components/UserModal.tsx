@@ -26,6 +26,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
   const [loginFailed, setLoginFailed] = useState<{status : boolean, message : string}>({status: false, message:''});
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState<"login" | "signup" | "changeUser" | "logout" | "null">("null");
+  const [isInsertUserCalled, setIsInsertUserCalled] = useState(false);
 
   // Placeholder users array
   const previousUsers: User[] = [
@@ -81,33 +82,42 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
       password: password,
     };
 
-    const response = await apiInsertUser(newUser);
-    console.log("response", response);
-    if(response.userData){
-      newUser.id = response.id;
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
-      setCurrentUser(newUser);
-      onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
-      setIsAlertOpen(true);
-      setStatus({success : "Success!", message: `Welcome ${newUser.username}!`})
-      setIsLoading("null");
+    if(!isInsertUserCalled){
+      const response = await apiInsertUser(newUser);
+      console.log("response", response);
+      if(response.userData){
+        newUser.id = response.id;
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+        setCurrentUser(newUser);
+        onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
+        setIsAlertOpen(true);
+        setStatus({success : "Success!", message: `Welcome ${newUser.username}!`})
+        setIsLoading("null");
+        setTimeout(() => {
+          setIsAlertOpen(false);
+        }, 3000)
+        setUsername('');  
+        setPassword('');
+        setConfirmPassword(''); 
+        setIsLoading("null");
+      }
+      else {
+        setIsAlertOpen(true);
+        setStatus({success : "Error!", message: "A problem occured!"})
+        setIsLoading("null");
+        setTimeout(() => {
+          setIsAlertOpen(false);
+        }, 3000)
+      }
+
+      //give it some time
+      setIsInsertUserCalled(true);
       setTimeout(() => {
-        setIsAlertOpen(false);
-      }, 3000)
-      setUsername('');  
-      setPassword('');
-      setConfirmPassword(''); 
-      setIsLoading("null");
-    }
-    else {
-      setIsAlertOpen(true);
-      setStatus({success : "Error!", message: "A problem occured!"})
-      setIsLoading("null");
-      setTimeout(() => {
-        setIsAlertOpen(false);
+        setIsInsertUserCalled(false);
       }, 3000)
     }
   }
+  
 
   const handleLogout = () => {
     setIsLoading("logout");
@@ -249,7 +259,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                       required
                     />
                     {usernameTaken?.status && (
-                      <div className="text-light-accent dark:text-dark-secondary px-2 mt-3 font-stix">{usernameTaken?.message}</div>
+                      <div className="text-light-accent dark:text-dark-secondary px-2 mt-3 font-dancing">{usernameTaken?.message}</div>
                     )}
                   </div>
                   <div>
@@ -275,7 +285,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                     />
                   </div>
                   {passwordsDontMatch?.status && (
-                      <div className="text-light-accent dark:text-dark-secondary px-2 mt-1 font-stix">{passwordsDontMatch.message}</div>
+                      <div className="text-light-accent dark:text-dark-secondary px-2 mt-1 font-dancing">{passwordsDontMatch.message}</div>
                   )}
                   <button
                     type="submit"
@@ -329,7 +339,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                       </button>
 
                       {loginFailed?.status && (
-                        <div className="text-light-accent dark:text-dark-secondary px-2 mt-3 mb-3 font-stix">{loginFailed?.message}</div>
+                        <div className="text-light-accent dark:text-dark-secondary px-2 mt-3 mb-3 font-dancing">{loginFailed?.message}</div>
                      )}
                     </form>
                     <div className="mt-4 text-center  text-lg">
