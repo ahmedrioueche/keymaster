@@ -7,6 +7,7 @@ import Leaderboard from "./Leaderboard"; // Import the Leaderboard component
 import { useTheme } from "../context/ThemeContext"; // Adjust the import path if necessary
 import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
 import { TypingStat, User } from "../types/types";
+import UserModal from "./UserModal";
 
 const MainContainer: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User>();
@@ -19,6 +20,7 @@ const MainContainer: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   useEffect(() => {
     //get current user
@@ -230,6 +232,11 @@ const MainContainer: React.FC = () => {
             </div>
           </div>
       </div>
+      <UserModal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        onSetUser={(user) => setCurrentUser(user)}
+      />
     </div>
   );
 };

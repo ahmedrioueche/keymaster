@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { User } from "../types/types";
 import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
 import Image from 'next/image';
@@ -8,11 +8,11 @@ import Alert from './Alert';
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUserChange?: (user : User) => void;
+  onSetUser?: (user : User) => void;
 }
 
-const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) => {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => {
+  const [currentUser, setCurrentUser] = useState<User>();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>(''); // State for confirm password
@@ -24,6 +24,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [usernameTaken, setUsernameTaken] = useState<{status : boolean, message : string}>({status : false, message : ""});
   const [passwordsDontMatch, setPasswordsDontMatch] = useState<{status : boolean, message : string}>({status: false, message:''});
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState<"login" | "signup" | "changeUser" | "logout" | "null">("null");
 
   // Placeholder users array
   const previousUsers: User[] = [
@@ -34,12 +35,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     const storedUser = localStorage.getItem("currentUser");
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
     if (currentUser && currentUser.username) {
-      setCurrentUser(currentUser.username);
+      setCurrentUser(currentUser);
     }
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setIsLoading("login");
     const userData: User = {
       username: username,
       password: password,
@@ -50,8 +53,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     if(response){
       userData.id = response.id;
       localStorage.setItem("currentUser", JSON.stringify(userData));
-      onUserChange ? onUserChange(userData) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
-      setCurrentUser(username);
+      onSetUser ? onSetUser(userData) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
+      setCurrentUser(userData);
       setUsername('');  
       setPassword('');
     }
@@ -66,8 +69,10 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading("signup");
 
     if(passwordsDontMatch?.status || usernameTaken?.status){
+      setIsLoading("null");
       return;
     }
 
@@ -81,14 +86,17 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     if(response){
       newUser.id = response.id;
       localStorage.setItem("currentUser", JSON.stringify(newUser));
-      setCurrentUser(username);
+      setCurrentUser(newUser);
+      onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
       setUsername('');  
       setPassword('');
       setConfirmPassword(''); 
+      setIsLoading("null");
     }
     else {
       setIsAlertOpen(true);
       setStatus({success : "Error!", message: "A problem occured!"})
+      setIsLoading("null");
       setTimeout(() => {
         setIsAlertOpen(false);
       }, 3000)
@@ -96,12 +104,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   }
 
   const handleLogout = () => {
+    setIsLoading("logout");
     localStorage.removeItem("currentUser");
-    setCurrentUser(null);
+    setCurrentUser(undefined);
     onClose();
   };
 
   const handleChangeUser = () => {
+    setIsLoading("changeUser");
     if (previousUsers.length === 0) {
       setIsChangingUser(false);
     } else {
@@ -265,7 +275,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     type="submit"
                     className={`${isSignupDisabled ? "disabled" :''} w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
                   >
-                    Sign Up
+                    {isLoading === "signup"? <FaSpinner className="animate-spin" /> : "Sign Up"} 
                   </button>
                 </form>
                 <div className="mt-4 text-center text-lg">
@@ -307,7 +317,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                         type="submit"
                         className="w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2"
                       >
-                        Login
+                       {isLoading === "login"? <FaSpinner className="animate-spin" /> : "Login"} 
                       </button>
                     </form>
                     <div className="mt-4 text-center  text-lg">
@@ -321,7 +331,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                   <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" height={48} width={38}/>
                 </div>            
                 <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
-                  Logged in as: <strong>{currentUser}</strong>
+                  Logged in as: <strong>{currentUser.username}</strong>
                 </p>
                 <div className='flex flex-row justify-between mt-5'>
                   <button
@@ -329,14 +339,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     className="flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
                     onClick={handleChangeUser}
                   >
-                    Change User
+                    {isLoading === "changeUser"? <FaSpinner className="animate-spin" /> : "Change User"} 
                   </button>
                   <button
                     type="button"
                     className="flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
                     onClick={handleLogout}
                   >
-                    Log Out
+                    {isLoading === "logout"? <FaSpinner className="animate-spin" /> : "Log Out"} 
                   </button>
                 </div>
               </div>
