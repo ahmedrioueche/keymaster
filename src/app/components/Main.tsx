@@ -55,7 +55,7 @@ const MainContainer: React.FC = () => {
 
         if (currentUser) {
             // Find the current user in the users list
-            const existingUserIndex = (updatedUsers && updatedUsers.length > 0) ? updatedUsers.findIndex(user => user.name === currentUser.name) : -1;
+            const existingUserIndex = (updatedUsers && updatedUsers.length > 0) ? updatedUsers.findIndex(user => user.username === currentUser.username) : -1;
 
             // Create a new entry for the typing stat
             const newEntry: TypingStat = { speed, date };
@@ -86,7 +86,7 @@ const MainContainer: React.FC = () => {
             } else {
                 // If the user does not exist in the list, create a new user
                 updatedUser = {
-                    name: currentUser.name,
+                    username: currentUser.username,
                     speed,
                     lastEntryDate: date,
                     typingStats: [newEntry],
@@ -101,7 +101,7 @@ const MainContainer: React.FC = () => {
 
             if (userName) {
                 updatedUser = {
-                    name: userName,
+                    username: userName,
                     speed,
                     lastEntryDate: date,
                     typingStats: [{ speed, date }],

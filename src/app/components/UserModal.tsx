@@ -32,15 +32,15 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
-    if (currentUser && currentUser.name) {
-      setCurrentUser(currentUser.name);
+    if (currentUser && currentUser.username) {
+      setCurrentUser(currentUser.username);
     }
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const userData: User = {
-      name: username,
+      username: username,
       password: password,
     };
 
@@ -66,7 +66,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newUser: User = {
-      name: username,
+      username: username,
       password: password,
     };
 
@@ -136,9 +136,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
 
     // Check if any user name matches the input value
     const isTaken = users.some((user: User) => {
-      console.log("user.name", user.name )
+      console.log("user.name", user.username )
       console.log("inputValue", inputValue )
-      return user.name === inputValue
+      return user.username === inputValue
     });
   
     if (isTaken) {
@@ -179,7 +179,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                   key={index}
                   className="w-full px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2"
                 >
-                  {user.name}
+                  {user.username}
                 </button>
               ))}
             </div>

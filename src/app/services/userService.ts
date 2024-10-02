@@ -8,7 +8,7 @@
      // Insert user into the database
      const newUser = await prisma.user.create({
        data: {
-         username: user.name,
+         username: user.username,
          password: hashedPassword,
          rank: user.rank ?? null, // Optional field
          speed: user.speed ?? null, // Optional field
@@ -62,7 +62,7 @@
   export const updateUser = async (id: number, data: Partial<User>) => {
     try {
       const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
-        username: data.name,
+        username: data.username,
         password: data.password,
         speed: data.speed,
         rank: data.rank,
@@ -112,7 +112,7 @@
       // Fetch the user from the database
       const existingUser = await prisma.user.findUnique({
         where: {
-          username: user.name, 
+          username: user.username, 
         },
       });
   

@@ -28,7 +28,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
           {leaderboardData && leaderboardData.length > 0 && leaderboardData.map((player : User, index : number) => (
             <tr className="hover:scale-105 transition duration-500" key={index}>
               <td className="border-b py-2 px-5">{player.rank}</td>
-              <td className="border-b py-2 px-4">{player.name}</td>
+              <td className="border-b py-2 px-4">{player.username}</td>
               <td className="border-b py-2 px-4">{player.speed}</td>
               <td className="border-b py-2 px-4 text-sm ">{player?.lastEntryDate? new Date(player?.lastEntryDate).toLocaleDateString([], { hour: '2-digit', minute: '2-digit' }) : null}</td>
             </tr>
