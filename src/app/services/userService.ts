@@ -1,14 +1,15 @@
   import { User } from "../types/types";
   import prisma from "../utils/prisma";
+  import bcrypt from 'bcrypt';
 
   export const insertUser = async (user: User) => {
-    console.log("user", user);
    try {
+    const hashedPassword = user.password? await bcrypt.hash(user.password, 10) : null; // Hash with 10 salt rounds
      // Insert user into the database
      const newUser = await prisma.user.create({
        data: {
          name: user.name,
-         password: user.password,
+         password: hashedPassword,
          rank: user.rank ?? null, // Optional field
          speed: user.speed ?? null, // Optional field
          lastEntryDate: user.lastEntryDate ? new Date(user.lastEntryDate) : null, // Optional field and converted to Date type

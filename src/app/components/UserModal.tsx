@@ -57,8 +57,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   const handleChangeUser = () => {
     if (previousUsers.length === 0) {
       // If users array is empty, go directly to the login form
-      localStorage.removeItem("currentUser");
-      setCurrentUser(null);
       setIsChangingUser(false);
     } else {
       // Otherwise, show user selection screen
