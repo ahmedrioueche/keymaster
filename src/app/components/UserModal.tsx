@@ -252,7 +252,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     />
                   </div>
                   {passwordsDontMatch && (
-                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">"Passwods do not match! please check again."</div>
+                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">Passwods do not match! please check again.</div>
                     )}
                   <button
                     type="submit"
