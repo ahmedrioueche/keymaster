@@ -13,7 +13,7 @@ model User {
   rank           Int?         // Optional rank
   speed          Int?         // Optional speed
   lastEntryDate  DateTime?    // Optional last entry date (converted to DateTime)
-  typingStats    TypingStat[] // One-to-many relationship with TypingStat model
+  typingStats    TypingStat[]? // One-to-many relationship with TypingStat model
 }
 
 model TypingStat {
