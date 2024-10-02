@@ -42,7 +42,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     }
 
     localStorage.setItem("currentUser", JSON.stringify(newUser));
-
+    
     setCurrentUser(username);
     setUsername('');
     setPassword('');

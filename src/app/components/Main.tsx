@@ -128,7 +128,7 @@ const MainContainer: React.FC = () => {
 
         // Update the current user state with the updated user
         setCurrentUser(updatedUser);
-
+                
         return rankedUsers; // Return the updated user list
     });
 
