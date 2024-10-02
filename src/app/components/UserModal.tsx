@@ -58,14 +58,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     onClose();
   };
 
-  const handleChangeUser = () => {
-    if (previousUsers.length === 0) {
-      setIsChangingUser(false);
-    } else {
-      handleLogout();
-      setIsChangingUser(true);
-    }
-  };
+  //const handleChangeUser = () => {
+  //  if (previousUsers.length === 0) {
+  //    setIsChangingUser(false);
+  //  } else {
+  //    handleLogout();
+  //    setIsChangingUser(true);
+  //  }
+  //};
 
   const handleBackToLogin = () => {
     setIsChangingUser(false);
@@ -220,7 +220,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       </button>
                     </form>
                     <div className="mt-4 text-center">
-                      <p className="text-gray-600 dark:text-gray-300">Don't have an account? <span className="text-light-secondary cursor-pointer" onClick={toggleSignup}>Sign Up</span></p>
+                      <p className="text-gray-600 dark:text-gray-300">Do not have an account? <span className="text-light-secondary cursor-pointer" onClick={toggleSignup}>Sign Up</span></p>
                     </div>
                   </>
                 )}
