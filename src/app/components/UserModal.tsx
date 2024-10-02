@@ -160,6 +160,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     if(password !== confirmPassword){
       setPasswordsDontMatch({status: true, message: "Passwords do not match, please check again!"})
     }
+    else
+      setPasswordsDontMatch({status: false, message: ""})
+
   }
   
   return (
