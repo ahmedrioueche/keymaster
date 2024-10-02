@@ -21,7 +21,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [status, setStatus] = useState<{ success: string; message: string; bg? : string}>();
   const [users, setUsers] = useState<User[]>([]);
-  const [usernameStatus, setUsernameStatus] = useState<"Available" | "Already taken">("Available");
+  const [usernameStatus, setUsernameStatus] = useState("Available");
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
 
   // Placeholder users array
@@ -142,7 +142,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     });
   
     if (isTaken) {
-      setUsernameStatus("Already taken");
+      setUsernameStatus("Username Already taken, please choose another one");
       setIsSignupDisabled(true);
     } else {
       setUsernameStatus("Available");
