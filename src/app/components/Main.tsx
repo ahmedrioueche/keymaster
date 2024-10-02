@@ -126,14 +126,13 @@ const MainContainer: React.FC = () => {
 
         // Update local storage with the ranked users
         localStorage.setItem("users", JSON.stringify(rankedUsers));
-
+        setUsers(rankedUsers);
         // Update the current user state with the updated user
         setCurrentUser(updatedUser);
 
         return rankedUsers; // Return the updated user list
     });
-
-};
+  };
 
   useEffect(() => {
     //update the user's data in db
