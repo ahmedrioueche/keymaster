@@ -157,12 +157,11 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const handleConfirmPassword = (e:React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setConfirmPassword(inputValue);
-    if(password !== confirmPassword){
+    if(password !== inputValue){
       setPasswordsDontMatch({status: true, message: "Passwords do not match, please check again!"})
     }
     else
       setPasswordsDontMatch({status: false, message: ""})
-
   }
   
   return (
@@ -261,7 +260,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                   </div>
                   {passwordsDontMatch?.status && (
                       <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{passwordsDontMatch.message}</div>
-                    )}
+                  )}
                   <button
                     type="submit"
                     className={`${isSignupDisabled ? "disabled" :''} w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
