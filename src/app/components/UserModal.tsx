@@ -23,7 +23,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [users, setUsers] = useState<User[]>([]);
   const [usernameTaken, setUsernameTaken] = useState<{status : boolean, message : string}>();
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
-  const [passwordsDontMatch, setPasswordsDontMatch] = useState(false);
+  const [passwordsDontMatch, setPasswordsDontMatch] = useState<{status : boolean, message : string}>();
 
   // Placeholder users array
   const previousUsers: User[] = [
@@ -66,11 +66,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(password !== confirmPassword){
-      setPasswordsDontMatch(true);
-      return;
-    }
-    if(usernameTaken?.status){
+
+    if(passwordsDontMatch?.status || usernameTaken?.status){
       return;
     }
 
@@ -156,6 +153,12 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
       setIsSignupDisabled(false);
     }
   };
+
+  const handleConfirmPassword = (e:React.ChangeEvent<HTMLInputElement>) => {
+    if(password !== confirmPassword){
+      setPasswordsDontMatch({status: true, message: "Passwords do not match, please check again!"})
+    }
+  }
   
   return (
     <div
@@ -244,15 +247,15 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     <input
                       id="confirmPassword"
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onChange={(e) => handleConfirmPassword(e)}
                       type="password"
                       className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                       placeholder="Confirm your password"
                       required
                     />
                   </div>
-                  {passwordsDontMatch && (
-                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">Passwods do not match! please check again.</div>
+                  {passwordsDontMatch?.status && (
+                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{passwordsDontMatch.message}</div>
                     )}
                   <button
                     type="submit"
@@ -308,7 +311,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                     </div>
                   </>
                 )}
-                  {currentUser && (
+              {currentUser && (
               <div className="mt-6 text-center">
                 <div className="mb-2">
                   <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" height={48} width={38}/>
