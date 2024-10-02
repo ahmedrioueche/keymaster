@@ -142,7 +142,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     });
   
     if (isTaken) {
-      setUsernameStatus("Username Already taken, please choose another one");
+      setUsernameStatus("Username Already taken, please choose another one!");
       setIsSignupDisabled(true);
     } else {
       setUsernameStatus("Available");
@@ -219,7 +219,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       required
                     />
                     {usernameStatus != "Available" && (
-                      <div className="text-red-500 px-2 py-1">{usernameStatus}</div>
+                      <div className="text-red-500 px-2 py-1 font-stix">{usernameStatus}</div>
                     )}
                   </div>
                   <div>
@@ -246,7 +246,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                   </div>
                   <button
                     type="submit"
-                    className={`${isSignupDisabled ? "disabled bg-light-secondary-disabled hover:bg-light-secondary-disabled dark:bg-dark-secondary-disabled dark:hover:bg-light-secondary-disabled outline-none" :''} w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
+                    className={`w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
                   >
                     Sign Up
                   </button>
