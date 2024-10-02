@@ -131,6 +131,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
     users.map((user : User) => {
+      console.log("e.target.value", e.target.value)
+      console.log("user.name", user.name)
+
       if(e.target.value === user.name){
         setUsernameStatus("Already taken");
         setIsSignupDisabled(true);
