@@ -2,6 +2,7 @@ import { User } from "../types/types";
 //import prisma from "../utils/prisma";
 
 export const insertUser = async (user: User) => {
+  console.log("user", user);
  // try {
  //   // Insert user into the database
  //   const newUser = await prisma.user.create({
