@@ -21,8 +21,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [status, setStatus] = useState<{ success: string; message: string; bg? : string}>();
   const [users, setUsers] = useState<User[]>([]);
-  const [usernameStatus, setUsernameStatus] = useState("Available");
+  const [usernameTaken, setUsernameTaken] = useState<{status : boolean, message : string}>();
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
+  const [passwordsDontMatch, setPasswordsDontMatch] = useState(false);
 
   // Placeholder users array
   const previousUsers: User[] = [
@@ -65,6 +66,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if(password !== confirmPassword){
+      setPasswordsDontMatch(true);
+      return;
+    }
+    if(usernameTaken?.status){
+      return;
+    }
+
     const newUser: User = {
       username: username,
       password: password,
@@ -131,8 +140,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setUsername(inputValue);
-    console.log("usernameStatus", usernameStatus )
-    console.log("users", users )
 
     // Check if any user name matches the input value
     const isTaken = users.some((user: User) => {
@@ -142,10 +149,10 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
     });
   
     if (isTaken) {
-      setUsernameStatus("Username Already taken, please choose another one!");
+      setUsernameTaken({status: true, message: "Username Already taken, please choose another one!"});
       setIsSignupDisabled(true);
     } else {
-      setUsernameStatus("Available");
+      setUsernameTaken({status: false, message: "Available"});
       setIsSignupDisabled(false);
     }
   };
@@ -218,8 +225,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       placeholder="Enter your username"
                       required
                     />
-                    {usernameStatus != "Available" && (
-                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{usernameStatus}</div>
+                    {usernameTaken?.status && (
+                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">{usernameTaken?.message}</div>
                     )}
                   </div>
                   <div>
@@ -244,6 +251,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onUserChange }) 
                       required
                     />
                   </div>
+                  {passwordsDontMatch && (
+                      <div className="text-light-secondary dark:text-dark-secondary px-2 mt-1 font-stix">"Passwods do not match! please check again."</div>
+                    )}
                   <button
                     type="submit"
                     className={`${isSignupDisabled ? "disabled" :''} w-full px-4 py-3 mt-5 bg-light-secondary text-white rounded-md font-semibold hover:text-dark-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2`}
