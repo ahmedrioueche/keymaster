@@ -39,7 +39,6 @@ const MainContainer: React.FC = () => {
 
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
-    console.log("Starting with:", { language, topic });
     const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
                     in a ${topic} topic in ${language} language, do not exceed the required length.`;
     const response = await apiPromptGemini(prompt);
@@ -137,12 +136,9 @@ const MainContainer: React.FC = () => {
   useEffect(() => {
     //update the user's data in db
     const updateUser = async () => {
-      console.log("currentUser", currentUser)
       if(currentUser){
         const response = currentUser?.id? await apiUpdateUser(currentUser?.id, {...currentUser}) : null;
         console.log("response", response)
-
-
       }
     }
 
@@ -167,9 +163,9 @@ const MainContainer: React.FC = () => {
     };
 }, []);
 
-  //setTimeout(() => {
-  //  getUsers();
-  //}, 10000)
+  setTimeout(() => {
+    getUsers();
+  }, 5000)
 
   const getUsers = async () => {
     const response = await apiGetUsers();
