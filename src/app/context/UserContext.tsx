@@ -1,35 +1,34 @@
 "use client";
-import React, { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from "react";
 import { User } from "../types/types"; // Assuming you have a User type defined
 
 interface UserContextProps {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
-  onSet: (callback: (user: User | null) => void) => void; // Add onSet method
+  onSet: (callback: (user: User | null) => void) => () => void; // Correctly specify the return type of onSet
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [callbackSet, setCallbackSet] = useState<Set<(user: User | null) => void>>(new Set());
+  const callbacksRef = useRef<Set<(user: User | null) => void>>(new Set()); // Use ref to hold callbacks
 
   // Notify all registered callbacks when currentUser changes
   useEffect(() => {
-    callbackSet.forEach((callback) => callback(currentUser));
-  }, [currentUser, callbackSet]); // Include callbackSet as a dependency
+    // Call each registered callback with the new currentUser value
+    callbacksRef.current.forEach((callback) => callback(currentUser));
+  }, [currentUser]); // Run only when currentUser changes
 
   // Function to register a callback
   const onSet = (callback: (user: User | null) => void) => {
-    setCallbackSet((prev) => new Set(prev).add(callback)); // Add callback to set
-  };
+    callbacksRef.current.add(callback); // Add callback to the ref
 
-  // Cleanup callbacks on unmount
-  useEffect(() => {
+    // Return a cleanup function to remove the callback
     return () => {
-      setCallbackSet(new Set()); // Clear callbacks when the provider unmounts
+      callbacksRef.current.delete(callback); // Cleanup
     };
-  }, []);
+  };
 
   return (
     <UserContext.Provider value={{ currentUser, setCurrentUser, onSet }}>

@@ -185,14 +185,13 @@ const MainContainer: React.FC = () => {
     };
 
     // Register callback to get notified when currentUser changes
-    onSet(callback);
+    const unregister = onSet(callback);
 
-    // Cleanup is managed automatically by useEffect
+    // Cleanup is managed automatically when the component unmounts
     return () => {
-      // You can implement logic here to unregister if necessary
+      unregister(); // Unregister the callback
     };
-  }, [onSet]); 
-
+  }, [onSet]); // Ensure onSet is included in the dependencies
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
   return (
