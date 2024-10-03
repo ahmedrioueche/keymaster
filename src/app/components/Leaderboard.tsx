@@ -18,6 +18,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
     return acc;
   }, [] as User[]);
 
+  // Sort players by speed in descending order
+  const sortedLeaderboardData = uniqueLeaderboardData.sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0));
+
   return (
     <div className="border-t pt-0">
       <table className="min-w-full border-collapse rounded-lg overflow-hidden shadow-lg">
@@ -30,14 +33,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
           </tr>
         </thead>
         <tbody>
-          {uniqueLeaderboardData.map((player: User) => (
+          {sortedLeaderboardData.map((player: User, index: number) => (
             <tr className="hover:scale-105 transition duration-500" key={player.id}>
-              <td className="border-b py-2 px-5">{player.rank}</td>
+              <td className="border-b py-2 px-5">{index + 1}</td> {/* Rank based on index + 1 */}
               <td className="border-b py-2 px-4">{player.username}</td>
               <td className="border-b py-2 px-4">{player.speed}</td>
               <td className="border-b py-2 px-4 text-sm">
                 {player?.lastEntryDate
-                  ? new Date(player?.lastEntryDate).toLocaleDateString([], {
+                  ? new Date(player.lastEntryDate).toLocaleDateString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })
