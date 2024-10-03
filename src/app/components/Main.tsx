@@ -198,7 +198,7 @@ const MainContainer: React.FC = () => {
           : "bg-light-background text-light-foreground"
       } transition-all duration-500`}
     >
-    <div className="flex flex-row items-center justify-center mb-4">
+    <div className="flex flex-row items-center justify-center mb-6">
     <Image
       src="/storysets/typing.svg"
       alt="KeyMaster"

@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleMenuClick = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen(prev => !prev);
   };
 
   const handleMenuClose = () => {
@@ -92,14 +92,14 @@ const Navbar: React.FC = () => {
               {/* Theme Toggle Icon */}
               <button
                 onClick={toggleTheme}
-                className="text-light-foreground dark:text-dark-foreground focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700 p-2 rounded mr-2"
+                className="text-light-foreground dark:text-dark-foreground focus:outline-none hover:bg-light-accent dark:hover:bg-dark-accent p-2 rounded mr-2"
                 aria-label="Toggle Theme"
               >
                 {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
               </button>
               <button
                 onClick={handleMenuClick}
-                className="text-light-foreground dark:text-dark-foreground focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700 p-2 rounded mr-2"
+                className="text-light-foreground dark:text-dark-foreground focus:outline-none hover:bg-light-accent dark:hover:bg-dark-accent p-2 rounded mr-2"
                 aria-label="Menu"
               >
                 <MenuIcon />
