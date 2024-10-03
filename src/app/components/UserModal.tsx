@@ -61,6 +61,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
       setCurrentUser(userData);
       setUsername('');  
       setPassword('');
+      onClose();
     }
     else {
       setLoginFailed({status: true, message: "Login Failed, please check your credentials!"})
@@ -131,9 +132,11 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
     setIsLoading("changeUser");
     if (previousUsers.length === 0) {
       setIsChangingUser(false);
+      setIsSignup(true);
+      setIsLoading("null");
     } else {
-      handleLogout();
       setIsChangingUser(true);
+      setIsLoading("null");
     }
   };
 
@@ -359,14 +362,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
                 <div className='flex flex-row justify-between mt-5'>
                   <button
                     type="button"
-                    className="flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
+                    className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
                     onClick={handleChangeUser}
                   >
                     {isLoading === "changeUser"? <FaSpinner className="animate-spin" /> : "Change User"} 
                   </button>
                   <button
                     type="button"
-                    className="flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
+                    className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
                     onClick={handleLogout}
                   >
                     {isLoading === "logout"? <FaSpinner className="animate-spin" /> : "Log Out"} 

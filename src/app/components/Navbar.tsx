@@ -8,11 +8,13 @@ import Link from 'next/link';
 import { useTheme } from '../context/ThemeContext'; 
 import UserModal from './UserModal';
 import { FaBook, FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
+import SettingsModal from './SettingsModal';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +72,13 @@ const Navbar: React.FC = () => {
     }
   }
 
+  const handleSettingsClick = () => {
+    setIsSettingsModalOpen(true);
+    if(isMenuOpen){
+      setIsMenuOpen(false);
+    }
+  }
+  
   return (
     <nav className="bg-light-background dark:bg-dark-background p-4 shadow">
       <div className="flex justify-between items-center">
@@ -128,7 +137,7 @@ const Navbar: React.FC = () => {
                <Link
                  href="/"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
-                 onClick={handleMenuClose}
+                 onClick={handleSettingsClick}
                >
                  <FaCog className="mr-3 text-lg" /> Settings
                </Link>
@@ -154,7 +163,7 @@ const Navbar: React.FC = () => {
             <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaBook className="mr-2" /> Lessons
             </Link>
-            <Link onClick={() => {}} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+            <Link onClick={handleSettingsClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaCog className="mr-2" /> Settings
             </Link>
             <Link href="/about" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
@@ -174,6 +183,10 @@ const Navbar: React.FC = () => {
       <UserModal
         isOpen={isUserModalOpen}
         onClose={() => setIsUserModalOpen(false)}
+      />
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
       />
     </nav>
   );

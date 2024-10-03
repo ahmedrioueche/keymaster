@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import TypingArea from "./TypingArea"; // Adjust the import path if necessary
-import SettingsAndStats from "./Settings"; // Adjust the import path if necessary
+import SettingsAndStats from "./Menu"; // Adjust the import path if necessary
 import Leaderboard from "./Leaderboard"; // Import the Leaderboard component
 import { useTheme } from "../context/ThemeContext"; // Adjust the import path if necessary
 import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
