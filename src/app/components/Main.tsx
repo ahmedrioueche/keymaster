@@ -8,6 +8,7 @@ import { useTheme } from "../context/ThemeContext"; // Adjust the import path if
 import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
 import { TypingStat, User } from "../types/types";
 import UserModal from "./UserModal";
+import Image from 'next/image';
 
 const MainContainer: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User>();
@@ -197,15 +198,29 @@ const MainContainer: React.FC = () => {
           : "bg-light-background text-light-foreground"
       } transition-all duration-500`}
     >
-      {/* Title - Hidden on small screens */}
-      <h1 className="hidden md:block text-4xl font-bold text-center mb-4 font-dancing">
+    <div className="flex flex-row items-center justify-center mb-8">
+    <Image
+      src="/storysets/typing.svg"
+      alt="KeyMaster"
+      className="w-38 h-38 object-contain mr-4" // Adjust size as needed
+      height={128} // Adjust height to match your design
+      width={128} // Adjust width to match your design
+    />
+    <div className="text-center">
+      <h1 className="text-4xl font-bold mb-2 font-dancing">
         KeyMaster
       </h1>
 
       {/* Subtitle - Responsive font size */}
-      <h2 className="text-2xl md:text-3xl font-dancing text-center mb-8">
+      <h2 className="text-2xl md:text-3xl font-dancing">
         How type can you fast?
       </h2>
+    </div>
+  </div>
+
+
+     
+    
 
       {/* Main Content Area */}
       <div className="flex flex-col md:flex-row flex-grow">
