@@ -9,6 +9,7 @@ import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper"
 import { TypingStat, User } from "../types/types";
 import UserModal from "./UserModal";
 import Image from 'next/image';
+import ResultModal from "./ResultModal";
 
 const MainContainer: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User>();
@@ -16,13 +17,14 @@ const MainContainer: React.FC = () => {
   const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [userTyped, setUserTyped] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { isDarkMode } = useTheme();
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-
+  
   useEffect(() => {
     //get current user
     //localStorage.clear();
@@ -62,6 +64,11 @@ const MainContainer: React.FC = () => {
         const updatedUsers = Array.isArray(prevUsers) ? [...prevUsers] : [];
 
         if (currentUser) {
+            setIsResultModalOpen(true);
+            setTimeout(() => {
+              setIsResultModalOpen(false);
+            }, 3000)
+            
             // Find the current user in the users list
             const existingUserIndex = updatedUsers.findIndex(
                 (user) => user.username === currentUser.username
@@ -260,6 +267,10 @@ const MainContainer: React.FC = () => {
         isOpen={isUserModalOpen}
         onClose={() => setIsUserModalOpen(false)}
         onSetUser={(user) => setCurrentUser(user)}
+      />
+      <ResultModal
+        isOpen={isResultModalOpen}
+        onClose={() => setIsResultModalOpen(false)}
       />
     </div>
   );
