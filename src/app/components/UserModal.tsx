@@ -4,6 +4,7 @@ import { User } from "../types/types";
 import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
 import Image from 'next/image';
 import Alert from './Alert';
+import { useUser } from '../context/UserContext';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface UserModalProps {
 }
 
 const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => {
-  const [currentUser, setCurrentUser] = useState<User>();
+  const { currentUser, setCurrentUser } = useUser();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>(''); // State for confirm password
@@ -125,7 +126,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
   const handleLogout = () => {
     setIsLoading("logout");
     localStorage.removeItem("currentUser");
-    setCurrentUser(undefined);
+    setCurrentUser(null);
     onClose();
   };
 

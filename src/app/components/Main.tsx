@@ -9,9 +9,10 @@ import { TypingStat, User } from "../types/types";
 import UserModal from "./UserModal";
 import Image from 'next/image';
 import ResultModal from "./ResultModal";
+import { useUser } from "../context/UserContext";
 
 const MainContainer: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<User>();
+  const [currentUser, setCurrentUser] = useState<User | null>();
   const [users, setUsers] = useState<User[]>([]);
   const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
@@ -25,13 +26,8 @@ const MainContainer: React.FC = () => {
   
   useEffect(() => {
     //get current user
-    //localStorage.clear();
-    const storedUser = localStorage.getItem("currentUser");
-    const currentUser : User = storedUser? JSON.parse(storedUser) : null;
-    if(currentUser){
-      setCurrentUser(currentUser);
-    }
-    
+    const { currentUser } = useUser(); // Access the current user
+    setCurrentUser(currentUser);
     //get users
     getUsers();
 
@@ -184,35 +180,9 @@ const MainContainer: React.FC = () => {
     }
   }
   
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === "currentUser" && event.newValue === null) {
-        // currentUser is removed, clear state in Main
-        setCurrentUser(undefined);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === "currentUser" && event.newValue != null) {
-        // currentUser is removed, clear state in Main
-        setCurrentUser(undefined);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
+  const handleSetUser = (user : User) => {
+    console.log("user has been set and recieved in handleSetUser", user)
+  }
 
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
@@ -276,7 +246,7 @@ const MainContainer: React.FC = () => {
       <UserModal
         isOpen={isUserModalOpen}
         onClose={() => setIsUserModalOpen(false)}
-        onSetUser={(user) => setCurrentUser(user)}
+        onSetUser={(user) => handleSetUser(user)}
       />
       <ResultModal
         isOpen={isResultModalOpen}
