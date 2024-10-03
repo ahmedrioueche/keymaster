@@ -174,16 +174,24 @@ const MainContainer: React.FC = () => {
       setUsers(response);
     }
   }
+  
   useEffect(() => {
-    // Register callback to get notified when currentUser changes
-    onSet((user) => {
+    const callback = (user: User | null) => {
       if (user) {
         console.log("User has been updated:", user);
       } else {
         console.log("User has been logged out or removed");
       }
-    });
-  }, [onSet]);
+    };
+
+    // Register callback to get notified when currentUser changes
+    onSet(callback);
+
+    // Cleanup is managed automatically by useEffect
+    return () => {
+      // You can implement logic here to unregister if necessary
+    };
+  }, [onSet]); 
 
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
