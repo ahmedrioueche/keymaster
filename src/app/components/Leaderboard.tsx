@@ -10,9 +10,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
     return null;
   }
 
-  // Remove duplicate players based on the 'id' field
+  // Remove duplicate players based on the 'id' field and filter out users without speed
   const uniqueLeaderboardData = leaderboardData.reduce((acc, player) => {
-    if (!acc.find((p) => p.id === player.id)) {
+    if (player.speed && !acc.find((p) => p.id === player.id)) {
       acc.push(player);
     }
     return acc;
