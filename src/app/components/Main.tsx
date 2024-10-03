@@ -58,7 +58,6 @@ const MainContainer: React.FC = () => {
     let updatedUser: User;
   
     setUsers((prevUsers) => {
-      // Ensure prevUsers is an array or initialize as an empty array
       const updatedUsers = Array.isArray(prevUsers) ? [...prevUsers] : [];
   
       if (currentUser) {
@@ -117,8 +116,17 @@ const MainContainer: React.FC = () => {
           .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
           .map((user, index) => ({ ...user, rank: index + 1 }));
   
-        // Update the current user state with the updated user
-        setCurrentUser(updatedUser);
+        // Find the updated current user in rankedUsers to get their new rank
+        const updatedCurrentUser = rankedUsers.find(
+          (user) => user.username === currentUser.username
+        );
+  
+        if (updatedCurrentUser) {
+          // Update the current user state with the new rank and updated stats
+          setCurrentUser(updatedCurrentUser);
+        }
+  
+        // Update the users array with ranked users
         setUsers(rankedUsers);
   
         return rankedUsers;
@@ -130,8 +138,7 @@ const MainContainer: React.FC = () => {
       return prevUsers;
     });
   };
-  
-  
+    
   useEffect(() => {
     //update the user's data in db
     const updateUser = async () => {
@@ -139,6 +146,8 @@ const MainContainer: React.FC = () => {
       if(currentUser){
         const response = currentUser?.id? await apiUpdateUser(currentUser?.id, {...currentUser}) : null;
         console.log("response", response)
+
+
       }
     }
 
@@ -174,21 +183,6 @@ const MainContainer: React.FC = () => {
       setUsers(response);
     }
   }
-
-  //useEffect(() => {
-  //  if (currentUser) {
-  //    const updatedUser = {
-  //       ...currentUser,
-  //        username: currentUser.username,
-  //    };
-//
-  //    // Set the current user to the new user
-  //    localStorage.setItem("currentUser", JSON.stringify(currentUser));
-//
-  //    // Add the new user to the users array
-  //    users.push(updatedUser);
-  //  }
-  //}, [currentUser]);
   
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
