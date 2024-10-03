@@ -199,6 +199,21 @@ const MainContainer: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "currentUser" && event.newValue != null) {
+        // currentUser is removed, clear state in Main
+        setCurrentUser(undefined);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
   return (
