@@ -20,7 +20,6 @@ const MainContainer: React.FC = () => {
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [userTyped, setUserTyped] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const { isDarkMode } = useTheme();
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
