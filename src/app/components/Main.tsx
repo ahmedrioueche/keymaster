@@ -12,7 +12,7 @@ import ResultModal from "./ResultModal";
 import { useUser } from "../context/UserContext";
 
 const MainContainer: React.FC = () => {
-  const {currentUser, setCurrentUser} = useUser();
+  const {currentUser, setCurrentUser, onSet} = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
@@ -174,10 +174,16 @@ const MainContainer: React.FC = () => {
       setUsers(response);
     }
   }
-  
-  const handleSetUser = (user : User) => {
-    console.log("user has been set and recieved in handleSetUser", user)
-  }
+  useEffect(() => {
+    // Register callback to get notified when currentUser changes
+    onSet((user) => {
+      if (user) {
+        console.log("User has been updated:", user);
+      } else {
+        console.log("User has been logged out or removed");
+      }
+    });
+  }, [onSet]);
 
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
@@ -241,7 +247,6 @@ const MainContainer: React.FC = () => {
       <UserModal
         isOpen={isUserModalOpen}
         onClose={() => setIsUserModalOpen(false)}
-        onSetUser={(user) => handleSetUser(user)}
       />
       <ResultModal
         isOpen={isResultModalOpen}
