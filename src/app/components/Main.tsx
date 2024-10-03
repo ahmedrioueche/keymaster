@@ -36,12 +36,14 @@ const MainContainer: React.FC = () => {
     getUsers();
 
   }, [])
+  
+  const numLetters = 100;
 
   const handleStart = async () => {
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
     console.log("Starting with:", { language, topic });
-    const prompt = `With no introductions nor conclusions, give a paragraph of 40 letters (including spaces)
+    const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
                     in a ${topic} topic in ${language} language, do not exceed the required length.`;
     const response = await apiPromptGemini(prompt);
     console.log("response:", response);
