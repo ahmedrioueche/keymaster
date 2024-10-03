@@ -160,14 +160,17 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
       >
         {userInput}
       </div>
-
-      <div className="absolute bottom-2 left-6 text-sm">
-        Speed : {currentSpeed} WPM
-      </div>
-      
-      <div className="absolute bottom-2 right-6 text-sm">
-        {userInput.length} / {trimmedTextToType?.length} characters
-      </div>
+      {isStarted && (
+        <>
+          <div className="absolute bottom-2 left-6 text-sm">
+            Speed : {currentSpeed} WPM
+          </div>
+          <div className="absolute bottom-2 right-6 text-sm">
+            {userInput.length} / {trimmedTextToType?.length} characters
+          </div>
+        </>
+      )}
+    
     </div>
   );
 };
