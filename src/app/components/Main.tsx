@@ -36,8 +36,8 @@ const MainContainer: React.FC = () => {
     getUsers();
 
   }, [])
-  
-  const numLetters = 100;
+
+  const numLetters = 80;
 
   const handleStart = async () => {
     setIsStarted(true); // Enable the typing area
