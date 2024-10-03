@@ -10,7 +10,15 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
     return null;
   }
 
-  console.log("leaderboardData", leaderboardData);
+  // Remove duplicate players based on the 'id' field
+  const uniqueLeaderboardData = leaderboardData.reduce((acc, player) => {
+    if (!acc.find((p) => p.id === player.id)) {
+      acc.push(player);
+    }
+    return acc;
+  }, [] as User[]);
+
+  console.log("uniqueLeaderboardData", uniqueLeaderboardData);
 
   return (
     <div className="border-t pt-0">
@@ -24,8 +32,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
           </tr>
         </thead>
         <tbody>
-          {leaderboardData.map((player: User, index: number) => (
-            <tr className="hover:scale-105 transition duration-500" key={index}>
+          {uniqueLeaderboardData.map((player: User, index: number) => (
+            <tr className="hover:scale-105 transition duration-500" key={player.id}>
               <td className="border-b py-2 px-5">{player.rank}</td>
               <td className="border-b py-2 px-4">{player.username}</td>
               <td className="border-b py-2 px-4">{player.speed}</td>
