@@ -175,21 +175,36 @@ const MainContainer: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    if (currentUser) {
-      const updatedUser = {
-         ...currentUser,
-          username: currentUser.username,
-      };
-
-      // Set the current user to the new user
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
-      // Add the new user to the users array
-      users.push(updatedUser);
-    }
-  }, [currentUser]);
+  //useEffect(() => {
+  //  if (currentUser) {
+  //    const updatedUser = {
+  //       ...currentUser,
+  //        username: currentUser.username,
+  //    };
+//
+  //    // Set the current user to the new user
+  //    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+//
+  //    // Add the new user to the users array
+  //    users.push(updatedUser);
+  //  }
+  //}, [currentUser]);
   
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "currentUser" && event.newValue === null) {
+        // currentUser is removed, clear state in Main
+        setCurrentUser(undefined);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
   return (
