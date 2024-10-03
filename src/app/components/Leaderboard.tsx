@@ -32,7 +32,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
           </tr>
         </thead>
         <tbody>
-          {uniqueLeaderboardData.map((player: User, index: number) => (
+          {uniqueLeaderboardData.map((player: User) => (
             <tr className="hover:scale-105 transition duration-500" key={player.id}>
               <td className="border-b py-2 px-5">{player.rank}</td>
               <td className="border-b py-2 px-4">{player.username}</td>
