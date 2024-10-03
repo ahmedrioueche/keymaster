@@ -31,22 +31,22 @@ const MainContainer: React.FC = () => {
   const numLetters = 30;
 
   const handleStart = async () => {
-    if(currentUser){
-      setIsStarted(true); // Enable the typing area
-      setTextToType("Loading Text...");
-      console.log("Starting with:", { language, topic });
-      const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
-                      in a ${topic} topic in ${language} language, do not exceed the required length.`;
-      const response = await apiPromptGemini(prompt);
-      console.log("response:", response);
-      if (response) {
-        setTextToType(response);
-      }
-    } 
-    else {
+    if(!currentUser){
       // If currentUser is not set, ask for the user's name
       setIsUserModalOpen(true);
     }
+
+    setIsStarted(true); // Enable the typing area
+    setTextToType("Loading Text...");
+    console.log("Starting with:", { language, topic });
+    const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
+                    in a ${topic} topic in ${language} language, do not exceed the required length.`;
+    const response = await apiPromptGemini(prompt);
+    console.log("response:", response);
+    if (response) {
+      setTextToType(response);
+    }
+
   };
 
   const handleTextCompletion = async (speed: number) => {
