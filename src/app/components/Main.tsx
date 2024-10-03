@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import TypingArea from "./TypingArea"; // Adjust the import path if necessary
-import SettingsAndStats from "./Menu"; // Adjust the import path if necessary
-import Leaderboard from "./Leaderboard"; // Import the Leaderboard component
-import { useTheme } from "../context/ThemeContext"; // Adjust the import path if necessary
+import TypingArea from "./TypingArea"; 
+import SettingsAndStats from "./Menu"; 
+import Leaderboard from "./Leaderboard"; 
 import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
 import { TypingStat, User } from "../types/types";
 import UserModal from "./UserModal";
