@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import { User } from "../types/types"; // Assuming you have a User type defined
 
