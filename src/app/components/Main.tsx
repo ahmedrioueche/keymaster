@@ -24,12 +24,8 @@ const MainContainer: React.FC = () => {
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
-  useEffect(() => {
-    //get current user
-  
-    //get users
+  useEffect(() => {  
     getUsers();
-
   }, [])
 
   const numLetters = 30;

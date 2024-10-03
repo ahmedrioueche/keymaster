@@ -36,7 +36,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
-    console.log("storedUser in UserModal", storedUser);
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
     if (currentUser && currentUser.username) {
       setCurrentUser(currentUser);
@@ -172,8 +171,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
 
     // Check if any user name matches the input value
     const isTaken = users.some((user: User) => {
-      console.log("user.name", user.username )
-      console.log("inputValue", inputValue )
       return user.username === inputValue
     });
   

@@ -18,8 +18,6 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
     return acc;
   }, [] as User[]);
 
-  console.log("uniqueLeaderboardData", uniqueLeaderboardData);
-
   return (
     <div className="border-t pt-0">
       <table className="min-w-full border-collapse rounded-lg overflow-hidden shadow-lg">
