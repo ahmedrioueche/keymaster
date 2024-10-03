@@ -31,15 +31,21 @@ const MainContainer: React.FC = () => {
   const numLetters = 30;
 
   const handleStart = async () => {
-    setIsStarted(true); // Enable the typing area
-    setTextToType("Loading Text...");
-    console.log("Starting with:", { language, topic });
-    const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
-                    in a ${topic} topic in ${language} language, do not exceed the required length.`;
-    const response = await apiPromptGemini(prompt);
-    console.log("response:", response);
-    if (response) {
-      setTextToType(response);
+    if(currentUser){
+      setIsStarted(true); // Enable the typing area
+      setTextToType("Loading Text...");
+      console.log("Starting with:", { language, topic });
+      const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
+                      in a ${topic} topic in ${language} language, do not exceed the required length.`;
+      const response = await apiPromptGemini(prompt);
+      console.log("response:", response);
+      if (response) {
+        setTextToType(response);
+      }
+    } 
+    else {
+      // If currentUser is not set, ask for the user's name
+      setIsUserModalOpen(true);
     }
   };
 
@@ -121,10 +127,7 @@ const MainContainer: React.FC = () => {
         setUsers(rankedUsers);
   
         return rankedUsers;
-      } else {
-        // If currentUser is not set, ask for the user's name
-        setIsUserModalOpen(true);
-      }
+      } 
   
       return prevUsers;
     });
@@ -192,6 +195,7 @@ const MainContainer: React.FC = () => {
       unregister(); // Unregister the callback
     };
   }, [onSet]); // Ensure onSet is included in the dependencies
+  
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
   return (
