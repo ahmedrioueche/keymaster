@@ -34,6 +34,7 @@ const MainContainer: React.FC = () => {
     if(!currentUser){
       // If currentUser is not set, ask for the user's name
       setIsUserModalOpen(true);
+      return;
     }
 
     setIsStarted(true); // Enable the typing area
@@ -182,6 +183,8 @@ const MainContainer: React.FC = () => {
     const callback = (user: User | null) => {
       if (user) {
         console.log("User has been updated:", user);
+        //user has logged in, start now
+        handleStart();
       } else {
         console.log("User has been logged out or removed");
       }
