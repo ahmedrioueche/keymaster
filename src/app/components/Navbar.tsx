@@ -9,6 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 import UserModal from './UserModal';
 import { FaBook, FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
 import SettingsModal from './SettingsModal';
+import Image from 'next/image';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -82,9 +83,19 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-light-background dark:bg-dark-background p-4 shadow">
       <div className="flex justify-between items-center">
-        <h1 className="text-light-foreground dark:text-dark-foreground text-2xl font-bold">
-          KeyMaster
-        </h1>
+        <div className='flex flex-row'>
+          <Image
+            src="/storysets/typing.svg"
+            alt="KeyMaster"
+            className="w-8 h-8 object-contain mr-2" // Adjust size as needed
+            height={12} // Adjust height to match your design
+            width={12} // Adjust width to match your design
+          />
+          <h1 className="text-light-foreground dark:text-dark-foreground text-2xl font-bold">
+            KeyMaster
+          </h1>
+        </div>
+      
 
         {isMobile ? (
           <>

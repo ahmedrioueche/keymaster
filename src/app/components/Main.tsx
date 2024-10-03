@@ -39,7 +39,7 @@ const MainContainer: React.FC = () => {
 
   }, [])
 
-  const numLetters = 80;
+  const numLetters = 30;
 
   const handleStart = async () => {
     setIsStarted(true); // Enable the typing area
@@ -68,7 +68,7 @@ const MainContainer: React.FC = () => {
             setTimeout(() => {
               setIsResultModalOpen(false);
             }, 3000)
-            
+
             // Find the current user in the users list
             const existingUserIndex = updatedUsers.findIndex(
                 (user) => user.username === currentUser.username
