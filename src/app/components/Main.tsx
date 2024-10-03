@@ -12,7 +12,7 @@ import ResultModal from "./ResultModal";
 import { useUser } from "../context/UserContext";
 
 const MainContainer: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>();
+  const {currentUser, setCurrentUser} = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
@@ -23,11 +23,10 @@ const MainContainer: React.FC = () => {
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  
+
   useEffect(() => {
     //get current user
-    const { currentUser } = useUser(); // Access the current user
-    setCurrentUser(currentUser);
+  
     //get users
     getUsers();
 
