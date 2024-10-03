@@ -35,12 +35,13 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
+    console.log("storedUser in UserModal", storedUser);
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
     if (currentUser && currentUser.username) {
       setCurrentUser(currentUser);
     }
 
-    setLoginFailed({status: false, message: ""})
+    setLoginFailed({status: false, message: ""});
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
