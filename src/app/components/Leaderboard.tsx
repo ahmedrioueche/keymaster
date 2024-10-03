@@ -1,4 +1,3 @@
-// Leaderboard.tsx
 import React from "react";
 import { User } from "../types/types";
 
@@ -7,15 +6,15 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
-  if(!leaderboardData || leaderboardData.length == 0){
-    return null
+  if (!leaderboardData || leaderboardData.length === 0) {
+    return null;
   }
 
   console.log("leaderboardData", leaderboardData);
 
   return (
     <div className="border-t pt-0">
-      <table className="min-w-full border-collapse">
+      <table className="min-w-full border-collapse rounded-lg overflow-hidden shadow-lg">
         <thead>
           <tr>
             <th className="border-b py-2 text-left px-4">Rank</th>
@@ -23,14 +22,21 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
             <th className="border-b py-2 text-left px-4">Speed (WPM)</th>
             <th className="border-b py-2 text-left px-4">Date</th>
           </tr>
-        </thead>    
+        </thead>
         <tbody>
-          {leaderboardData && leaderboardData.length > 0 && leaderboardData.map((player : User, index : number) => (
+          {leaderboardData.map((player: User, index: number) => (
             <tr className="hover:scale-105 transition duration-500" key={index}>
               <td className="border-b py-2 px-5">{player.rank}</td>
               <td className="border-b py-2 px-4">{player.username}</td>
               <td className="border-b py-2 px-4">{player.speed}</td>
-              <td className="border-b py-2 px-4 text-sm ">{player?.lastEntryDate? new Date(player?.lastEntryDate).toLocaleDateString([], { hour: '2-digit', minute: '2-digit' }) : null}</td>
+              <td className="border-b py-2 px-4 text-sm">
+                {player?.lastEntryDate
+                  ? new Date(player?.lastEntryDate).toLocaleDateString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : null}
+              </td>
             </tr>
           ))}
         </tbody>
