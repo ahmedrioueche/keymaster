@@ -53,75 +53,81 @@ const MainContainer: React.FC = () => {
     setIsFinished(true);
     const date = new Date().toLocaleString();
     let updatedUser: User;
-  
+
     setUsers((prevUsers) => {
-      // Ensure prevUsers is an array or initialize as an empty array
-      const updatedUsers = Array.isArray(prevUsers) ? [...prevUsers] : [];
-  
-      if (currentUser) {
-        // Find the current user in the users list
-        const existingUserIndex = updatedUsers.findIndex(
-          (user) => user.username === currentUser.username
-        );
-  
-        // Create a new entry for the typing stat
-        const newEntry: TypingStat = { speed, date };
-  
-        if (existingUserIndex > -1) {
-          // If the user already exists, update their stats
-          const existingUser = updatedUsers[existingUserIndex];
-  
-          // Append the new entry to their typingStats
-          const updatedTypingStats = [...(existingUser.typingStats || []), newEntry];
-  
-          // Determine the best speed
-          const bestSpeedEntry = updatedTypingStats.reduce(
-            (best, entry) => (entry.speed > best.speed ? entry : best),
-            updatedTypingStats[0]
-          );
-  
-          // Update the user object with new stats
-          updatedUser = {
-            ...existingUser,
-            typingStats: updatedTypingStats,
-            speed: bestSpeedEntry.speed,
-            lastEntryDate: date,
-          };
-  
-          // Update the user in the array
-          updatedUsers[existingUserIndex] = updatedUser;
+        // Ensure prevUsers is an array or initialize as an empty array
+        const updatedUsers = Array.isArray(prevUsers) ? [...prevUsers] : [];
+
+        if (currentUser) {
+            // Find the current user in the users list
+            const existingUserIndex = updatedUsers.findIndex(
+                (user) => user.username === currentUser.username
+            );
+
+            // Create a new entry for the typing stat
+            const newEntry: TypingStat = { speed, date };
+
+            if (existingUserIndex > -1) {
+                // If the user already exists, update their stats
+                const existingUser = updatedUsers[existingUserIndex];
+
+                // Append the new entry to their typingStats
+                const updatedTypingStats = [...(existingUser.typingStats || []), newEntry];
+
+                // Determine the best speed
+                const bestSpeedEntry = updatedTypingStats.reduce(
+                    (best, entry) => (entry.speed > best.speed ? entry : best),
+                    updatedTypingStats[0]
+                );
+
+                // Update the user object with new stats
+                updatedUser = {
+                    ...existingUser,
+                    typingStats: updatedTypingStats,
+                    speed: bestSpeedEntry.speed,
+                    lastEntryDate: date,
+                };
+
+                // Update the user in the array
+                updatedUsers[existingUserIndex] = updatedUser;
+            } else {
+                // If the user does not exist in the list, create a new user
+                updatedUser = {
+                    username: currentUser.username,
+                    speed,
+                    lastEntryDate: date,
+                    typingStats: [newEntry],
+                };
+
+                // Add the new user to the users array
+                updatedUsers.push(updatedUser);
+            }
+
+            // Sort and rank users based on their best speed
+            const rankedUsers = updatedUsers
+                .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
+                .map((user, index) => ({ ...user, rank: index + 1 }));
+
+            // Update the current user state with the updated user
+            setCurrentUser(updatedUser);
+            setUsers(rankedUsers);
+
+            return rankedUsers;
         } else {
-          // If the user does not exist in the list, create a new user
-          updatedUser = {
-            username: currentUser.username,
-            speed,
-            lastEntryDate: date,
-            typingStats: [newEntry],
-          };
-  
-          // Add the new user to the users array
-          updatedUsers.push(updatedUser);
+            // If currentUser is not set, ask for the user's name
+            setIsUserModalOpen(true);
         }
-      } else {
-        // If currentUser is not set, ask for the user's name
-        setIsUserModalOpen(true);
-      }
-  
-      // Sort and rank users based on their best speed
-      const rankedUsers = updatedUsers
-        .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
-        .map((user, index) => ({ ...user, rank: index + 1 }));
-  
-      // Update local storage with the ranked users
-      localStorage.setItem("users", JSON.stringify(rankedUsers));
-      setUsers(rankedUsers);
-  
-      // Update the current user state with the updated user
-      setCurrentUser(updatedUser);
-  
-      return rankedUsers; // Return the updated user list
+
+        return prevUsers;
     });
-  };
+
+    // Update user data in the backend
+    if (currentUser) {
+        const response = currentUser?.id? await apiUpdateUser(currentUser?.id, { ...currentUser }) : null;
+        console.log("Backend response after updating user:", response);
+    }
+};
+
   
   useEffect(() => {
     //update the user's data in db
@@ -163,7 +169,6 @@ const MainContainer: React.FC = () => {
     console.log("response", response);
     if(response){
       setUsers(response);
-      localStorage.setItem("users", JSON.stringify(response));
     }
   }
 
@@ -179,7 +184,6 @@ const MainContainer: React.FC = () => {
 
       // Add the new user to the users array
       users.push(updatedUser);
-      localStorage.setItem("users", JSON.stringify(users));
     }
   }, [currentUser]);
   

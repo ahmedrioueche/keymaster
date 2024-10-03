@@ -157,11 +157,11 @@ const Navbar: React.FC = () => {
             <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaHome className="mr-2" /> Home
             </Link>
-            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-              <FaUser className="mr-2" /> User
-            </Link>
             <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaBook className="mr-2" /> Lessons
+            </Link>
+            <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+              <FaUser className="mr-2" /> User
             </Link>
             <Link onClick={handleSettingsClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaCog className="mr-2" /> Settings
