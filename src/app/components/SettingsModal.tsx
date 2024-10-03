@@ -6,12 +6,11 @@ import Image from 'next/image';
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSetUser?: (user: User) => void;
 }
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSetUser }) => {
-  const [currentUser, setCurrentUser] = useState<User>();  // eslint-disable-line @typescript-eslint/no-unused-expressions
-  const [isLoading, setIsLoading] = useState<"save" | "null">("null");  // eslint-disable-line @typescript-eslint/no-unused-expressions
+const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+  const [currentUser, setCurrentUser] = useState<User>();  // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState<"save" | "null">("null");  // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const languages = ["English", "French", "Spanish"];
   const typingModes = ["Words per Minute", "Sentences per Minute", "Timed Mode"];
