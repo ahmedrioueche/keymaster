@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { FaSpinner, FaTimes } from 'react-icons/fa';
-import { User } from "../types/types";
-import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
+import React from 'react';
 import Image from 'next/image';
-import Alert from './Alert';
+import { FaTimes } from 'react-icons/fa';
 
 interface ResultModalProps {
   isOpen: boolean;

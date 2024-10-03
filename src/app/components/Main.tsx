@@ -131,13 +131,7 @@ const MainContainer: React.FC = () => {
         return prevUsers;
     });
 
-    // Update user data in the backend
-    if (currentUser) {
-        const response = currentUser?.id? await apiUpdateUser(currentUser?.id, { ...currentUser }) : null;
-        console.log("Backend response after updating user:", response);
-    }
-};
-
+  };
   
   useEffect(() => {
     //update the user's data in db
@@ -201,35 +195,28 @@ const MainContainer: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen flex flex-col p-4 sm:p-8 h-full ${
-        isDarkMode
-          ? "bg-dark-background text-dark-foreground"
-          : "bg-light-background text-light-foreground"
-      } transition-all duration-500`}
+      className={`min-h-screen flex flex-col p-4 sm:p-8 h-full dark:bg-dark-background dark:text-dark-foreground
+          bg-light-background text-light-foreground transition-all duration-500`}
     >
-    <div className="flex flex-row items-center justify-center mb-6">
-    <Image
-      src="/storysets/typing.svg"
-      alt="KeyMaster"
-      className="w-38 h-38 object-contain mr-4" // Adjust size as needed
-      height={128} // Adjust height to match your design
-      width={128} // Adjust width to match your design
-    />
-    <div className="text-center">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">
-        KeyMaster
-      </h1>
+      <div className="flex flex-row items-center justify-center mb-6">
+      <Image
+        src="/storysets/typing.svg"
+        alt="KeyMaster"
+        className="w-38 h-38 object-contain mr-4" // Adjust size as needed
+        height={128} // Adjust height to match your design
+        width={128} // Adjust width to match your design
+      />
+      <div className="text-center">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">
+          KeyMaster
+        </h1>
 
-      {/* Subtitle - Responsive font size */}
-      <h2 className="text-xl md:text-3xl font-dancing">
-        How type can you fast?
-      </h2>
+        {/* Subtitle - Responsive font size */}
+        <h2 className="text-xl md:text-3xl font-dancing">
+          How type can you fast?
+        </h2>
+      </div>
     </div>
-  </div>
-
-
-     
-    
 
       {/* Main Content Area */}
       <div className="flex flex-col md:flex-row flex-grow">
