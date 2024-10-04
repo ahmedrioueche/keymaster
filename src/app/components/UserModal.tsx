@@ -34,7 +34,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   ];
 
   useEffect(() => {
-    localStorage.clear();
     const storedUser = localStorage.getItem("currentUser");
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
     if (currentUser && currentUser.username) {
