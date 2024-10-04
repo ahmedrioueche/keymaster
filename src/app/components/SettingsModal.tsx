@@ -3,7 +3,7 @@ import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
-import { minTextLength } from '../utils/settings';
+import { defaultTextLength, minTextLength } from '../utils/settings';
 import { useUser } from '../context/UserContext';
 
 interface SettingsModalProps {
@@ -12,33 +12,40 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const {currentUser, setCurrentUser} = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [isLoading, setIsLoading] = useState<"save" | "null">("null"); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const { currentUser, setCurrentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState<"save" | "null">("null");
 
   const languages = ["English", "French", "Spanish"];
   const typingModes = ["Auto", "Manual"];
   const difficultyLevels = ["Beginner", "Intermediate", "Advanced"];
   const soundEffects = ["Enabled", "Disabled"];
 
-  const [textLength, setTextLength] = useState<number>(51); // Initialize to a value greater than 50
+  // Initialize user settings or fallback to default values
+  const [language, setLanguage] = useState<string>(currentUser?.settings?.language || languages[0]);
+  const [typingMode, setTypingMode] = useState<string>(currentUser?.settings?.mode === 'manual' ? "Manual" : "Auto");
+  const [textLength, setTextLength] = useState<number>(currentUser?.settings?.textLength || defaultTextLength);
   const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
+  const [difficultyLevel, setDifficultyLevel] = useState<string>(currentUser?.settings?.difficultyLevel || difficultyLevels[0]);
+  const [soundEffect, setSoundEffect] = useState<string>(currentUser?.settings?.soundEffects ? "Enabled" : "Disabled");
 
   const handleSave = async () => {
-    if(!isValidTextLength)
-      return;
+    if (!isValidTextLength) return;
 
     setIsLoading("save");
-    const settings : Settings = {
-      language: "English", // Replace with the selected language from your CustomSelect
-      mode: typingModes[0] === "Auto" ? 'auto' : 'manual', // Replace with the selected typing mode from your CustomSelect
+
+    const settings: Settings = {
+      language: language.toLowerCase(), // Set language to lowercase
+      mode: typingMode === "Auto" ? 'auto' : 'manual',
       textLength,
-      soundEffects: soundEffects[0] === "Enabled", // Replace with the selected sound effect option from your CustomSelect
-      difficultyLevel: difficultyLevels[0].toLowerCase() as 'beginner' | 'intermediate' | 'advanced', // Replace with the selected difficulty level from your CustomSelect
+      soundEffects: soundEffect === "Enabled",
+      difficultyLevel: difficultyLevel.toLowerCase() as 'beginner' | 'intermediate' | 'advanced',
     };
-    console.log("currentUser", currentUser)
+
+    console.log("currentUser", currentUser);
+
     // Call your API to save settings
-    const response = currentUser?.id? await apiSetSettings(currentUser?.id, settings) : null;
-    console.log("response", response)
+    const response = currentUser?.id ? await apiSetSettings(currentUser.id, settings) : null;
+    console.log("response", response);
 
     setIsLoading("null");
     onClose();
@@ -68,27 +75,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Grid layout for image and settings */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left side - Image */}
           <div className="col-span-1 flex justify-center">
             <Image 
               src="/storysets/settings.svg" 
               alt="Settings illustration" 
-              className="object-contain w-1/2 md:w-3/4 lg:w-full h-auto"  // Responsive image size
+              className="object-contain w-1/2 md:w-3/4 lg:w-full h-auto"
               height={48} 
               width={38} 
             />
           </div>
 
-          {/* Right side - Settings */}
           <div className="col-span-2 space-y-4 text-light-foreground dark:text-dark-foreground">
-            {/* Language Setting */}
-            <CustomSelect label="Language" options={languages} />
-
-            {/* Typing Mode Setting */}
-            <CustomSelect label="Typing Mode" options={typingModes} />
-            {/* Text Length Setting */}
+            <CustomSelect label="Language" options={languages} selectedOption={language} onChange={setLanguage} />
+            <CustomSelect label="Typing Mode" options={typingModes} selectedOption={typingMode} onChange={setTypingMode} />
             <div className='flex flex-col'>
               <label className="font-semibold">Text length</label>
               <input 
@@ -101,14 +101,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 <span className="text-dark-secondary text-base mt-1">Text length must be equal to or greater than {minTextLength} letters.</span>
               )}
             </div>
+            <CustomSelect label="Difficulty Level" options={difficultyLevels} selectedOption={difficultyLevel} onChange={setDifficultyLevel} />
+            <CustomSelect label="Sound Effects" options={soundEffects} selectedOption={soundEffect} onChange={setSoundEffect} />
 
-            {/* Difficulty Level Setting */}
-            <CustomSelect label="Difficulty Level" options={difficultyLevels} />
-
-            {/* Sound Effects Setting */}
-            <CustomSelect label="Sound Effects" options={soundEffects} />
-
-            {/* Save Button */}
             <div className="flex justify-end">
               <button
                 type="button"
@@ -128,10 +123,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 interface CustomSelectProps {
   label: string;
   options: string[];
+  selectedOption: string;
+  onChange: (option: string) => void;
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ label, options }) => {
-  const [selectedOption, setSelectedOption] = useState<string>(options[0]);
+const CustomSelect: React.FC<CustomSelectProps> = ({ label, options, selectedOption, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
 
@@ -164,7 +160,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ label, options }) => {
               key={option}
               className="px-4 py-2 hover:bg-light-secondary dark:hover:bg-dark-secondary hover:cursor-pointer text-light-foreground dark:text-dark-foreground hover:text-dark-background dark:hover:text-dark-background"
               onClick={() => {
-                setSelectedOption(option);
+                onChange(option);
                 setIsOpen(false);
               }}
             >
