@@ -25,33 +25,36 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     const minutes = timeInSeconds / 60;
     return Math.round(words / minutes);
   };
-
   const calculateHeight = () => {
     const baseHeight = 150; // Default base height
     if (!textToType) return baseHeight;
   
     const screenWidth = window.innerWidth; // Get current screen width
     let widthFactor = 1; // Default width factor
+    const textLength = textToType.length || 0; // Length of the text to type
   
+    // For small screens (<=800px), increase the height aggressively
     if (screenWidth <= 800) {
-      // For small screens (<=800px), increase the height more significantly
-      widthFactor = 1.5 + (800 - screenWidth) / 800; // Larger increase for smaller screens
+      widthFactor = 1.8 + (800 - screenWidth) / 800; // Larger factor for smaller screens
     } else if (screenWidth <= 1200) {
-      // For medium screens (800px to 1200px), slightly increase the height
-      widthFactor = 1.1 + (1200 - screenWidth) / 1200; // Moderate increase for medium screens
-    } else {
-      // For large screens (>1200px), only slightly increase the height
-      widthFactor = 1.05; // Minimal increase for very wide screens
+      // For medium screens (800px to 1200px), apply a moderate increase
+      widthFactor = 1.2 + (1200 - screenWidth) / 1200; // Moderate factor for medium screens
+    } else if (screenWidth > 1200 && textLength > 500) {
+      // Only increase the height on large screens if the text length is over 500 characters
+      widthFactor = 1.05; // Small increase for large screens with long text
     }
   
-    // Adjust height based on text length
-    const textFactor = Math.max(1, (textToType.length || 0) / 400); // Ensure textFactor is at least 1
+    // Adjust height based on text length, but for small screens, increase more
+    const textFactor = Math.max(1, textLength / 400); // Text factor based on length
+  
+    // Calculate the new height and cap it at 600px, or 150px if the typing hasn't started
     const newHeight = isStarted
-      ? Math.min(baseHeight * widthFactor * textFactor, 600) // Cap the height at 600px
+      ? Math.min(baseHeight * widthFactor * textFactor, 600) // Cap at 600px
       : baseHeight;
   
     return newHeight; // Return the calculated height
   };
+  
   
   // Reset all states and height when textToType changes
   useEffect(() => {
