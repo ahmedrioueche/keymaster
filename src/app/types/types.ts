@@ -22,5 +22,5 @@ export interface Settings {
   mode: 'auto' | 'manual';
   textLength: number;
   soundEffects: boolean;
-  difficultyLevel: 'beginner' | 'intermediate' | 'advanced';
+  difficultyLevel?: 'beginner' | 'intermediate' | 'advanced';
 }

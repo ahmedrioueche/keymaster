@@ -3,8 +3,9 @@ import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings, User } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
-import { defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
+import { defaultLanguage, defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
 import { useUser } from '../context/UserContext';
+import { capitalizeFirstLetter } from '../utils/formater';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -20,13 +21,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const typingModes = ["Auto", "Manual"];
   const difficultyLevels = ["Beginner", "Intermediate", "Advanced"];
   const soundEffects = ["Enabled", "Disabled"];
-
+  const userSettings = currentUser?.settings;
   // Initialize state with default values
-  const [language, setLanguage] = useState<string>(languages[0]);
-  const [typingMode, setTypingMode] = useState<string>("Auto");
-  const [textLength, setTextLength] = useState<number>(defaultTextLength);
-  const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
-  const [difficultyLevel, setDifficultyLevel] = useState<string>(difficultyLevels[0]);
+  const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : defaultLanguage);
+  const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : "Manual");
+  const [textLength, setTextLength] = useState<number>(userSettings?.textLength? userSettings?.textLength : defaultTextLength);
+  const [isValidTextLength, setIsValidTextLength] = useState<boolean>(userSettings?.soundEffects? userSettings?.soundEffects : true);
   const [soundEffect, setSoundEffect] = useState<string>("Enabled");
 
   useEffect(() => {
@@ -35,7 +35,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       setLanguage(currentUser.settings.language || languages[0]);
       setTypingMode(currentUser.settings.mode === 'manual' ? "Manual" : "Auto");
       setTextLength(currentUser.settings.textLength || defaultTextLength);
-      setDifficultyLevel(currentUser.settings.difficultyLevel || difficultyLevels[0]);
       setSoundEffect(currentUser.settings.soundEffects ? "Enabled" : "Disabled");
     }
   }, [currentUser]);
@@ -50,7 +49,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       mode: typingMode === "Auto" ? 'auto' : 'manual',
       textLength,
       soundEffects: soundEffect === "Enabled",
-      difficultyLevel: difficultyLevel.toLowerCase() as 'beginner' | 'intermediate' | 'advanced',
     };
 
     // Call your API to save settings
@@ -118,7 +116,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 <span className="text-dark-secondary text-base mt-1">Text length must be between {minTextLength} and {maxTextLength} letters.</span>
               )}
             </div>
-            <CustomSelect label="Difficulty Level" options={difficultyLevels} selectedOption={difficultyLevel} onChange={setDifficultyLevel} />
+            
             <CustomSelect label="Sound Effects" options={soundEffects} selectedOption={soundEffect} onChange={setSoundEffect} />
 
             <div className="flex justify-end">
