@@ -11,15 +11,15 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
   }
 
   // Remove duplicate players based on the 'id' field and filter out users without speed
-  //const uniqueLeaderboardData = leaderboardData.reduce((acc, player) => {
-  //  if (player.speed && !acc.find((p) => p.id === player.id)) {
-  //    acc.push(player);
-  //  }
-  //  return acc;
-  //}, [] as User[]);
+  const uniqueLeaderboardData = leaderboardData.reduce((acc, player) => {
+    if (player.speed && !acc.find((p) => p.id === player.id)) {
+      acc.push(player);
+    }
+    return acc;
+  }, [] as User[]);
 
   // Sort players by speed in descending order
-  const sortedLeaderboardData : any = []; //uniqueLeaderboardData.sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0));
+  const sortedLeaderboardData = uniqueLeaderboardData.sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0));
 
   return (
     <div className="border-t pt-0">
