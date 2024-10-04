@@ -12,7 +12,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const {currentUser} = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const {currentUser, setCurrentUser} = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState<"save" | "null">("null"); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const languages = ["English", "French", "Spanish"];
@@ -35,7 +35,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       soundEffects: soundEffects[0] === "Enabled", // Replace with the selected sound effect option from your CustomSelect
       difficultyLevel: difficultyLevels[0].toLowerCase() as 'beginner' | 'intermediate' | 'advanced', // Replace with the selected difficulty level from your CustomSelect
     };
-
+    console.log("currentUser", currentUser)
     // Call your API to save settings
     const response = currentUser?.id? await apiSetSettings(currentUser?.id, settings) : null;
     console.log("response", response)
