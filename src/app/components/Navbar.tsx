@@ -94,9 +94,9 @@ const Navbar: React.FC = () => {
           <Image
             src="/storysets/typing.svg"
             alt="KeyMaster"
-            className="w-8 h-8 object-contain mr-2" // Adjust size as needed
-            height={12} // Adjust height to match your design
-            width={12} // Adjust width to match your design
+            className="w-8 h-8 object-contain mr-2" 
+            height={12} 
+            width={12} 
           />
           <h1 className="text-light-foreground dark:text-dark-foreground text-2xl font-bold">
             KeyMaster
@@ -149,7 +149,22 @@ const Navbar: React.FC = () => {
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
                  onClick={handleUserClick}
                >
-                 <FaUser className="mr-3 text-lg" /> User
+                  {!currentUser? (
+                    <div>
+                      <FaUser className="mr-3 text-lg" /> <span> "User"</span>
+                    </div>
+                  ) : (
+                    <div>
+                      <Image
+                        src="/storysets/profile.svg"
+                        alt="KeyMaster"
+                        className="w-8 h-8 object-contain mr-2"
+                        height={12} 
+                        width={12}
+                      />      
+                      {currentUser.username}     
+                    </div>
+                  )}
                </Link> 
               
                <Link
@@ -179,7 +194,22 @@ const Navbar: React.FC = () => {
               <FaBook className="mr-2" /> Lessons
             </Link>
             <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-              <FaUser className="mr-2" /> User
+              {!currentUser? (
+                <div>
+                  <FaUser className="mr-3 text-lg" /> <span> "User"</span>
+                </div>
+              ) : (
+                <div>
+                  <Image
+                    src="/storysets/profile.svg"
+                    alt="KeyMaster"
+                    className="w-8 h-8 object-contain mr-2"
+                    height={12} 
+                    width={12}
+                  />      
+                  {currentUser.username}     
+                </div>
+              )}           
             </Link>
             <Link onClick={handleSettingsClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaCog className="mr-2" /> Settings
