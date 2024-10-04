@@ -60,8 +60,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         settings: settings,
       };
       setCurrentUser(updatedUser);
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
     }
-
     setIsLoading("null");
     onClose();
   };
