@@ -23,20 +23,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
 
   const handleSave = async () => {
-    if(isValidTextLength){
-      const settings : Settings = {
-        language: "English", // Replace with the selected language from your CustomSelect
-        mode: typingModes[0] === "Auto" ? 'auto' : 'manual', // Replace with the selected typing mode from your CustomSelect
-        textLength,
-        soundEffects: soundEffects[0] === "Enabled", // Replace with the selected sound effect option from your CustomSelect
-        difficultyLevel: difficultyLevels[0].toLowerCase() as 'beginner' | 'intermediate' | 'advanced', // Replace with the selected difficulty level from your CustomSelect
-      };
-  
-      // Call your API to save settings
-      const response = currentUser?.id? await apiSetSettings(currentUser?.id, settings) : null;
-      console.log("response", response)
-    }
-  
+    if(!isValidTextLength)
+      return;
+    
+    setIsLoading("save");
+    const settings : Settings = {
+      language: "English", // Replace with the selected language from your CustomSelect
+      mode: typingModes[0] === "Auto" ? 'auto' : 'manual', // Replace with the selected typing mode from your CustomSelect
+      textLength,
+      soundEffects: soundEffects[0] === "Enabled", // Replace with the selected sound effect option from your CustomSelect
+      difficultyLevel: difficultyLevels[0].toLowerCase() as 'beginner' | 'intermediate' | 'advanced', // Replace with the selected difficulty level from your CustomSelect
+    };
+
+    // Call your API to save settings
+    const response = currentUser?.id? await apiSetSettings(currentUser?.id, settings) : null;
+    console.log("response", response)
+
+    setIsLoading("null");
+    onClose();
   };
 
   const handleTextLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
