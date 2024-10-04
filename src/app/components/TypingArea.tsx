@@ -34,7 +34,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     console.log("textToType.length", textToType.length)
     const screenWidth = window.innerWidth; // Get current screen width
     let widthFactor = 1; // Default width factor is 1, no change for wide screens unless conditions are met
-  
+    console.log("screenWidth", screenWidth)
+
     if (screenWidth <= 800) {
       // For small screens, increase the height more
       widthFactor = 1.5 + (800 - screenWidth) / 800; // Larger factor for smaller screens
