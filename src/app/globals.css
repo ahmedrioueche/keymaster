@@ -73,8 +73,6 @@ html, body {
     -moz-appearance: textfield;
 }
 
-/* styles.css or your global stylesheet */
-
 .custom-scrollbar {
   /* For Chrome, Safari, and Opera */
   &::-webkit-scrollbar {
