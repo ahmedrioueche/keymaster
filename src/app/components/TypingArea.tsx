@@ -33,7 +33,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     const screenWidth = window.innerWidth; // Get current screen width
     const widthFactor = Math.max(1, screenWidth / 800); // Adjust factor based on a reference width (800px)
     const textFactor = Math.max(1, (textLength || 0) / 50); // Adjust based on text length
-    return isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit
+    const newHeight = isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit
+    return newHeight; // Return the calculated height
   };
 
   // Reset all states and height when textToType changes
@@ -43,12 +44,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     setStartTime(null); // Reset the start time
     setLastInputTime(null); // Reset last input time
     setCurrentSpeed(0); // Reset speed counter
+    setInputHeight(calculateHeight()); // Update height when textToType changes
   }, [textToType, isStarted]);
 
   // Handle input changes
   const handleInputChange = (e: React.FormEvent<HTMLDivElement>) => {
     if (isStarted) {
-      calculateHeight(); // Calculate height on new text
       const inputText = e.currentTarget.textContent || "";
       const currentTime = Date.now();
 
@@ -74,6 +75,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
             setIsCompleted(true);
             onComplete?.(currentSpeed);
           }
+
+          // Update height dynamically based on new input
+          setInputHeight(calculateHeight());
         }
       } else {
         e.preventDefault();
@@ -112,6 +116,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
       setUserInput(newInput);
       setCursorPosition(cursorPosition - 1);
       setLastInputTime(Date.now());
+
+      // Update height dynamically on deletion
+      setInputHeight(calculateHeight());
     }
   };
 
@@ -151,9 +158,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
 
   // Update height on component mount and window resize
   useEffect(() => {
-    calculateHeight(); // Initial height calculation
-    window.addEventListener("resize", calculateHeight); // Listen for resize events
-    return () => window.removeEventListener("resize", calculateHeight); // Cleanup listener
+    const newHeight = calculateHeight(); // Initial height calculation
+    setInputHeight(newHeight); // Set initial height
+    window.addEventListener("resize", () => setInputHeight(calculateHeight())); // Listen for resize events
+    return () => window.removeEventListener("resize", () => setInputHeight(calculateHeight())); // Cleanup listener
   }, [textLength]); // Recalculate if textLength changes
 
   return (
