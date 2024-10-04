@@ -82,7 +82,6 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
         }
     
         const responseData = await response.json();
-        console.log("responseData in apiGetUsers", responseData)
         return responseData;
     
       } catch (error) {

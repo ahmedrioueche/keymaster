@@ -25,7 +25,6 @@ const MainContainer: React.FC = () => {
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
-  console.log("usertextLength", usertextLength)
   const textLength = usertextLength? usertextLength : defaultTextLength;
 
   useEffect(() => {  
@@ -101,6 +100,7 @@ const MainContainer: React.FC = () => {
           updatedUsers[existingUserIndex] = updatedUser;
         } else {
           // If the user does not exist in the list, create a new user
+          console.log("currentUser.typingStats ", currentUser.typingStats )
           const newEntry: TypingStat = { speed, date };
           updatedUser = {
             username: currentUser.username,
