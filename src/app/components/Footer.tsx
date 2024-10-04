@@ -6,7 +6,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-light-background dark:bg-dark-background p-4 mt-8 shadow-md">
+    <footer className="bg-light-background dark:bg-dark-background p-8 shadow-md">
       <div className="flex justify-between items-center">
         <div className="text-light-foreground dark:text-dark-foreground">
           <p className="text-sm">
