@@ -7,6 +7,9 @@ import Navbar from "./components/Navbar";
 export const metadata: Metadata = {
   title: "KeyMaster",
   description: "How type can you fast?",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
