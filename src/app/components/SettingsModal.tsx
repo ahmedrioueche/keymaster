@@ -12,7 +12,6 @@ interface SettingsModalProps {
   onClose: () => void;
 }
 
-
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { currentUser, setCurrentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState<"save" | "null">("null");
@@ -21,7 +20,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const typingModes = ["Auto", "Manual"];
   const soundEffects = ["Enabled", "Disabled"];
   const userSettings = currentUser?.settings;
-  console.log("userSettings", userSettings)
   // Initialize state with default values
   const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : capitalizeFirstLetter(defaultLanguage));
   const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : capitalizeFirstLetter(defaultMode));
