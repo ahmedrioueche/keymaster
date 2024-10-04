@@ -43,7 +43,8 @@ const MainContainer: React.FC = () => {
     console.log("usertextLength", usertextLength)
     const textLength = usertextLength? usertextLength : defaultTextLength;
 
-    const prompt = `With no introductions nor conclusions, give a paragraph of ${textLength} letters (including spaces)
+    const prompt = `With no introductions nor conclusions, give a paragraph of exactly ${textLength} letters (including spaces)
+                    if possible, or an offset of 30 characters max, this is important!
                     in a ${topic} topic in ${language} language, do not exceed the required length.`;
     const response = await apiPromptGemini(prompt);
     console.log("response:", response);
@@ -184,7 +185,7 @@ const MainContainer: React.FC = () => {
       if (user) {
         console.log("User has been updated:", user);
         //user has logged in, start now
-        if(userLoggedIn){
+        if(userLoggedIn){ 
           handleStart();
           setUserLoggedIn(false);
         }
