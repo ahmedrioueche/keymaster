@@ -157,7 +157,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
           lineHeight: '1.5',
           color: 'transparent',
           zIndex: 1,
-          height: `${textLength? Math.max(60, textLength * 1.5) : 300}px`, // Set height proportional to userTextLength
+          height: `${textLength? Math.max(60, textLength * 1.5) : 200}px`, // Set height proportional to userTextLength
         }}
       >
         {userInput}
