@@ -21,6 +21,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const typingModes = ["Auto", "Manual"];
   const soundEffects = ["Enabled", "Disabled"];
   const userSettings = currentUser?.settings;
+  console.log("userSettings", userSettings)
   // Initialize state with default values
   const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : defaultLanguage);
   const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : "Manual");
