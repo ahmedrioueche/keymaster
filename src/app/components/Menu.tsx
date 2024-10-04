@@ -239,16 +239,16 @@ const Menu: React.FC<MenuProps> = ({
 
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
-              <div>
-                {typingStats.map((stat, index) => (
-                  <div key={index} className="flex justify-between py-1">
-                    <p className="text-sm">
-                      Recorded Speed: {stat.speed} WPM On {new Date(stat.date).toLocaleDateString()} {new Date(stat.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="bg-light-background dark:bg-dark-background p-2 rounded-md border border-light-secondary dark:border-dark-secondary">
+              {typingStats.map((stat, index) => (
+                <div key={index} className="flex justify-between py-1">
+                  <p className="text-sm">
+                    Recorded Speed: {stat.speed} WPM on {new Date(stat.date).toLocaleDateString()} {new Date(stat.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
           </div>
         </div>
       )}
