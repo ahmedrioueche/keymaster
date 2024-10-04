@@ -38,6 +38,7 @@ const MainContainer: React.FC = () => {
 
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
+    console.log("currentUser", currentUser)
     const usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
     console.log("usertextLength", usertextLength)
     const textLength = usertextLength? usertextLength : defaultTextLength;
