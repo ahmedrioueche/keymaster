@@ -149,7 +149,7 @@ import { defaultTextLength } from "../utils/settings";
       if (!existingUser) {
         throw new Error('User not found');
       }
-  
+      console.log("existingUser.password", existingUser.password);
       // Compare the provided password with the hashed password in the database
       const isPasswordValid = (user.password &&  existingUser.password)? await bcrypt.compare(user.password, existingUser.password) : null;
       
