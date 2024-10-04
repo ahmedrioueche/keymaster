@@ -135,6 +135,7 @@ import { defaultTextLength } from "../utils/settings";
   export const authenticateUser = async (user: User) => {
     try {
       // Fetch the user from the database
+      console.log("user in user", user);
       const existingUser = await prisma.user.findUnique({
         where: {
           username: user.username, 
