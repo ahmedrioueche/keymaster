@@ -3,13 +3,14 @@ import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings, User } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
-import { defaultTextLength, minTextLength } from '../utils/settings';
+import { defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
 import { useUser } from '../context/UserContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { currentUser, setCurrentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -19,14 +20,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const typingModes = ["Auto", "Manual"];
   const difficultyLevels = ["Beginner", "Intermediate", "Advanced"];
   const soundEffects = ["Enabled", "Disabled"];
-  
-  // Initialize user settings or fallback to default values
-  const [language, setLanguage] = useState<string>(currentUser?.settings?.language || languages[0]);
-  const [typingMode, setTypingMode] = useState<string>(currentUser?.settings?.mode === 'manual' ? "Manual" : "Auto");
-  const [textLength, setTextLength] = useState<number>(currentUser?.settings?.textLength || defaultTextLength);
+
+  // Initialize state with default values
+  const [language, setLanguage] = useState<string>(languages[0]);
+  const [typingMode, setTypingMode] = useState<string>("Auto");
+  const [textLength, setTextLength] = useState<number>(defaultTextLength);
   const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
-  const [difficultyLevel, setDifficultyLevel] = useState<string>(currentUser?.settings?.difficultyLevel || difficultyLevels[0]);
-  const [soundEffect, setSoundEffect] = useState<string>(currentUser?.settings?.soundEffects ? "Enabled" : "Disabled");
+  const [difficultyLevel, setDifficultyLevel] = useState<string>(difficultyLevels[0]);
+  const [soundEffect, setSoundEffect] = useState<string>("Enabled");
+
+  useEffect(() => {
+    if (currentUser?.settings) {
+      // Set initial values based on the user's current settings
+      setLanguage(currentUser.settings.language || languages[0]);
+      setTypingMode(currentUser.settings.mode === 'manual' ? "Manual" : "Auto");
+      setTextLength(currentUser.settings.textLength || defaultTextLength);
+      setDifficultyLevel(currentUser.settings.difficultyLevel || difficultyLevels[0]);
+      setSoundEffect(currentUser.settings.soundEffects ? "Enabled" : "Disabled");
+    }
+  }, [currentUser]);
 
   const handleSave = async () => {
     if (!isValidTextLength) return;
@@ -41,20 +53,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       difficultyLevel: difficultyLevel.toLowerCase() as 'beginner' | 'intermediate' | 'advanced',
     };
 
-    console.log("currentUser", currentUser);
-
     // Call your API to save settings
     const response = currentUser?.id ? await apiSetSettings(currentUser.id, settings) : null;
-    console.log("response", response);
 
-    if(currentUser){
-      const updatedUser : User = {
+    if (currentUser) {
+      const updatedUser: User = {
         ...currentUser,
-        settings : settings,
-      }
+        settings: settings,
+      };
       setCurrentUser(updatedUser);
     }
-  
+
     setIsLoading("null");
     onClose();
   };
@@ -62,7 +71,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const handleTextLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(event.target.value);
     setTextLength(value);
-    setIsValidTextLength(value >= minTextLength); // Validate input to be greater than minTextLength
+    setIsValidTextLength(value >= minTextLength && value <= maxTextLength);
   };
 
   return (
@@ -106,7 +115,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 onChange={handleTextLengthChange}
               />
               {!isValidTextLength && (
-                <span className="text-dark-secondary text-base mt-1">Text length must be equal to or greater than {minTextLength} letters.</span>
+                <span className="text-dark-secondary text-base mt-1">Text length must be between {minTextLength} and {maxTextLength} letters.</span>
               )}
             </div>
             <CustomSelect label="Difficulty Level" options={difficultyLevels} selectedOption={difficultyLevel} onChange={setDifficultyLevel} />
