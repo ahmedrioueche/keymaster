@@ -10,6 +10,7 @@ import UserModal from "./UserModal";
 import Image from 'next/image';
 import ResultModal from "./ResultModal";
 import { useUser } from "../context/UserContext";
+import { defaultTextLength } from "../utils/settings";
 
 const MainContainer: React.FC = () => {
   const {currentUser, setCurrentUser, onSet} = useUser();
@@ -27,8 +28,6 @@ const MainContainer: React.FC = () => {
   useEffect(() => {  
     getUsers();
   }, [])
-
-  const defaultTextLength = 100;
 
   const handleStart = async () => {
     if(!currentUser){

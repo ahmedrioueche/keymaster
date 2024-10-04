@@ -3,6 +3,7 @@ import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings, User } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
+import { minTextLength } from '../utils/settings';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -22,30 +23,33 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
 
   const handleSave = async () => {
-    const settings : Settings = {
-      language: "English", // Replace with the selected language from your CustomSelect
-      mode: typingModes[0] === "Auto" ? 'auto' : 'manual', // Replace with the selected typing mode from your CustomSelect
-      textLength,
-      soundEffects: soundEffects[0] === "Enabled", // Replace with the selected sound effect option from your CustomSelect
-      difficultyLevel: difficultyLevels[0].toLowerCase() as 'beginner' | 'intermediate' | 'advanced', // Replace with the selected difficulty level from your CustomSelect
-    };
-
-    // Call your API to save settings
-    const response = currentUser?.id? await apiSetSettings(currentUser?.id, settings) : null;
-    console.log("response", response)
+    if(isValidTextLength){
+      const settings : Settings = {
+        language: "English", // Replace with the selected language from your CustomSelect
+        mode: typingModes[0] === "Auto" ? 'auto' : 'manual', // Replace with the selected typing mode from your CustomSelect
+        textLength,
+        soundEffects: soundEffects[0] === "Enabled", // Replace with the selected sound effect option from your CustomSelect
+        difficultyLevel: difficultyLevels[0].toLowerCase() as 'beginner' | 'intermediate' | 'advanced', // Replace with the selected difficulty level from your CustomSelect
+      };
+  
+      // Call your API to save settings
+      const response = currentUser?.id? await apiSetSettings(currentUser?.id, settings) : null;
+      console.log("response", response)
+    }
+  
   };
 
   const handleTextLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(event.target.value);
     setTextLength(value);
-    setIsValidTextLength(value > 50); // Validate input to be greater than 50
+    setIsValidTextLength(value >= minTextLength); // Validate input to be greater than minTextLength
   };
 
   return (
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-transform duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
     >
-      <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-3xl max-h-[95vh] overflow-hidden">
+      <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-3xl max-h-[95vh] overflow-y-auto hide-scrollbar">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center text-light-foreground dark:text-dark-foreground">
             <Image src='/icons/settings.png' height={30} width={30} className="text-3xl mr-3" alt="Settings" />
@@ -59,8 +63,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Scrollable settings area */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-h-[60vh] overflow-y-auto hide-scrollbar">
+        {/* Grid layout for image and settings */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Left side - Image */}
           <div className="col-span-1 flex justify-center">
             <Image 
@@ -79,26 +83,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
             {/* Typing Mode Setting */}
             <CustomSelect label="Typing Mode" options={typingModes} />
+            {/* Text Length Setting */}
+            <div className='flex flex-col'>
+              <label className="font-semibold mb-2">Text length</label>
+              <input 
+                className="mt-2 p-2 border rounded-md bg-light-background dark:bg-dark-background text-light-foreground dark:text-dark-foreground hover:border-light-secondary dark:hover:border-dark-secondary focus:ring-2 focus:ring-light-secondary dark:focus:ring-dark-secondary transition-colors duration-300 no-spinner"
+                type='number' 
+                value={textLength} 
+                onChange={handleTextLengthChange}
+              />
+              {!isValidTextLength && (
+                <span className="text-dark-secondary text-base mt-1">Text length must be equal to or greater than {minTextLength} letters.</span>
+              )}
+            </div>
 
             {/* Difficulty Level Setting */}
             <CustomSelect label="Difficulty Level" options={difficultyLevels} />
 
             {/* Sound Effects Setting */}
             <CustomSelect label="Sound Effects" options={soundEffects} />
-
-            {/* Text Length Input */}
-            <div>
-              <label className="font-semibold">Text Length</label>
-              <input
-                type="number"
-                value={textLength}
-                onChange={handleTextLengthChange}
-                className={`mt-2 p-2 border rounded-md bg-light-background dark:bg-dark-background ${isValidTextLength ? '' : 'border-red-500'}`}
-                min={51}
-                required
-              />
-              {!isValidTextLength && <span className="text-red-500 text-sm">Please enter a number greater than 50.</span>}
-            </div>
 
             {/* Save Button */}
             <div className="flex justify-end">
