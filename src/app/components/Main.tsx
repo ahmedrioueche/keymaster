@@ -266,10 +266,15 @@ const MainContainer: React.FC = () => {
         isOpen={isUserModalOpen}
         onClose={() => setIsUserModalOpen(false)}
       />
-      <ResultModal
-        isOpen={isResultModalOpen}
-        onClose={() => setIsResultModalOpen(false)}
-      />
+      {currentUser && (
+        <ResultModal
+          isOpen={isResultModalOpen}
+          onClose={() => setIsResultModalOpen(false)}
+          user={currentUser}
+          isNewRecord={false}
+        />
+      )}
+   
     </div>
   );
 };

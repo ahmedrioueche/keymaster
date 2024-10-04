@@ -14,10 +14,10 @@ const Footer: React.FC = () => {
           </p>
         </div>
         <div className="flex space-x-4">
-          <Link href="https://github.com/your-username" target="_blank" className="text-light-foreground dark:text-dark-foreground hover:text-light-accent dark:hover:text-dark-accent transition-colors duration-300">
+          <Link href="https://github.com/ahmedrioueche" target="_blank" className="text-light-foreground dark:text-dark-foreground hover:text-light-accent dark:hover:text-dark-accent transition-colors duration-300">
             <FaGithub size={20} />
           </Link>
-          <Link href="https://linkedin.com/in/your-profile" target="_blank" className="text-light-foreground dark:text-dark-foreground hover:text-light-accent dark:hover:text-dark-accent transition-colors duration-300">
+          <Link href="https://linkedin.com/in/ahmed-drioueche-aa02732b7" target="_blank" className="text-light-foreground dark:text-dark-foreground hover:text-light-accent dark:hover:text-dark-accent transition-colors duration-300">
             <FaLinkedin size={20} />
           </Link>
         </div>

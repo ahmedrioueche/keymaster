@@ -1,19 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { FaTimes } from 'react-icons/fa';
+import Confetti from 'react-confetti';
+import useSound from 'use-sound';
 
 interface ResultModalProps {
   isOpen: boolean;
+  user: any;   // eslint-disable-line @typescript-eslint/no-explicit-any
+  isNewRecord: boolean;
   onClose: () => void;
 }
 
-const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose }) => {
+const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose, user, isNewRecord }) => {
+  const [playCheer] = useSound('/sounds/cheer.mp3'); // Path to your cheer sound
+
+  useEffect(() => {
+    if (isNewRecord && isOpen) {
+      playCheer(); // Play the cheer sound when a new record is set
+    }
+  }, [isNewRecord, isOpen, playCheer]);
 
   return (
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-transform duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
     >
       <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-md max-h-[95vh] overflow-y-auto hide-scrollbar">
+        {/* Confetti effect when a new record is set */}
+        {isNewRecord && (
+          <Confetti width={window.innerWidth} height={window.innerHeight} recycle={false} />
+        )}
+
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center text-light-foreground dark:text-dark-foreground">
             <Image src='/icons/results.png' height={30} width={30} className="text-3xl mr-3" alt="Profile" />
@@ -27,6 +43,17 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
+        <div className='flex flex-col'>
+          <Image src="/storysets/result.svg" alt="Result illustration" className="w-full h-48 object-contain" height={48} width={38}/>
+          {isNewRecord && (
+            <div className="mt-4 text-center text-light-primary dark:text-dark-primary text-lg font-bold">
+              🎉 New Record! 🎉
+            </div>
+          )}
+          <div className="mt-4 text-light-foreground dark:text-dark-foreground">
+            Speed: {user?.speed ?? 'No speed data available'}
+          </div>
+        </div>
       </div>
     </div>
   );
