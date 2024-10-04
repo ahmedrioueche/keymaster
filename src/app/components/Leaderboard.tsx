@@ -6,9 +6,14 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
-  if (!leaderboardData || (Array.isArray(leaderboardData) && leaderboardData.length === 0)) {
+  if (
+    !leaderboardData || // Check for null, undefined, or other falsy values
+    (Array.isArray(leaderboardData) && leaderboardData.length === 0) || // Check if it's an empty array
+    (typeof leaderboardData === 'object' && Object.keys(leaderboardData).length === 0) // Check if it's an empty object
+  ) {
     return null;
-  }  
+  }
+  
 
   // Remove duplicate players based on the 'id' field and filter out users without speed
   const uniqueLeaderboardData = leaderboardData.reduce((acc, player) => {
