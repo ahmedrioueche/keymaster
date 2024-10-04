@@ -32,7 +32,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     const containerWidth = typingRef.current?.clientWidth || 0; // Get current width of the container
     const baseHeight = 150; // Base height in pixels
     const widthFactor = containerWidth / 600; // Assuming 600px is the width for scaling
-    const textFactor = Math.max(1, (textLength || 0) / 20); // Adjust this factor based on desired sensitivity to text length
+    const textFactor = Math.max(1, (textLength || 0) / 50); // Adjust this factor based on desired sensitivity to text length
 
     // Calculate final height
     const calculatedHeight = Math.max(baseHeight, baseHeight * widthFactor * textFactor);
