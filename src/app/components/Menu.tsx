@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { TypingStat } from '../types/types';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 interface MenuProps {
   onStart: () => void;
@@ -238,18 +239,15 @@ const Menu: React.FC<MenuProps> = ({
             <p className="text-sm mb-1">Average Speed: {averageSpeed.toFixed(2)} WPM</p>
 
             {/* Show detailed stats if not collapsed */}
-            {!isTypingStatsCollapsed && typingStats && (
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="custom-scrollbar">
-              {typingStats.map((stat, index) => (
+            <Scrollbars style={{ maxHeight: 200 }}>
+              {typingStats && typingStats.length > 0 && typingStats?.map((stat, index) => (
                 <div key={index} className="flex justify-between py-1">
                   <p className="text-sm">
                     Recorded Speed: {stat.speed} WPM on {new Date(stat.date).toLocaleDateString()} {new Date(stat.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               ))}
-            </div>
-          )}
-
+          </Scrollbars>
           </div>
         </div>
       )}

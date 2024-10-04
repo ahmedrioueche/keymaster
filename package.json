@@ -7,12 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate && prisma migrate deploy", 
-    "migrate": "prisma migrate dev", 
-    "format": "prettier --write .", 
-    "test": "jest" 
+    "postinstall": "prisma generate && prisma migrate deploy",
+    "migrate": "prisma migrate dev",
+    "format": "prettier --write .",
+    "test": "jest"
   },
-  
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -27,6 +26,7 @@
     "pg": "^8.13.0",
     "prisma": "^5.20.0",
     "react": "^18",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^18",
     "react-icons": "^5.3.0",
     "tailwind-scrollbar-hide": "^1.1.7"
@@ -35,6 +35,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-custom-scrollbars": "^4.0.13",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
