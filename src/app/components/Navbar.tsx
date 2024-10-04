@@ -148,23 +148,8 @@ const Navbar: React.FC = () => {
                  href="/"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
                  onClick={handleUserClick}
-               >
-                  {!currentUser? (
-                    <div>
-                      <FaUser className="mr-3 text-lg" /> <span>User</span>
-                    </div>
-                  ) : (
-                    <div className='flex flex-row'>
-                      <Image
-                        src="/icons/profile.png"
-                        alt="KeyMaster"
-                        className="w-8 h-8 object-contain mr-2"
-                        height={12} 
-                        width={12}
-                      />      
-                      {currentUser.username}     
-                    </div>
-                  )}
+               > 
+                <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"} 
                </Link> 
               
                <Link
@@ -194,22 +179,7 @@ const Navbar: React.FC = () => {
               <FaBook className="mr-2" /> Lessons
             </Link>
             <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-              {!currentUser? (
-                <div>
-                  <FaUser className="mr-3 text-lg" /> <span> User</span>
-                </div>
-              ) : (
-                <div className='flex flex-row'>
-                  <Image
-                    src="/icons/profile.png"
-                    alt="KeyMaster"
-                    className="w-8 h-8 object-contain mr-2"
-                    height={12} 
-                    width={12}
-                  />      
-                  {currentUser.username}     
-                </div>
-              )}           
+             <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"} 
             </Link>
             <Link onClick={handleSettingsClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaCog className="mr-2" /> Settings
