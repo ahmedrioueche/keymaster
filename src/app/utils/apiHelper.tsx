@@ -1,4 +1,4 @@
-import { User } from "../types/types";
+import { Settings, User } from "../types/types";
 
 export const apiPromptGemini = async (prompt: string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
@@ -115,5 +115,24 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
       }
   }
   
-  
+  export const apiSetSettings = async (id : number, settings: Partial<Settings>): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/user/set-settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({id, settings}),
+        });
     
+        if (!response.ok) {
+          throw new Error("Failed to set user's settings in api");
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error("Failed to set user's settings in api:", error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }

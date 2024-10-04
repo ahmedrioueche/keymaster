@@ -28,7 +28,7 @@ const MainContainer: React.FC = () => {
     getUsers();
   }, [])
 
-  const numLetters = 30;
+  const defaultTextLength = 100;
 
   const handleStart = async () => {
     if(!currentUser){
@@ -39,7 +39,11 @@ const MainContainer: React.FC = () => {
 
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
-    const prompt = `With no introductions nor conclusions, give a paragraph of ${numLetters} letters (including spaces)
+    let usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
+    console.log("usertextLength", usertextLength)
+    let textLength = usertextLength? usertextLength : defaultTextLength;
+
+    const prompt = `With no introductions nor conclusions, give a paragraph of ${textLength} letters (including spaces)
                     in a ${topic} topic in ${language} language, do not exceed the required length.`;
     const response = await apiPromptGemini(prompt);
     console.log("response:", response);
@@ -165,7 +169,7 @@ const MainContainer: React.FC = () => {
 
   setTimeout(() => {
     getUsers();
-  }, 10000)
+  }, 30000)
 
   const getUsers = async () => {
     const response = await apiGetUsers();

@@ -1,4 +1,4 @@
-  import { User } from "../types/types";
+  import { Settings, User } from "../types/types";
   import prisma from "../utils/prisma";
   import bcrypt from 'bcrypt';
 
@@ -43,8 +43,6 @@
       throw error;
     }
   };
-  
-
   
   export const getUserById = async (id: number) => {
     try {
@@ -142,5 +140,29 @@
       throw error; // Rethrow the error to be handled by the calling function
     } 
   };
-
+  
+  export const setSettings = async (id: number, settings: Partial<Settings>) => {
+    try {
+      const updateData: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
+  
+      // Build update data based on provided settings
+      if (settings.language) updateData.language = settings.language;
+      if (settings.mode) updateData.mode = settings.mode;
+      if (settings.textLength) updateData.textLength = settings.textLength;
+      if (settings.soundEffects !== undefined) updateData.soundEffects = settings.soundEffects; // boolean can be false
+      if (settings.difficultyLevel) updateData.difficultyLevel = settings.difficultyLevel;
+  
+      // Update settings in the database
+      const updatedSettings = await prisma.settings.update({
+        where: { userId: id }, // Assuming userId is the foreign key in settings
+        data: updateData,
+      });
+  
+      console.log('Settings updated successfully:', updatedSettings);
+      return updatedSettings;
+    } catch (error) {
+      console.error('Error setting settings:', error);
+      throw error;
+    }
+  };
   
