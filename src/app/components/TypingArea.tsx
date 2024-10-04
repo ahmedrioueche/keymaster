@@ -34,24 +34,24 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     let widthFactor = 1; // Default width factor
   
     if (screenWidth <= 800) {
-      // For small screens (<=800px), increase the height more significantly
-      widthFactor = 1.5 + (800 - screenWidth) / 800; // Larger increase for smaller screens
+      // For small screens (<=800px), slightly increase the height
+      widthFactor = 1.2 + (800 - screenWidth) / 1600; // Smaller increase factor for smaller screens
     } else if (screenWidth <= 1200) {
-      // For medium screens (800px to 1200px), slightly increase the height
-      widthFactor = 1.1 + (1200 - screenWidth) / 1200; // Moderate increase for medium screens
+      // For medium screens (800px to 1200px), reduce height increase
+      widthFactor = 1.05 + (1200 - screenWidth) / 2400; // More subtle increase for medium screens
     } else {
-      // For large screens (>1200px), only slightly increase the height
-      widthFactor = 1.05; // Minimal increase for very wide screens
+      // For large screens (>1200px), minimal height increase
+      widthFactor = 1.02; // Very minimal increase for wide screens
     }
   
-    // Adjust height based on text length
-    const textFactor = Math.max(1, (textToType.length || 0) / 300); // Ensure textFactor is at least 1
+    // Adjust height based on text length, with a smaller text factor
+    const textFactor = Math.max(1, (textToType.length || 0) / 500); // Reduced impact of text length
     const newHeight = isStarted
-      ? Math.min(baseHeight * widthFactor * textFactor, 600) // Cap the height at 600px
+      ? Math.min(baseHeight * widthFactor * textFactor, 500) 
       : baseHeight;
   
     return newHeight; // Return the calculated height
-  };
+  };  
   
   // Reset all states and height when textToType changes
   useEffect(() => {
