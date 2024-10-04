@@ -29,14 +29,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   };
 
   const calculateHeight = () => {
-    const containerWidth = typingRef.current?.clientWidth || 0; // Get current width of the container
-    const baseHeight = 150; // Base height in pixels
-    const widthFactor = containerWidth / 600; // Assuming 600px is the width for scaling
-    const textFactor = Math.max(1, (textLength || 0) / 50); // Adjust this factor based on desired sensitivity to text length
-
-    // Calculate final height
-    const calculatedHeight = Math.max(baseHeight, baseHeight * widthFactor * textFactor);
-    setInputHeight(calculatedHeight); // Update the state with the new height
+    const baseHeight = 150; // Default height
+    const screenWidth = window.innerWidth; // Get current screen width
+    const widthFactor = Math.max(1, screenWidth / 800); // Adjust factor based on a reference width (800px)
+    const textFactor = Math.max(1, (textLength || 0) / 50); // Adjust based on text length
+    return isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit
   };
 
   // Reset all states and height when textToType changes
@@ -46,12 +43,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     setStartTime(null); // Reset the start time
     setLastInputTime(null); // Reset last input time
     setCurrentSpeed(0); // Reset speed counter
-    calculateHeight(); // Calculate height on new text
   }, [textToType, isStarted]);
 
   // Handle input changes
   const handleInputChange = (e: React.FormEvent<HTMLDivElement>) => {
     if (isStarted) {
+      calculateHeight(); // Calculate height on new text
       const inputText = e.currentTarget.textContent || "";
       const currentTime = Date.now();
 
