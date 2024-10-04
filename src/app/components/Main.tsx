@@ -24,6 +24,9 @@ const MainContainer: React.FC = () => {
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
+  console.log("usertextLength", usertextLength)
+  const textLength = usertextLength? usertextLength : defaultTextLength;
 
   useEffect(() => {  
     getUsers();
@@ -39,9 +42,6 @@ const MainContainer: React.FC = () => {
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
     console.log("currentUser", currentUser)
-    const usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
-    console.log("usertextLength", usertextLength)
-    const textLength = usertextLength? usertextLength : defaultTextLength;
 
     const prompt = `With no introductions nor conclusions, give a paragraph of exactly ${textLength} letters (including spaces)
                     if possible, or an offset of 30 characters max, this is important!
@@ -254,6 +254,7 @@ const MainContainer: React.FC = () => {
                 isStarted={isStarted}
                 onComplete={(speed) => handleTextCompletion(speed)}
                 onUserTyped={handleUserTyped}
+                textLength={textLength}
               />
             )}
             {/* Leaderboard - Displayed under the Typing Area */}

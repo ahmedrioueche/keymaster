@@ -4,11 +4,12 @@ import { useTheme } from '../context/ThemeContext';
 interface TypingAreaProps {
   textToType: string;
   isStarted?: boolean;
+  textLength?: number;
   onComplete?: (speed: number) => void;
   onUserTyped?: () => void; // Add this line
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComplete, onUserTyped }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComplete, onUserTyped, textLength }) => {
   const { isDarkMode } = useTheme();
   const [userInput, setUserInput] = useState("");
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -148,7 +149,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
         contentEditable={!isCompleted}
         onInput={handleInputChange}
         onKeyDown={handleKeyDown}
-        className="relative w-full h-60 sm:h-60 md:h-36 text-lg font-normal focus:outline-none overflow-y-auto"
+        className="relative w-full text-lg font-normal focus:outline-none overflow-y-auto"
         style={{
           whiteSpace: "pre-wrap",
           caretColor: isDarkMode ? "white" : "black",
@@ -156,10 +157,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
           lineHeight: '1.5',
           color: 'transparent',
           zIndex: 1,
+          height: `${textLength? Math.max(60, textLength * 1.5) : 300}px`, // Set height proportional to userTextLength
         }}
       >
         {userInput}
       </div>
+
       {isStarted && (
         <>
           <div className="absolute bottom-2 left-6 text-sm">
