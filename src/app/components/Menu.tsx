@@ -28,7 +28,7 @@ const Menu: React.FC<MenuProps> = ({
   typingStats, 
 }) => {
   const { isDarkMode } = useTheme();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isTypingStatsCollapsed, setIsTypingStatsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [timerVisible, setTimerVisible] = useState(false);
