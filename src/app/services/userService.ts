@@ -1,34 +1,56 @@
   import { Settings, User } from "../types/types";
   import prisma from "../utils/prisma";
   import bcrypt from 'bcrypt';
+import { defaultTextLength } from "../utils/settings";
 
   export const insertUser = async (user: User) => {
-   try {
-    const hashedPassword = user.password? await bcrypt.hash(user.password, 10) : null; // Hash with 10 salt rounds
-     // Insert user into the database
-     const newUser = await prisma.user.create({
-       data: {
-         username: user.username,
-         password: hashedPassword,
-         rank: user.rank ?? null, // Optional field
-         speed: user.speed ?? null, // Optional field
-         lastEntryDate: user.lastEntryDate ? new Date(user.lastEntryDate) : null, // Optional field and converted to Date type
-         typingStats: {
-           create: user.typingStats?.map(stat => ({
-             accuracy: stat.accuracy,
-             speed: stat.speed
-           })) || [] // Handle optional typingStats field
-         }
-       }
-     });
+    try {
+      const hashedPassword = user.password ? await bcrypt.hash(user.password, 10) : null;
   
-     console.log('User inserted successfully:', newUser);
-     return newUser;
-   } catch (error) {
-     console.error('Error inserting user:', error);
-     throw error;
-   }
+      // Insert user into the database
+      const newUser = await prisma.user.create({
+        data: {
+          username: user.username,
+          password: hashedPassword,
+          rank: user.rank ?? null,
+          speed: user.speed ?? null,
+          lastEntryDate: user.lastEntryDate ? new Date(user.lastEntryDate) : null,
+          typingStats: {
+            create: user.typingStats?.map(stat => ({
+              accuracy: stat.accuracy,
+              speed: stat.speed,
+            })) || [],
+          },
+          settings: {
+            create: {
+              language: "en",
+              mode: "manual",
+              textLength: defaultTextLength,
+              soundEffects: true,
+              difficultyLevel: "intermediate",
+            },
+          },
+        },
+      });
+  
+      // Now fetch the user along with the settings to return everything
+      const insertedUserWithSettings = await prisma.user.findUnique({
+        where: {
+          id: newUser.id, // Use the newly inserted user's ID
+        },
+        include: {
+          settings: true, // Include settings relation in the return
+        },
+      });
+  
+      console.log('User and settings inserted successfully:', insertedUserWithSettings);
+      return insertedUserWithSettings;
+    } catch (error) {
+      console.error('Error inserting user:', error);
+      throw error;
+    }
   };
+  
 
   export const getUsers = async () => {
     try {
@@ -117,6 +139,9 @@
         where: {
           username: user.username, 
         },
+        include: {
+          settings: true,
+        }
       });
   
       // Check if the user exists
