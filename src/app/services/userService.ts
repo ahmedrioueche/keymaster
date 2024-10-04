@@ -123,7 +123,6 @@ import { defaultTextLength } from "../utils/settings";
     try {
       const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
         username: data.username,
-        password: data.password,
         speed: data.speed,
         rank: data.rank,
       };
