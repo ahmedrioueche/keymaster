@@ -69,8 +69,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-transform duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
     >
-      <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-3xl max-h-[95vh] overflow-y-auto hide-scrollbar">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-3xl max-h-[99vh] overflow-y-auto hide-scrollbar">
+        <div className="flex justify-between items-center mb-1">
           <div className="flex items-center text-light-foreground dark:text-dark-foreground">
             <Image src='/icons/settings.png' height={30} width={30} className="text-3xl mr-3" alt="Settings" />
             <h2 className="text-xl font-bold mt-1 font-dancing">Settings</h2>
