@@ -44,7 +44,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
       widthFactor = 1.1; // Slight increase for large screens if text is long
     }
   
-    const textFactor = Math.max(1, (textToType.length || 0) / 50); // Adjust based on text length
+    const textFactor = Math.max(1, (textToType.length || 0) / 200); // Adjust based on text length
     const newHeight = isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit at 600px
     return newHeight; // Return the calculated height
   };
