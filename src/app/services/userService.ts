@@ -5,6 +5,7 @@ import { defaultTextLength } from "../utils/settings";
 
   export const insertUser = async (user: User) => {
     try {
+      console.log("user in insertUser", user);
       const hashedPassword = user.password ? await bcrypt.hash(user.password, 10) : null;
   
       // Insert user into the database
@@ -144,7 +145,7 @@ import { defaultTextLength } from "../utils/settings";
           settings: true,
         }
       });
-  
+      
       // Check if the user exists
       if (!existingUser) {
         throw new Error('User not found');
