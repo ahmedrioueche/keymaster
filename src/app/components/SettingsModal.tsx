@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSpinner, FaTimes } from 'react-icons/fa';
-import { Settings, User } from "../types/types";
+import { Settings } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
 import { minTextLength } from '../utils/settings';
@@ -12,7 +12,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const {currentUser, setCurrentUser} = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const {currentUser} = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState<"save" | "null">("null"); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const languages = ["English", "French", "Spanish"];
