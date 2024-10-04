@@ -59,7 +59,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
       userData.id = response.userData.id;
       localStorage.setItem("currentUser", JSON.stringify(userData));
       onSetUser ? onSetUser(userData) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
-      setCurrentUser(userData);
+      setCurrentUser(response.userData);
       setUsername('');  
       setPassword('');
       onClose();
@@ -90,7 +90,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
       if(response.userData){
         newUser.id = response.userData.id;
         localStorage.setItem("currentUser", JSON.stringify(newUser));
-        setCurrentUser(newUser);
+        setCurrentUser(response.userData);
         onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
         setIsAlertOpen(true);
         setStatus({success : "Success!", message: `Welcome ${newUser.username}!`, bg: 'bg-blue-500'})
