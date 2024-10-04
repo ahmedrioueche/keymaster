@@ -8,7 +8,7 @@ export async function POST(request: Request) {
         console.log("result in get-users route", result)
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
-        console.error('Error inserting user in route:', error);
+        console.error('Error getting users in route:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
