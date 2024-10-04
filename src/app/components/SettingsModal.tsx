@@ -3,7 +3,7 @@ import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings, User } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
-import { defaultLanguage, defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
+import { defaultLanguage, defaultMode, defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
 import { useUser } from '../context/UserContext';
 import { capitalizeFirstLetter } from '../utils/formater';
 
@@ -23,8 +23,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const userSettings = currentUser?.settings;
   console.log("userSettings", userSettings)
   // Initialize state with default values
-  const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : defaultLanguage);
-  const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : "Manual");
+  const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : capitalizeFirstLetter(defaultLanguage));
+  const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : capitalizeFirstLetter(defaultMode));
   const [textLength, setTextLength] = useState<number>(userSettings?.textLength? userSettings?.textLength : defaultTextLength);
   const [isValidTextLength, setIsValidTextLength] = useState<boolean>(userSettings?.soundEffects? userSettings?.soundEffects : true);
   const [soundEffect, setSoundEffect] = useState<string>("Enabled");
