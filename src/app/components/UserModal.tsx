@@ -56,7 +56,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
     const response = await apiAuthenticateUser(userData);
     console.log("response", response);
     if(response.userData){
-      userData.id = response.id;
+      userData.id = response.userData.id;
       localStorage.setItem("currentUser", JSON.stringify(userData));
       onSetUser ? onSetUser(userData) : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
       setCurrentUser(userData);
@@ -88,7 +88,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSetUser }) => 
       const response = await apiInsertUser(newUser);
       console.log("response", response);
       if(response.userData){
-        newUser.id = response.id;
+        newUser.id = response.userData.id;
         localStorage.setItem("currentUser", JSON.stringify(newUser));
         setCurrentUser(newUser);
         onSetUser? onSetUser(newUser) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
