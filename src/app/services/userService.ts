@@ -52,6 +52,40 @@ import { defaultTextLength } from "../utils/settings";
     }
   };
   
+  export const authenticateUser = async (user: User) => {
+    try {
+      // Fetch the user from the database
+      console.log("user in user", user);
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          username: user.username, 
+        },
+        include: {
+          settings: true,
+        }
+      });
+      
+      // Check if the user exists
+      if (!existingUser) {
+        throw new Error('User not found');
+      }
+      console.log("existingUser.password", existingUser.password);
+      // Compare the provided password with the hashed password in the database
+      const isPasswordValid = (user.password &&  existingUser.password)? await bcrypt.compare(user.password, existingUser.password) : null;
+      
+      if (!isPasswordValid) {
+        throw new Error('Invalid password');
+      }
+  
+      // If authentication is successful, return the user data (omit password for security)
+      const { password, ...userData } = existingUser; //eslint-disable-line @typescript-eslint/no-unused-vars
+      return userData;
+  
+    } catch (error) {
+      console.error('Error authenticating user:', error);
+      throw error; // Rethrow the error to be handled by the calling function
+    } 
+  };
 
   export const getUsers = async () => {
     try {
@@ -131,41 +165,6 @@ import { defaultTextLength } from "../utils/settings";
       console.error('Error updating user:', error);
       throw error;
     }
-  };
-
-  export const authenticateUser = async (user: User) => {
-    try {
-      // Fetch the user from the database
-      console.log("user in user", user);
-      const existingUser = await prisma.user.findUnique({
-        where: {
-          username: user.username, 
-        },
-        include: {
-          settings: true,
-        }
-      });
-      
-      // Check if the user exists
-      if (!existingUser) {
-        throw new Error('User not found');
-      }
-      console.log("existingUser.password", existingUser.password);
-      // Compare the provided password with the hashed password in the database
-      const isPasswordValid = (user.password &&  existingUser.password)? await bcrypt.compare(user.password, existingUser.password) : null;
-      
-      if (!isPasswordValid) {
-        throw new Error('Invalid password');
-      }
-  
-      // If authentication is successful, return the user data (omit password for security)
-      const { password, ...userData } = existingUser; //eslint-disable-line @typescript-eslint/no-unused-vars
-      return userData;
-  
-    } catch (error) {
-      console.error('Error authenticating user:', error);
-      throw error; // Rethrow the error to be handled by the calling function
-    } 
   };
   
   export const setSettings = async (id: number, settings: Partial<Settings>) => {
