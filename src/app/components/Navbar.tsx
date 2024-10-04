@@ -140,13 +140,6 @@ const Navbar: React.FC = () => {
                <Link
                  href="/"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
-                 onClick={handleMenuClose}
-               >
-                 <FaBook className="mr-3 text-lg" /> Lessons
-               </Link> 
-               <Link
-                 href="/"
-                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
                  onClick={handleUserClick}
                > 
                 <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"} 
@@ -174,9 +167,6 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-8">
             <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
               <FaHome className="mr-2" /> Home
-            </Link>
-            <Link href="/lessons" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-              <FaBook className="mr-2" /> Lessons
             </Link>
             <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
              <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"}  

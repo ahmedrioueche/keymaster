@@ -23,11 +23,10 @@ import { defaultTextLength } from "../utils/settings";
           },
           settings: {
             create: {
-              language: "en",
+              language: "english",
               mode: "manual",
               textLength: defaultTextLength,
               soundEffects: true,
-              difficultyLevel: "intermediate",
             },
           },
         },
@@ -173,7 +172,7 @@ import { defaultTextLength } from "../utils/settings";
       if (settings.textLength) updateData.textLength = settings.textLength;
       if (settings.soundEffects !== undefined) updateData.soundEffects = settings.soundEffects; // boolean can be false
       if (settings.difficultyLevel) updateData.difficultyLevel = settings.difficultyLevel;
-  
+      console.log("updateData", updateData)
       // Use upsert to either update or create settings in the database
       const upsertedSettings = await prisma.settings.upsert({
         where: { userId: id }, // Assuming userId is the foreign key in settings
