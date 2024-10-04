@@ -190,40 +190,42 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
 
   return (
     <div className="relative w-full max-w-5xl mx-auto p-6 border-2 rounded-lg border-light-secondary dark:border-dark-secondary mb-6">
-      <div className="absolute top-6 left-6 right-6 bottom-12 pointer-events-none whitespace-pre-wrap font-stix leading-normal">
-        {renderText()}
-      </div>
-
-      <div
-        ref={typingRef}
-        contentEditable={!isCompleted}
-        onInput={handleInputChange}
-        onKeyDown={handleKeyDown}
-        className="relative w-full text-lg font-normal focus:outline-none overflow-y-auto"
-        style={{
-          whiteSpace: "pre-wrap",
-          caretColor: isDarkMode ? "white" : "black",
-          fontFamily: 'STIX',
-          lineHeight: '1.5',
-          color: 'transparent',
-          zIndex: 1,
-          height: `${inputHeight}px`, // Use calculated height
-        }}
-      >
-        {userInput}
-      </div>
-
-      {isStarted && (
-        <>
-          <div className="absolute bottom-2 left-6 text-sm mt-3">
-            Speed : {currentSpeed} WPM
-          </div>
-          <div className="absolute bottom-2 right-6 text-sm mt-3">
-            {userInput.length} / {trimmedTextToType?.length} characters
-          </div>
-        </>
-      )}
+    <div className="absolute top-6 left-6 right-6 bottom-20 pointer-events-none whitespace-pre-wrap font-stix leading-normal">
+      {renderText()}
     </div>
+  
+    <div
+      ref={typingRef}
+      contentEditable={!isCompleted}
+      onInput={handleInputChange}
+      onKeyDown={handleKeyDown}
+      className="relative w-full text-lg font-normal focus:outline-none overflow-y-auto"
+      style={{
+        whiteSpace: "pre-wrap",
+        caretColor: isDarkMode ? "white" : "black",
+        fontFamily: 'STIX',
+        lineHeight: '1.5',
+        color: 'transparent',
+        zIndex: 1,
+        height: `${inputHeight}px`, // Use calculated height
+        paddingBottom: '40px', // Extra padding at the bottom to prevent overlap
+      }}
+    >
+      {userInput}
+    </div>
+  
+    {isStarted && (
+      <>
+        <div className="absolute bottom-2 left-6 text-sm mt-3">
+          Speed : {currentSpeed} WPM
+        </div>
+        <div className="absolute bottom-2 right-6 text-sm mt-3">
+          {userInput.length} / {trimmedTextToType?.length} characters
+        </div>
+      </>
+    )}
+  </div>
+  
   );
 };
 
