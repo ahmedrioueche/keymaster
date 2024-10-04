@@ -154,9 +154,9 @@ const Navbar: React.FC = () => {
                       <FaUser className="mr-3 text-lg" /> <span>User</span>
                     </div>
                   ) : (
-                    <div>
+                    <div className='flex flex-row'>
                       <Image
-                        src="/storysets/profile.svg"
+                        src="/icons/profile.png"
                         alt="KeyMaster"
                         className="w-8 h-8 object-contain mr-2"
                         height={12} 
@@ -199,9 +199,9 @@ const Navbar: React.FC = () => {
                   <FaUser className="mr-3 text-lg" /> <span> User</span>
                 </div>
               ) : (
-                <div>
+                <div className='flex flex-row'>
                   <Image
-                    src="/storysets/profile.svg"
+                    src="/icons/profile.png"
                     alt="KeyMaster"
                     className="w-8 h-8 object-contain mr-2"
                     height={12} 
