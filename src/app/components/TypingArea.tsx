@@ -4,12 +4,11 @@ import { useTheme } from '../context/ThemeContext';
 interface TypingAreaProps {
   textToType: string;
   isStarted?: boolean;
-  textLength?: number;
   onComplete?: (speed: number) => void;
   onUserTyped?: () => void; 
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComplete, onUserTyped, textLength }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComplete, onUserTyped }) => {
   const { isDarkMode } = useTheme();
   const [userInput, setUserInput] = useState("");
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -19,7 +18,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   const [lastInputTime, setLastInputTime] = useState<number | null>(null);
   const typingRef = useRef<HTMLDivElement>(null);
   const [inputHeight, setInputHeight] = useState<number>(150); // State for dynamic height
-  console.log("inputHeight", inputHeight)
   const trimmedTextToType = textToType && textToType.trimEnd() ? textToType.trimEnd() : null;
 
   const calculateSpeed = (text: string, timeInSeconds: number) => {
@@ -30,27 +28,25 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
 
   const calculateHeight = () => {
     const baseHeight = 150; // Default height
-    if(!textLength)
+    if(!textToType)
       return baseHeight;
-    
+
     const screenWidth = window.innerWidth; // Get current screen width
     let widthFactor = 1; // Default width factor is 1, no change for wide screens unless conditions are met
   
     if (screenWidth <= 800) {
       // For small screens, increase the height more
       widthFactor = 1.5 + (800 - screenWidth) / 800; // Larger factor for smaller screens
-    } else if (textLength > 500) {
+    } else if (textToType.length > 500) {
       // For large screens, increase height only if text length > 500
       widthFactor = 1.1; // Slight increase for large screens if text is long
     }
   
-    const textFactor = Math.max(1, (textLength || 0) / 50); // Adjust based on text length
+    const textFactor = Math.max(1, (textToType.length || 0) / 50); // Adjust based on text length
     const newHeight = isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit at 600px
     return newHeight; // Return the calculated height
   };
   
-
-
   // Reset all states and height when textToType changes
   useEffect(() => {
     setUserInput('');
@@ -170,14 +166,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
     });
   };
 
-  // Update height on component mount and window resize
-  useEffect(() => {
-    const newHeight = calculateHeight(); // Initial height calculation
-    setInputHeight(newHeight); // Set initial height
-    window.addEventListener("resize", () => setInputHeight(calculateHeight())); // Listen for resize events
-    return () => window.removeEventListener("resize", () => setInputHeight(calculateHeight())); // Cleanup listener
-  }, [textLength]); // Recalculate if textLength changes
-
   return (
     <div className="relative w-full max-w-5xl mx-auto p-6 border-2 rounded-lg border-light-secondary dark:border-dark-secondary mb-6">
       <div className="absolute top-6 left-6 right-6 bottom-12 pointer-events-none whitespace-pre-wrap font-stix leading-normal">
@@ -197,7 +185,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
           lineHeight: '1.5',
           color: 'transparent',
           zIndex: 1,
-          height: `${150}px`, // Use calculated height
+          height: `${inputHeight}px`, // Use calculated height
         }}
       >
         {userInput}

@@ -254,7 +254,6 @@ const MainContainer: React.FC = () => {
                 isStarted={isStarted}
                 onComplete={(speed) => handleTextCompletion(speed)}
                 onUserTyped={handleUserTyped}
-                textLength={textLength}
               />
             )}
             {/* Leaderboard - Displayed under the Typing Area */}
