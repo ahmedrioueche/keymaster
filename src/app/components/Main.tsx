@@ -39,9 +39,9 @@ const MainContainer: React.FC = () => {
 
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
-    let usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
+    const usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
     console.log("usertextLength", usertextLength)
-    let textLength = usertextLength? usertextLength : defaultTextLength;
+    const textLength = usertextLength? usertextLength : defaultTextLength;
 
     const prompt = `With no introductions nor conclusions, give a paragraph of ${textLength} letters (including spaces)
                     in a ${topic} topic in ${language} language, do not exceed the required length.`;
