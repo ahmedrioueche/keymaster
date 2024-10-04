@@ -25,7 +25,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const handleSave = async () => {
     if(!isValidTextLength)
       return;
-    
+
     setIsLoading("save");
     const settings : Settings = {
       language: "English", // Replace with the selected language from your CustomSelect
@@ -89,7 +89,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             <CustomSelect label="Typing Mode" options={typingModes} />
             {/* Text Length Setting */}
             <div className='flex flex-col'>
-              <label className="font-semibold mb-2">Text length</label>
+              <label className="font-semibold">Text length</label>
               <input 
                 className="mt-2 p-2 border rounded-md bg-light-background dark:bg-dark-background text-light-foreground dark:text-dark-foreground hover:border-light-secondary dark:hover:border-dark-secondary focus:ring-2 focus:ring-light-secondary dark:focus:ring-dark-secondary transition-colors duration-300 no-spinner"
                 type='number' 
