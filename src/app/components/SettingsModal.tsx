@@ -4,6 +4,7 @@ import { Settings, User } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
 import { minTextLength } from '../utils/settings';
+import { useUser } from '../context/UserContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const [currentUser, setCurrentUser] = useState<User>(); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const {currentUser, setCurrentUser} = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState<"save" | "null">("null"); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const languages = ["English", "French", "Spanish"];
