@@ -34,6 +34,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   ];
 
   useEffect(() => {
+    localStorage.clear();
     const storedUser = localStorage.getItem("currentUser");
     const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
     if (currentUser && currentUser.username) {
@@ -47,16 +48,16 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     e.preventDefault();
     setLoginFailed({status: false, message: ""})
     setIsLoading("login");
-    const userData: User = {
+    const user: User = {
       username: username,
       password: password,
     };
 
-    const response = await apiAuthenticateUser(userData);
+    const response = await apiAuthenticateUser(user);
     console.log("response", response);
     if(response.userData){
-      userData.id = response.userData.id;
-      localStorage.setItem("currentUser", JSON.stringify(userData));
+      user.id = response.userData.id;
+      localStorage.setItem("currentUser", JSON.stringify(user));
       console.log("response.userData", response.userData)
       setCurrentUser(response.userData);
       setUsername('');  

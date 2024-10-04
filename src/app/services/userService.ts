@@ -5,7 +5,6 @@ import { defaultTextLength } from "../utils/settings";
 
   export const insertUser = async (user: User) => {
     try {
-      console.log("user in insertUser", user);
       const hashedPassword = user.password ? await bcrypt.hash(user.password, 10) : null;
   
       // Insert user into the database
@@ -55,7 +54,6 @@ import { defaultTextLength } from "../utils/settings";
   export const authenticateUser = async (user: User) => {
     try {
       // Fetch the user from the database
-      console.log("user in user", user);
       const existingUser = await prisma.user.findUnique({
         where: {
           username: user.username, 
@@ -69,7 +67,6 @@ import { defaultTextLength } from "../utils/settings";
       if (!existingUser) {
         throw new Error('User not found');
       }
-      console.log("existingUser.password", existingUser.password);
       // Compare the provided password with the hashed password in the database
       const isPasswordValid = (user.password &&  existingUser.password)? await bcrypt.compare(user.password, existingUser.password) : null;
       
