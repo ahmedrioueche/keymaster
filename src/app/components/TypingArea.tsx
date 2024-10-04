@@ -208,7 +208,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
         color: 'transparent',
         zIndex: 1,
         height: `${inputHeight}px`, // Use calculated height
-        paddingBottom: '40px', // Extra padding at the bottom to prevent overlap
+        paddingBottom: '60px', // Extra padding at the bottom to prevent overlap
       }}
     >
       {userInput}
