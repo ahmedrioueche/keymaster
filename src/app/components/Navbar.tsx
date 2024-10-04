@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
 
   const handleSettingsClick = () => {
     if(!currentUser){
-      setIsMenuOpen(false);
+      setIsMenuOpen(true);
       return;
     }
 
