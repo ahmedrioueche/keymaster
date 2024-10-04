@@ -19,7 +19,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   const languages = ["English", "French", "Spanish"];
   const typingModes = ["Auto", "Manual"];
-  const difficultyLevels = ["Beginner", "Intermediate", "Advanced"];
   const soundEffects = ["Enabled", "Disabled"];
   const userSettings = currentUser?.settings;
   // Initialize state with default values
@@ -116,7 +115,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 <span className="text-dark-secondary text-base mt-1">Text length must be between {minTextLength} and {maxTextLength} letters.</span>
               )}
             </div>
-            
+
             <CustomSelect label="Sound Effects" options={soundEffects} selectedOption={soundEffect} onChange={setSoundEffect} />
 
             <div className="flex justify-end">
