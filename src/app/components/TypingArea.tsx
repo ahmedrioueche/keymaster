@@ -31,11 +31,21 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   const calculateHeight = () => {
     const baseHeight = 150; // Default height
     const screenWidth = window.innerWidth; // Get current screen width
-    const widthFactor = 800 / Math.max(screenWidth, 1); // Inverse scaling: larger factor for smaller screens
+    let widthFactor;
+  
+    if (screenWidth <= 800) {
+      // For small screens, increase the height more
+      widthFactor = 1.5 + (800 - screenWidth) / 800; // Larger factor for smaller screens
+    } else {
+      // For large screens, don't increase height too much
+      widthFactor = 1; // Keep it at 1, meaning no extra height increase for wide screens
+    }
+  
     const textFactor = Math.max(1, (textLength || 0) / 50); // Adjust based on text length
-    const newHeight = isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit
+    const newHeight = isStarted ? Math.min(baseHeight * widthFactor * textFactor, 600) : baseHeight; // Max height limit at 600px
     return newHeight; // Return the calculated height
   };
+  
 
   // Reset all states and height when textToType changes
   useEffect(() => {
