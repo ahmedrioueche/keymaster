@@ -74,13 +74,12 @@ const MainContainer: React.FC = () => {
   
         // If user exists, proceed with the update
         if (existingUserIndex > -1) {
-          const existingUser = updatedUsers[existingUserIndex];
   
           // Create a new entry for the typing stat
           const newEntry: TypingStat = { speed, date };
   
           // Append the new entry to their typingStats
-          const updatedTypingStats = [...(existingUser.typingStats || []), newEntry];
+          const updatedTypingStats = [...(currentUser.typingStats || []), newEntry];
   
           // Determine the best speed
           const bestSpeedEntry = updatedTypingStats.reduce(
@@ -90,7 +89,7 @@ const MainContainer: React.FC = () => {
   
           // Update the user object with new stats
           updatedUser = {
-            ...existingUser,
+            ...currentUser,
             typingStats: updatedTypingStats,
             speed: bestSpeedEntry.speed,
             lastEntryDate: date,
@@ -106,7 +105,7 @@ const MainContainer: React.FC = () => {
             username: currentUser.username,
             speed,
             lastEntryDate: date,
-            typingStats: currentUser.typingStats ? [...currentUser.typingStats, newEntry] : [newEntry], // Correctly handle the existing stats
+            typingStats: [newEntry], 
           };
   
           // Add the new user to the users array
