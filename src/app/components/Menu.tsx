@@ -6,7 +6,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { TypingStat } from '../types/types';
 
-interface SettingsAndStatsProps {
+interface MenuProps {
   onStart: () => void;
   userTyped: boolean;
   isFinished: boolean;
@@ -17,7 +17,7 @@ interface SettingsAndStatsProps {
   typingStats?: TypingStat[]; // Optional array of typing statistics
 }
 
-const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
+const Menu: React.FC<MenuProps> = ({
   onStart,
   userTyped,
   isFinished,
@@ -256,4 +256,4 @@ const SettingsAndStats: React.FC<SettingsAndStatsProps> = ({
   );
 };
 
-export default SettingsAndStats;
+export default Menu;

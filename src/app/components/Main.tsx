@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import TypingArea from "./TypingArea"; 
-import SettingsAndStats from "./Menu"; 
+import Menu from "./Menu"; 
 import Leaderboard from "./Leaderboard"; 
 import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
 import { TypingStat, User } from "../types/types";
@@ -165,7 +165,7 @@ const MainContainer: React.FC = () => {
 
   setTimeout(() => {
     getUsers();
-  }, 5000)
+  }, 10000)
 
   const getUsers = async () => {
     const response = await apiGetUsers();
@@ -226,7 +226,7 @@ const MainContainer: React.FC = () => {
       <div className="flex flex-col md:flex-row flex-grow">
         {/* Settings and Stats - Full width on small screens, 1/3 width on large screens */}
         <div className="w-full md:w-1/3 lg:w-1/4 mb-8 md:mb-0 md:mr-4">
-          <SettingsAndStats
+          <Menu
             onStart={handleStart}
             userTyped={userTyped}
             isFinished={isFinished}

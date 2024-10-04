@@ -31,14 +31,19 @@
   };
 
   export const getUsers = async () => {
-      try {
-        const users = await prisma.user.findMany(); // Use findMany to get all users
-        return users;
-      } catch (error) {
-        console.error('Error getting users:', error);
-        throw error;
-      }
+    try {
+      const users = await prisma.user.findMany({
+        include: {
+          settings: true, 
+        },
+      });
+      return users;
+    } catch (error) {
+      console.error('Error getting users:', error);
+      throw error;
+    }
   };
+  
 
   
   export const getUserById = async (id: number) => {

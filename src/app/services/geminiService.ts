@@ -8,6 +8,5 @@ export const getGeminiAnswer = async (prompt: string) => {
     
     const result = await model?.generateContent(prompt);
     
-    // Ensure result.response.text() is called correctly
     return result?.response.text();
 };
