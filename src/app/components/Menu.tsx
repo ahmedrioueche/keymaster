@@ -239,7 +239,7 @@ const Menu: React.FC<MenuProps> = ({
 
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="">
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="custom-scrollbar">
               {typingStats.map((stat, index) => (
                 <div key={index} className="flex justify-between py-1">
                   <p className="text-sm">
@@ -249,6 +249,7 @@ const Menu: React.FC<MenuProps> = ({
               ))}
             </div>
           )}
+
           </div>
         </div>
       )}
