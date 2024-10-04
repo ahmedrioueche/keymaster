@@ -106,7 +106,7 @@ const MainContainer: React.FC = () => {
             username: currentUser.username,
             speed,
             lastEntryDate: date,
-            typingStats: [newEntry],
+            typingStats: currentUser.typingStats ? [...currentUser.typingStats, newEntry] : [newEntry], // Correctly handle the existing stats
           };
   
           // Add the new user to the users array
