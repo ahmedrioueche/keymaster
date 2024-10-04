@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "./context/ThemeContext";
 import { UserProvider } from "./context/UserContext"; // Import UserProvider
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "KeyMaster",
@@ -24,6 +25,7 @@ export default function RootLayout({
           <UserProvider>
             <Navbar />
             {children}
+            <Footer/>
           </UserProvider>
         </ThemeProvider>
       </body>
