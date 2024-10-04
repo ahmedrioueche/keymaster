@@ -72,3 +72,27 @@ html, body {
 .no-spinner[type="number"] {
     -moz-appearance: textfield;
 }
+
+.custom-scrollbar {
+  /* For Chrome, Safari, and Opera */
+  &::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; /* Background of the scrollbar track */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #007bff; /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #0056b3; /* Color of the scrollbar thumb on hover */
+  }
+
+  /* For Firefox */
+  scrollbar-width: thin; /* Make the scrollbar thin */
+  scrollbar-color: #007bff transparent; /* Thumb color and track color */
+}
