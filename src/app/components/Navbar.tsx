@@ -7,7 +7,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Link from 'next/link';
 import { useTheme } from '../context/ThemeContext'; 
 import UserModal from './UserModal';
-import { FaBook, FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
+import { FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
 import SettingsModal from './SettingsModal';
 import Image from 'next/image';
 import { useUser } from '../context/UserContext';
