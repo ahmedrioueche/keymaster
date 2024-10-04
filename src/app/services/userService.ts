@@ -152,14 +152,18 @@
       if (settings.soundEffects !== undefined) updateData.soundEffects = settings.soundEffects; // boolean can be false
       if (settings.difficultyLevel) updateData.difficultyLevel = settings.difficultyLevel;
   
-      // Update settings in the database
-      const updatedSettings = await prisma.settings.update({
+      // Use upsert to either update or create settings in the database
+      const upsertedSettings = await prisma.settings.upsert({
         where: { userId: id }, // Assuming userId is the foreign key in settings
-        data: updateData,
+        update: updateData,
+        create: {
+          userId: id, // Ensure the userId is set when creating a new record
+          ...updateData, // Spread the updateData to include other settings
+        },
       });
   
-      console.log('Settings updated successfully:', updatedSettings);
-      return updatedSettings;
+      console.log('Settings updated or created successfully:', upsertedSettings);
+      return upsertedSettings;
     } catch (error) {
       console.error('Error setting settings:', error);
       throw error;
