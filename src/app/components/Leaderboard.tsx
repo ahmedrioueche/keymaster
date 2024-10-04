@@ -6,15 +6,7 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
-  if (
-    !leaderboardData || // Check for null, undefined, or other falsy values
-    (Array.isArray(leaderboardData) && leaderboardData.length === 0) || // Check if it's an empty array
-    (typeof leaderboardData === 'object' && Object.keys(leaderboardData).length === 0) // Check if it's an empty object
-  ) {
-    return null;
-  }
   
-
   // Remove duplicate players based on the 'id' field and filter out users without speed
   const uniqueLeaderboardData = leaderboardData.reduce((acc, player) => {
     if (player.speed && !acc.find((p) => p.id === player.id)) {
@@ -23,6 +15,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
     return acc;
   }, [] as User[]);
 
+  if (
+    !uniqueLeaderboardData || // Check for null, undefined, or other falsy values
+    (Array.isArray(uniqueLeaderboardData) && uniqueLeaderboardData.length === 0) || // Check if it's an empty array
+    (typeof uniqueLeaderboardData === 'object' && Object.keys(uniqueLeaderboardData).length === 0) // Check if it's an empty object
+  ) {
+    return null;
+  }
+  
   // Sort players by speed in descending order
   const sortedLeaderboardData = uniqueLeaderboardData.sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0));
 
