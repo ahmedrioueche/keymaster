@@ -49,7 +49,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, onComple
   
     // Calculate the new height and cap it at 600px, or 150px if the typing hasn't started
     const newHeight = isStarted
-      ? Math.min(baseHeight * widthFactor * textFactor, 900) // Cap at 600px
+      ? Math.min(baseHeight * widthFactor * textFactor, 2000) // Cap at 600px
       : baseHeight;
   
     return newHeight; // Return the calculated height
