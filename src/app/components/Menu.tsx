@@ -239,7 +239,7 @@ const Menu: React.FC<MenuProps> = ({
 
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="bg-light-background dark:bg-dark-background p-2 rounded-md border border-light-secondary dark:border-dark-secondary">
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="">
               {typingStats.map((stat, index) => (
                 <div key={index} className="flex justify-between py-1">
                   <p className="text-sm">
