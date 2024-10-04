@@ -13,7 +13,7 @@ import { useUser } from "../context/UserContext";
 import { defaultTextLength } from "../utils/settings";
 
 const MainContainer: React.FC = () => {
-  const {currentUser, setCurrentUser, onSet} = useUser();
+  const {currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn} = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
@@ -184,7 +184,10 @@ const MainContainer: React.FC = () => {
       if (user) {
         console.log("User has been updated:", user);
         //user has logged in, start now
-        handleStart();
+        if(userLoggedIn){
+          handleStart();
+          setUserLoggedIn(false);
+        }
       } else {
         console.log("User has been logged out or removed");
       }

@@ -12,7 +12,7 @@ interface UserModalProps {
 }
 
 const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
-  const { currentUser, setCurrentUser } = useUser();
+  const { currentUser, setCurrentUser, setUserLoggedIn } = useUser();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>(''); // State for confirm password
@@ -56,8 +56,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     console.log("response", response);
     if(response.userData){
       user.id = response.userData.id;
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      console.log("response.userData", response.userData)
+      localStorage.setItem("currentUser", JSON.stringify(response.userData));
+      setUserLoggedIn(true);
       setCurrentUser(response.userData);
       setUsername('');  
       setPassword('');
@@ -88,8 +88,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
       console.log("response", response);
       if(response.userData){
         newUser.id = response.userData.id;
-        localStorage.setItem("currentUser", JSON.stringify(newUser));
-        console.log("response.userData", response.userData)
+        localStorage.setItem("currentUser", JSON.stringify(response.userData));
+        setUserLoggedIn(true);
         setCurrentUser(response.userData);
         setIsAlertOpen(true);
         setStatus({success : "Success!", message: `Welcome ${newUser.username}!`, bg: 'bg-blue-500'})

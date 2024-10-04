@@ -1,37 +1,35 @@
-"use client";
 import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from "react";
-import { User } from "../types/types"; // Assuming you have a User type defined
+import { User } from "../types/types";
 
 interface UserContextProps {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
-  onSet: (callback: (user: User | null) => void) => () => void; // Correctly specify the return type of onSet
+  onSet: (callback: (user: User | null) => void) => () => void;
+  userLoggedIn: boolean;
+  setUserLoggedIn: (loggedIn: boolean) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const callbacksRef = useRef<Set<(user: User | null) => void>>(new Set()); // Use ref to hold callbacks
+  const [userLoggedIn, setUserLoggedIn] = useState(false); // Add flag to the context
 
-  // Notify all registered callbacks when currentUser changes
+  const callbacksRef = useRef<Set<(user: User | null) => void>>(new Set());
+
   useEffect(() => {
-    // Call each registered callback with the new currentUser value
     callbacksRef.current.forEach((callback) => callback(currentUser));
-  }, [currentUser]); // Run only when currentUser changes
+  }, [currentUser]);
 
-  // Function to register a callback
   const onSet = (callback: (user: User | null) => void) => {
-    callbacksRef.current.add(callback); // Add callback to the ref
-
-    // Return a cleanup function to remove the callback
+    callbacksRef.current.add(callback);
     return () => {
-      callbacksRef.current.delete(callback); // Cleanup
+      callbacksRef.current.delete(callback);
     };
   };
 
   return (
-    <UserContext.Provider value={{ currentUser, setCurrentUser, onSet }}>
+    <UserContext.Provider value={{ currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn }}>
       {children}
     </UserContext.Provider>
   );
