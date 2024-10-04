@@ -126,6 +126,7 @@ const MainContainer: React.FC = () => {
         if (updatedCurrentUser) {
           // Update the current user state with the new rank and updated stats
           setCurrentUser(updatedCurrentUser);
+          localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
         }
   
         // Update the users array with ranked users
