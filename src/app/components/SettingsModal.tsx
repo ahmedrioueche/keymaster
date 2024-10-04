@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSpinner, FaTimes } from 'react-icons/fa';
-import { Settings } from "../types/types";
+import { Settings, User } from "../types/types";
 import Image from 'next/image';
 import { apiSetSettings } from '../utils/apiHelper';
 import { defaultTextLength, minTextLength } from '../utils/settings';
@@ -19,7 +19,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const typingModes = ["Auto", "Manual"];
   const difficultyLevels = ["Beginner", "Intermediate", "Advanced"];
   const soundEffects = ["Enabled", "Disabled"];
-
+  
   // Initialize user settings or fallback to default values
   const [language, setLanguage] = useState<string>(currentUser?.settings?.language || languages[0]);
   const [typingMode, setTypingMode] = useState<string>(currentUser?.settings?.mode === 'manual' ? "Manual" : "Auto");
@@ -47,6 +47,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const response = currentUser?.id ? await apiSetSettings(currentUser.id, settings) : null;
     console.log("response", response);
 
+    if(currentUser){
+      const updatedUser : User = {
+        ...currentUser,
+        settings : settings,
+      }
+      setCurrentUser(updatedUser);
+    }
+  
     setIsLoading("null");
     onClose();
   };

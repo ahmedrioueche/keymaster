@@ -10,6 +10,7 @@ import UserModal from './UserModal';
 import { FaBook, FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
 import SettingsModal from './SettingsModal';
 import Image from 'next/image';
+import { useUser } from '../context/UserContext';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -17,6 +18,7 @@ const Navbar: React.FC = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {currentUser} = useUser();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Detect if the device is mobile
@@ -74,6 +76,11 @@ const Navbar: React.FC = () => {
   }
 
   const handleSettingsClick = () => {
+    if(!currentUser){
+      setIsMenuOpen(false);
+      return;
+    }
+
     setIsSettingsModalOpen(true);
     if(isMenuOpen){
       setIsMenuOpen(false);
