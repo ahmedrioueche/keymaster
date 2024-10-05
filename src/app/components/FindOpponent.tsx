@@ -17,7 +17,7 @@ interface FindOpponentProps {
   onJoinRoom?: (roomId : string) => void;
 }
 
-const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onJoinRoom, onCreateRoom }) => {
+const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom, onCreateRoom }) => {
   const { currentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [opponent, setOpponent] = useState<User | null>(null);
   const [textToType, setTextToType] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -79,7 +79,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onJoinRoom, onCreat
 
     try {
       const response = await apiJoinRoom(roomId);
-      if (response.success) {
+      if (response.room) {
         // Handle successful room joining
         setOpponent(response.opponent);
         setTextToType(response.text);
@@ -87,6 +87,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onJoinRoom, onCreat
         if(response.room){
           onJoinRoom? onJoinRoom(response.room.roomId) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
         }
+        onClose();
       } else {
         alert("Failed to join the room. Please check the Room ID.");
       }
@@ -107,6 +108,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onJoinRoom, onCreat
     if(response.room){
       onCreateRoom? onCreateRoom(response.room.roomId) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
     }
+    onClose();
   }
 
   const handleTryAgain = () => {

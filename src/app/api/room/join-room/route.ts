@@ -1,4 +1,4 @@
-import { joinRoom } from '@/app/services/pusherService';
+import { joinRoom } from '@/app/services/roomService';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     const response = await joinRoom(roomId);
 
-    return NextResponse.json({room: response});
+    return NextResponse.json({response: response});
   } catch (error) {
     console.error('Error in Pusher route:', error);
     return NextResponse.json({ error: `Message failed to send: ${error}` }, { status: 500 });

@@ -57,10 +57,13 @@ const CompetePage: React.FC = () => {
   };
   
   const handleCreateRoom = (roomId: string) => {
+    console.log("roomId in handleCreateRoom", roomId)
     setRoomId(roomId);
   }
   
   const handleJoinRoom = (roomId: string) => {
+    console.log("roomId in handleJoinRoom", roomId)
+
     setRoomId(roomId);
   }
 

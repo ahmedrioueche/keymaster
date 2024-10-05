@@ -61,7 +61,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
 
   useEffect(() => {
     console.log("received inputText in typingArea", inputText);
-
+    inputText? setUserInput(inputText) : null;
   }, [inputText])
   
   
