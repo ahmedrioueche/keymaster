@@ -4,13 +4,12 @@ import React, { useState, useEffect } from "react";
 import TypingArea from "./TypingArea";
 import { User } from "../types/types";
 import { apiPusherSendMessage } from "../utils/apiHelper";
-import { pusherClient } from "../utils/pusher";
+import Pusher from "pusher-js";
 
 interface CompeteRoomProps {
   roomId: string;
   currentUser: User | null;
   opponent: User | undefined;
-  textToType: string;
   onReady?: () => void;
   isStarted?: boolean;
 }
@@ -19,7 +18,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   roomId,
   currentUser,
   opponent,
-  textToType,
   onReady,
   isStarted,
 }) => {
@@ -29,6 +27,8 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   const [opponentReady, setOpponentReady] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [opponentInputText, setOpponentInputText] = useState('');
   const [timer, setTimer] = useState(0);
+  const [textToType, setTextToType] = useState('Press Ready button to start');
+  const [temptextToType, setTempTextToType] = useState('Press Ready button to start');
 
   const handleComplete = (speed: number) => {
     setUserSpeed(speed);
@@ -38,10 +38,19 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     setOpponentSpeed(speed);
   };
 
-  const handleUserReady = () => {
+  const handleUserReady = async () => {
+    console.log("currentUser", currentUser);  
+    const response = await apiPusherSendMessage(roomId, "on-ready", "ready", currentUser?.username);
+    console.log("response in handleUserReady", response);
     setUserReady(true);
-    onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
   };
+
+  useEffect(() => {
+    if(userReady && opponentReady){
+      onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
+      setTextToType(temptextToType);
+    }
+  }, [userReady, opponentReady])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -58,26 +67,44 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     };
   }, [isStarted]);
 
+
   const handleUserInputChange = async (inputText: string) => {
-    const response = await apiPusherSendMessage(roomId, inputText, currentUser?.username);
+    const response = await apiPusherSendMessage(roomId, "on-text-update", inputText, currentUser?.username);
     console.log("response", response);
   }
 
   useEffect(() => {
+    const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '',
+    });
+
     const channel = pusherClient.subscribe(`compete-channel-${roomId}`);
 
-    channel.bind('text-update', (data: { message: string; user: string }) => {
+    channel.bind('on-text-update', (data: { message: string; messageType: string; username: string }) => {
       console.log('Received data:', data);
-      if (data.user !== currentUser?.username) {
+      console.log('Received message:', data.message);
+      if (data.username !== currentUser?.username) {
         setOpponentInputText(data.message);
       }
+      
+    });
+
+    channel.bind('on-ready', (data: { username: string }) => {
+      if (data.username !== currentUser?.username) {
+        setOpponentReady(true);
+      }
+    });
+
+    channel.bind('on-text-to-type', (data: { textToType: string }) => {
+      console.log('Received text to type:', data.textToType);
+        setTempTextToType(data.textToType); 
     });
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [currentUser, roomId]);
+  }, [roomId]);
 
   return (
     <div className="min-h-screen flex flex-col p-4 sm:p-8 h-full">

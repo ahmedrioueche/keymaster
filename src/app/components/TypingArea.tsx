@@ -233,14 +233,23 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
   
     {isStarted && (
       <>
+        {/* Speed and character count */}
         <div className="absolute bottom-2 left-6 text-sm mt-3">
-          Speed : {currentSpeed} WPM
+          Speed: {currentSpeed} WPM
         </div>
         <div className="absolute bottom-2 right-6 text-sm mt-3">
           {userInput.length} / {trimmedTextToType?.length} characters
         </div>
+
+        {/* Percentage progress in the middle */}
+        {trimmedTextToType && (
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-sm mt-3">
+            {Math.floor((userInput.length / trimmedTextToType?.length) * 100)}% completed
+          </div>
+        )}
       </>
     )}
+
   </div>
   
   );

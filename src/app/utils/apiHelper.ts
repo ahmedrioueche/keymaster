@@ -161,7 +161,7 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
   
   export const apiJoinRoom = async (roomId : string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
-        const response = await fetch('/api/join-room', {
+        const response = await fetch('/api/room/join-room', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({roomId}),
@@ -203,12 +203,12 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
       }
   }
 
-  export const apiPusherSendMessage = async (roomId : string, message: string, username : string | undefined): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  export const apiPusherSendMessage = async (roomId : string, event: string, message: string, username : string | undefined): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
         const response = await fetch('/api/pusher/send-message', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({roomId, message, username}),
+          body: JSON.stringify({roomId, event, message, username}),
         });
     
         if (!response.ok) {

@@ -9,9 +9,10 @@ import { useUser } from '../context/UserContext';
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
+  type?: "practice" | "compete";
 }
 
-const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
+const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, type }) => {
   const { currentUser, setCurrentUser, setUserLoggedIn } = useUser();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -27,7 +28,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   const [isSignupDisabled, setIsSignupDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState<"login" | "signup" | "changeUser" | "logout" | "null">("null");
   const [isInsertUserCalled, setIsInsertUserCalled] = useState(false);
-
   // Placeholder users array
   const previousUsers: User[] = [
     // Add your previous users here if any
@@ -57,6 +57,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     if(response.userData){
       user.id = response.userData.id;
       localStorage.setItem("currentUser", JSON.stringify(response.userData));
+      console.log("currentUser", response.userData)
       setUserLoggedIn(true);
       setCurrentUser(response.userData);
       setUsername('');  
@@ -191,6 +192,10 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     else
       setPasswordsDontMatch({status: false, message: ""})
   }
+
+  const handleClose = () => {
+    onClose();
+  }
   
   return (
     <div
@@ -202,12 +207,12 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
             <Image src='/icons/profile.png' height={30} width={30} className="text-3xl mr-3" alt="Profile" />
             <h2 className="text-xl font-bold mt-1 font-dancing">User</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full bg-light-background hover:bg-light-accent dark:hover:bg-dark-secondary transition-colors duration-300 text-gray-700"
-          >
-            <FaTimes size={16} />
-          </button>
+            <button
+              onClick={handleClose}
+              className="p-2 rounded-full bg-light-background hover:bg-light-accent dark:hover:bg-dark-secondary transition-colors duration-300 text-gray-700"
+            >
+              <FaTimes size={16} />
+            </button>
         </div>
 
         {/* Conditional rendering for user change screen */}
@@ -256,7 +261,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                       value={username}
                       onChange={(e) => handleUsernameChange(e)}
                       type="text"
-                      className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white text-dark-background font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                       placeholder="Enter your username"
                       required
                     />
@@ -270,7 +275,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       type="password"
-                      className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white text-dark-background font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                       placeholder="Enter your password"
                       required
                     />
@@ -281,7 +286,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                       value={confirmPassword}
                       onChange={(e) => handleConfirmPassword(e)}
                       type="password"
-                      className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white text-dark-background font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                       placeholder="Confirm your password"
                       required
                     />
@@ -317,7 +322,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           type="text"
-                          className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white text-dark-background font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                           placeholder="Enter your username"
                           required
                         />
@@ -328,7 +333,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           type="password"
-                          className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white text-dark-background font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
                           placeholder="Enter your password"
                           required
                         />

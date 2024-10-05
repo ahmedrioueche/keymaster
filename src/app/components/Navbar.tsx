@@ -96,20 +96,21 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-light-background dark:bg-dark-background p-4 shadow">
       <div className="flex justify-between items-center">
-        <div className='flex flex-row'>
-          <Image
-            src="/storysets/typing.svg"
-            alt="KeyMaster"
-            className="w-8 h-8 object-contain mr-2" 
-            height={12} 
-            width={12} 
-          />
-          <h1 className="text-light-foreground dark:text-dark-foreground text-2xl font-bold">
-            KeyMaster
-          </h1>
-        </div>
+        <Link href="/">
+          <div className='flex flex-row'>
+            <Image
+              src="/storysets/typing.svg"
+              alt="KeyMaster"
+              className="w-8 h-8 object-contain mr-2" 
+              height={12} 
+              width={12} 
+            />
+            <h1 className="text-light-foreground dark:text-dark-foreground text-2xl font-bold cursor-pointer">
+              KeyMaster
+            </h1>
+          </div>
+        </Link>
       
-
         {isMobile ? (
           <>
             <div>
@@ -139,12 +140,14 @@ const Navbar: React.FC = () => {
              <Link
                  href="/"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleMenuClose}
                >
                  <FaBook className="mr-3 text-lg" /> Practice
               </Link>
                <Link
                  href="/compete"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleMenuClose}
                >
                  <FaTrophy className="mr-3 text-lg" /> Compete
                </Link>

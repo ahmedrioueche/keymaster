@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "KeyMaster",
-  description: "How type can you fast?",
+  description: "How fast can you type?",
   icons: {
     icon: '/favicon.svg',
   },

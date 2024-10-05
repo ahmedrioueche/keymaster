@@ -210,7 +210,7 @@ const MainContainer: React.FC = () => {
     return () => {
       unregister(); // Unregister the callback
     };
-  }, [onSet]); // Ensure onSet is included in the dependencies
+  }, [onSet]);
   
   const handleStop = () => {
     if(userSettings?.mode === "auto"){
@@ -240,10 +240,10 @@ const MainContainer: React.FC = () => {
 
           {/* Subtitle - Responsive font size */}
           <h2 className="text-xl md:text-3xl font-dancing">
-            How type can you fast?
+            How fast can you type?
           </h2>
         </div>
-    </div>
+      </div>
 
       {/* Main Content Area */}
       <div className="flex flex-col md:flex-row flex-grow">

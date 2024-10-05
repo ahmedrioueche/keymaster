@@ -2,18 +2,20 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FindOpponent from "../../components/FindOpponent";
 import CompeteRoom from "../../components/CompeteRoom";
-import { UserProvider } from "../../context/UserContext";
+import { useUser } from "../../context/UserContext";
 import { User } from "../../types/types";
 import CountDown from "@/app/components/Countdown";
-import { helperPromptGemini } from "@/app/utils/helper";
+import UserModal from "@/app/components/UserModal";
+import Image from 'next/image';
 
 const CompetePage: React.FC = () => {
  // const user = {
  //   username: "Ahmed",
  // };
+  const { currentUser, onSet, userLoggedIn } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars 
   const [opponent, setOpponent] = useState<User | null>();
   const [textToType, setTextToType] = useState<string>("Press Ready button to start");
   const [isReady, setIsReady] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -25,8 +27,51 @@ const CompetePage: React.FC = () => {
   const [textLength, setTextLength] = useState(100); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isPromptedGemini, setIsPromptedGemini] = useState<boolean>(false);
   const [isStarted, setIsStarted] = useState<boolean>(false);
-  const [isFindOpponentOpen, setIsFindOpponentOpen] = useState<boolean>(opponent? false : true);
+  const [isFindOpponentOpen, setIsFindOpponentOpen] = useState<boolean>(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [roomId, setRoomId] = useState('');
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    const checkUserWithDelay = setTimeout(() => {
+      console.log("currentUser", currentUser);
+      if (!currentUser) {
+        setIsUserModalOpen(true);
+      } else if (!opponent) {
+        setIsFindOpponentOpen(true);
+      }
+    }, 1000); // Wait for 1 second
+
+    return () => clearTimeout(checkUserWithDelay);
+  }, [currentUser, opponent]);
+
+  useEffect(() => {
+    if(!opponent){
+      setIsFindOpponentOpen(true);
+    }
+  }, [isUserLoggedIn])
+
+  useEffect(() => {
+    const callback = (user: User | null) => {
+      if (user) {
+        console.log("User has been updated:", user);
+        //user has logged in, start now
+        if(userLoggedIn){
+          setIsUserLoggedIn(true);
+        }
+      } else {
+        console.log("User has been logged out or removed");
+      }
+    };
+
+    // Register callback to get notified when currentUser changes
+    const unregister = onSet(callback);
+
+    // Cleanup is managed automatically when the component unmounts
+    return () => {
+      unregister(); // Unregister the callback
+    };
+  }, [onSet]);
 
   // Function to handle opponent found
   const handleOpponentFound = (opponent: User, text: string) => {
@@ -39,13 +84,6 @@ const CompetePage: React.FC = () => {
     setIsReady(true);
     setCountdownStart(3); // Reset countdown start value
     setIsCountdownOpen(true); // Open countdown modal
-    if(!isPromptedGemini){
-      const response = await helperPromptGemini(textLength, language, topic);
-      if(response){
-        setTextToType(response);
-      }
-      setIsPromptedGemini(true);
-    }
   };
 
   const handleCountdownClose = async () => {
@@ -66,11 +104,55 @@ const CompetePage: React.FC = () => {
     setRoomId(roomId);
   }
 
+  const handleLoginClick = () => {
+    setIsUserModalOpen(true);
+  }
+
   return (
-    <UserProvider>
-      <div className="min-h-screen flex flex-col h-full bg-light-background text-light-foreground transition-all duration-500 dark:bg-dark-background dark:text-dark-foreground">
-        {roomId && (
-          <CompeteRoom roomId={roomId} opponent={opponent? opponent : undefined} textToType={textToType} currentUser={null} onReady={handleReady} isStarted={isStarted} />
+    <div>
+      <div className={`min-h-screen flex flex-col ${currentUser? '' : 'p-8' } h-full bg-light-background text-light-foreground transition-all duration-500 dark:bg-dark-background dark:text-dark-foreground`}>
+        {!currentUser ? (
+        <div className="flex flex-col md:flex-row items-center justify-center mb-8 md:mt-12 md:mb-12">
+        {/* Left Side - Typing Image */}
+        <Image
+          src="/storysets/typing.svg"
+          alt="KeyMaster"
+          className="w-48 h-48 object-contain mr-4"
+          height={128}
+          width={128}
+        />
+      
+        {/* Middle Section - Title and Subtitle */}
+        <div className="text-center md:text-left flex flex-col items-center md:items-start">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-dancing">
+            KeyMaster
+          </h1>
+      
+          <h2 className="text-xl md:text-2xl font-dancing mb-4">
+            How fast can you type?
+          </h2>
+      
+          {/* Login Call-to-Action */}
+          <p className="text-lg md:text-xl font-semibold mb-6">
+            Login to compete against your friends!
+          </p>
+      
+          <button onClick={handleLoginClick} className="dark:bg-dark-primary bg-light-primary hover:bg-light-secondary dark:hover:bg-dark-secondary hover:text-dark-background text-light-background font-bold py-2 px-6 rounded-full transition duration-300">
+            Login
+          </button>
+        </div>
+      
+        {/* Right Side - Compete Image */}
+        <Image
+          src="/storysets/compete.svg"
+          alt="Compete"
+          className="w-64 h-64 md:w-80 md:h-80 object-contain ml-4 mt-6 md:mt-0" // Bigger size for the compete image
+          height={256}
+          width={256}
+        />
+      </div>
+        ) : (
+          <CompeteRoom roomId={roomId} opponent={opponent? opponent : undefined} currentUser={currentUser} onReady={handleReady} isStarted={isStarted} />
         )}
       </div>
       <CountDown 
@@ -87,7 +169,12 @@ const CompetePage: React.FC = () => {
             onJoinRoom={(roomId) => handleJoinRoom(roomId)}
            />
       )}
-    </UserProvider>
+      <UserModal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        type="compete"
+      />
+    </div>
   );
 };
 
