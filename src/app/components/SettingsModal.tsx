@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings, User } from "../types/types";
 import Image from 'next/image';
@@ -6,6 +6,7 @@ import { apiSetSettings } from '../utils/apiHelper';
 import { defaultLanguage, defaultMode, defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
 import { useUser } from '../context/UserContext';
 import { capitalizeFirstLetter } from '../utils/formater';
+import CustomSelect from './CustomSelect';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const { currentUser, setCurrentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const { currentUser, setCurrentUser } = useUser(); 
   const [isLoading, setIsLoading] = useState<"save" | "null">("null");
 
   const languages = ["English", "French", "Spanish"];
@@ -129,59 +130,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-interface CustomSelectProps {
-  label: string;
-  options: string[];
-  selectedOption: string;
-  onChange: (option: string) => void;
-}
-
-const CustomSelect: React.FC<CustomSelectProps> = ({ label, options, selectedOption, onChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const selectRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [selectRef]);
-
-  return (
-    <div className="relative" ref={selectRef}>
-      <label className="font-semibold">{label}</label>
-      <div
-        className="mt-2 p-2 border rounded-md bg-light-background dark:bg-dark-background hover:border-light-secondary dark:hover:border-dark-secondary focus:ring-2 focus:ring-light-secondary dark:focus:ring-dark-secondary cursor-pointer text-light-foreground dark:text-dark-foreground"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {selectedOption}
-      </div>
-      {isOpen && (
-        <ul className="absolute z-10 mt-1 w-full bg-light-background dark:bg-dark-background border border-light-secondary dark:border-dark-secondary rounded-md shadow-lg max-h-60 overflow-auto">
-          {options.map((option) => (
-            <li
-              key={option}
-              className="px-4 py-2 hover:bg-light-secondary dark:hover:bg-dark-secondary hover:cursor-pointer text-light-foreground dark:text-dark-foreground hover:text-dark-background dark:hover:text-dark-background"
-              onClick={() => {
-                onChange(option);
-                setIsOpen(false);
-              }}
-            >
-              {option}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };

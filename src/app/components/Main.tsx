@@ -4,13 +4,14 @@ import React, { useEffect, useState } from "react";
 import TypingArea from "./TypingArea"; 
 import Menu from "./Menu"; 
 import Leaderboard from "./Leaderboard"; 
-import { apiGetUsers, apiPromptGemini, apiUpdateUser } from "../utils/apiHelper";
+import { apiGetUsers, apiUpdateUser } from "../utils/apiHelper";
 import { TypingStat, User } from "../types/types";
 import UserModal from "./UserModal";
 import Image from 'next/image';
 import ResultModal from "./ResultModal";
 import { useUser } from "../context/UserContext";
 import { defaultTextLength } from "../utils/settings";
+import { helperPromptGemini } from "../utils/helper";
 
 const MainContainer: React.FC = () => {
   const {currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn} = useUser();
@@ -20,11 +21,13 @@ const MainContainer: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [userTyped, setUserTyped] = useState(false);
+  const [isNewRecord, setIsNewRecord] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const usertextLength = currentUser?.settings?.textLength? currentUser.settings.textLength : null;
+  const userSettings = currentUser?.settings;
+  const usertextLength = userSettings?.textLength? userSettings.textLength : null;
   const textLength = usertextLength? usertextLength : defaultTextLength;
 
   useEffect(() => {  
@@ -42,101 +45,107 @@ const MainContainer: React.FC = () => {
     setTextToType("Loading Text...");
     console.log("currentUser", currentUser)
 
-    const prompt = `With no introductions nor conclusions, give a paragraph of exactly ${textLength} letters (including spaces)
-                    if possible, or an offset of 30 characters max, this is important!
-                    in a ${topic} topic in ${language} language, do not exceed the required length.`;
-    const response = await apiPromptGemini(prompt);
-    console.log("response:", response);
+    const response = await helperPromptGemini(textLength, language, topic);
     if (response) {
       setTextToType(response);
     }
 
   };
 
-  const handleTextCompletion = async (speed: number) => {
+ const handleTextCompletion = async (speed: number) => {
+  setIsNewRecord(false); // Track if a new record has been set
+  
+  // Check if the mode is manual or auto
+  if (userSettings?.mode === "manual") {
     setIsFinished(true);
-    const date = new Date().toLocaleString();
-    let updatedUser: User;
-  
-    setUsers((prevUsers) => {
-      const updatedUsers = Array.isArray(prevUsers) ? [...prevUsers] : [];
-  
-      if (currentUser) {
-        setIsResultModalOpen(true);
-        setTimeout(() => {
-          setIsResultModalOpen(false);
-        }, 3000);
-  
-        // Find the current user in the users list
-        const existingUserIndex = updatedUsers.findIndex(
-          (user) => user.username === currentUser.username
-        );
-  
-        // If user exists, proceed with the update
-        if (existingUserIndex > -1) {
-  
-          // Create a new entry for the typing stat
-          const newEntry: TypingStat = { speed, date };
-  
-          // Append the new entry to their typingStats
-          const updatedTypingStats = [...(currentUser.typingStats || []), newEntry];
-  
-          // Determine the best speed
-          const bestSpeedEntry = updatedTypingStats.reduce(
-            (best, entry) => (entry.speed > best.speed ? entry : best),
-            updatedTypingStats[0]
-          );
-  
-          // Update the user object with new stats
-          updatedUser = {
-            ...currentUser,
-            typingStats: updatedTypingStats,
-            speed: bestSpeedEntry.speed,
-            lastEntryDate: date,
-          };
-  
-          // Update the user in the array
-          updatedUsers[existingUserIndex] = updatedUser;
-        } else {
-          // If the user does not exist in the list, create a new user
-          console.log("currentUser.typingStats ", currentUser.typingStats )
-          const newEntry: TypingStat = { speed, date };
-          updatedUser = {
-            username: currentUser.username,
-            speed,
-            lastEntryDate: date,
-            typingStats: [newEntry], 
-          };
-  
-          // Add the new user to the users array
-          updatedUsers.push(updatedUser);
+  } else {
+    handleStart(); // Continue to the next typing session if in auto mode
+  }
+
+  const date = new Date().toLocaleString();
+  let updatedUser: User;
+
+  setUsers((prevUsers) => {
+    const updatedUsers = Array.isArray(prevUsers) ? [...prevUsers] : [];
+
+    if (currentUser) {
+      setIsResultModalOpen(true);
+      setTimeout(() => {
+        setIsResultModalOpen(false);
+      }, 3000);
+
+      // Find the current user in the users list
+      const existingUserIndex = updatedUsers.findIndex(
+        (user) => user.username === currentUser.username
+      );
+
+      // If user exists, proceed with the update
+      if (existingUserIndex > -1) {
+
+        // Create a new entry for the typing stat
+        const newEntry: TypingStat = { speed, date };
+
+        // Append the new entry to their typingStats
+        const updatedTypingStats = [...(currentUser.typingStats || []), newEntry];
+
+        // Determine if the current speed is a new record (personal best)
+        if(currentUser?.speed){
+          if (speed > currentUser.speed) {
+            setIsNewRecord(true);
+          }
         }
   
-        // Sort and rank users based on their best speed
-        const rankedUsers = updatedUsers
-          .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
-          .map((user, index) => ({ ...user, rank: index + 1 }));
-  
-        // Find the updated current user in rankedUsers to get their new rank
-        const updatedCurrentUser = rankedUsers.find(
-          (user) => user.username === currentUser.username
-        );
-  
-        if (updatedCurrentUser) {
-          // Update the current user state with the new rank and updated stats
-          setCurrentUser(updatedCurrentUser);
-          localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
-        }
-  
-        // Update the users array with ranked users
-        setUsers(rankedUsers);
-  
-        return rankedUsers;
-      } 
-  
-      return prevUsers;
-    });
-  };
+
+        // Update the user object with new stats and best speed
+        updatedUser = {
+          ...currentUser,
+          typingStats: updatedTypingStats,
+          speed: currentUser.speed? Math.max(currentUser.speed, speed) : speed, // Ensure the speed is the highest value
+          lastEntryDate: date,
+        };
+
+        // Update the user in the array
+        updatedUsers[existingUserIndex] = updatedUser;
+      } else {
+        // If the user does not exist in the list, create a new user
+        const newEntry: TypingStat = { speed, date };
+        updatedUser = {
+          username: currentUser.username,
+          speed,
+          lastEntryDate: date,
+          typingStats: [newEntry],
+        };
+
+        // Add the new user to the users array
+        updatedUsers.push(updatedUser);
+      }
+
+      // Sort and rank users based on their best speed
+      const rankedUsers = updatedUsers
+        .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
+        .map((user, index) => ({ ...user, rank: index + 1 }));
+
+      // Find the updated current user in rankedUsers to get their new rank
+      const updatedCurrentUser = rankedUsers.find(
+        (user) => user.username === currentUser.username
+      );
+
+      if (updatedCurrentUser) {
+        // Update the current user state with the new rank and updated stats
+        setCurrentUser(updatedCurrentUser);
+        localStorage.setItem("currentUser", JSON.stringify(updatedCurrentUser));
+      }
+
+      // Update the users array with ranked users
+      setUsers(rankedUsers);
+
+      return rankedUsers;
+    }
+
+    return prevUsers;
+  });
+};
+
     
   useEffect(() => {
     //update the user's data in db
@@ -203,6 +212,12 @@ const MainContainer: React.FC = () => {
     };
   }, [onSet]); // Ensure onSet is included in the dependencies
   
+  const handleStop = () => {
+    if(userSettings?.mode === "auto"){
+
+    }
+  }
+
   const TypingStats : TypingStat[] | undefined = currentUser?.typingStats;
 
   return (
@@ -211,23 +226,23 @@ const MainContainer: React.FC = () => {
           bg-light-background text-light-foreground transition-all duration-500`}
     >
       <div className="flex flex-row items-center justify-center mb-6">
-      <Image
-        src="/storysets/typing.svg"
-        alt="KeyMaster"
-        className="w-38 h-38 object-contain mr-4" // Adjust size as needed
-        height={128} // Adjust height to match your design
-        width={128} // Adjust width to match your design
-      />
-      <div className="text-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">
-          KeyMaster
-        </h1>
+        <Image
+          src="/storysets/typing.svg"
+          alt="KeyMaster"
+          className="w-38 h-38 object-contain mr-4" // Adjust size as needed
+          height={128} // Adjust height to match your design
+          width={128} // Adjust width to match your design
+        />
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">
+            KeyMaster
+          </h1>
 
-        {/* Subtitle - Responsive font size */}
-        <h2 className="text-xl md:text-3xl font-dancing">
-          How type can you fast?
-        </h2>
-      </div>
+          {/* Subtitle - Responsive font size */}
+          <h2 className="text-xl md:text-3xl font-dancing">
+            How type can you fast?
+          </h2>
+        </div>
     </div>
 
       {/* Main Content Area */}
@@ -239,6 +254,7 @@ const MainContainer: React.FC = () => {
             userTyped={userTyped}
             isFinished={isFinished}
             language={language}
+            onStop={handleStop}
             setLanguage={setLanguage}
             topic={topic}
             setTopic={setTopic}
@@ -271,10 +287,9 @@ const MainContainer: React.FC = () => {
           isOpen={isResultModalOpen}
           onClose={() => setIsResultModalOpen(false)}
           user={currentUser}
-          isNewRecord={false}
+          isNewRecord={isNewRecord}
         />
       )}
-   
     </div>
   );
 };

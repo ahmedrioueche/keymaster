@@ -135,3 +135,95 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
         return { status: 'error', message: 'An error occurred' };
       }
   }
+
+  
+  export const apiFindOpponent = async (): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/..', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to find opponent in api");
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error("Failedto find opponent in api:", error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }
+  
+  export const apiJoinRoom = async (roomId : string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/join-room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({roomId}),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to join room in api");
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error("Failedto join room in api:", error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }
+  
+  export const apiCreateRoom = async (roomId : string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/room/create-room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({roomId}),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to create room in api");
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error("Failed to create room in api:", error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }
+
+  export const apiPusherSendMessage = async (roomId : string, message: string, username : string | undefined): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/pusher/send-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({roomId, message, username}),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to send message in api");
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error("Failed to send message in api:", error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }
+
+
+  

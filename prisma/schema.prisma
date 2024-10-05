@@ -38,3 +38,11 @@ model Settings {
   user   User @relation(fields: [userId], references: [id]) // Relationship to User model
   userId Int  @unique // Add @unique to enforce one-to-one relationship
 }
+
+model Room {
+  id          Int      @id @default(autoincrement()) 
+  roomId      String   @unique
+  createdAt   DateTime @default(now()) 
+  status      String   // e.g., 'active', 'inactive', 'completed'
+  maxPlayers  Int      // Maximum number of players allowed in the room
+}

@@ -7,7 +7,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Link from 'next/link';
 import { useTheme } from '../context/ThemeContext'; 
 import UserModal from './UserModal';
-import { FaCog, FaExclamationCircle, FaHome, FaUser } from 'react-icons/fa';
+import { FaBook, FaCog, FaSignOutAlt, FaTrophy, FaUser } from 'react-icons/fa';
 import SettingsModal from './SettingsModal';
 import Image from 'next/image';
 import { useUser } from '../context/UserContext';
@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const {currentUser} = useUser();
+  const {currentUser, setCurrentUser} = useUser();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Detect if the device is mobile
@@ -88,6 +88,11 @@ const Navbar: React.FC = () => {
     }
   }
   
+  const handleLogOut = () => {
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
+  }
+
   return (
     <nav className="bg-light-background dark:bg-dark-background p-4 shadow">
       <div className="flex justify-between items-center">
@@ -131,22 +136,19 @@ const Navbar: React.FC = () => {
              className="md:hidden overflow-y-auto mt-5 z-[100] absolute top-[2.8rem] right-[1.4rem] w-[15.6rem] bg-light-background dark:bg-dark-background border text-dark-background dark:text-light-background border-gray-300 dark:border-gray-600 rounded-lg shadow-lg flex flex-col py-1 space-y-4"
            >
              <div className="flex flex-col items-start w-full space-y-2">
-               <Link
+             <Link
                  href="/"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
-                 onClick={handleMenuClose}
                >
-                 <FaHome className="mr-3 text-lg" /> Home
-               </Link>
+                 <FaBook className="mr-3 text-lg" /> Practice
+              </Link>
                <Link
-                 href="/"
+                 href="/compete"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
-                 onClick={handleUserClick}
-               > 
-                <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"} 
-               </Link> 
-              
-               <Link
+               >
+                 <FaTrophy className="mr-3 text-lg" /> Compete
+               </Link>
+              <Link
                  href="/"
                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
                  onClick={handleSettingsClick}
@@ -154,21 +156,42 @@ const Navbar: React.FC = () => {
                  <FaCog className="mr-3 text-lg" /> Settings
                </Link>
              
+               <Link
+                 href="/"
+                 className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                 onClick={handleUserClick}
+               > 
+                <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"} 
+               </Link> 
+                {currentUser && (
+                  <Link onClick={handleLogOut} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+                    <FaSignOutAlt className="mr-3 text-lg" /> Log Out
+                  </Link>
+                )}    
+             
                </div>
               </div>
             )}
           </>
         ) : (
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-              <FaHome className="mr-2" /> Home
-            </Link>
+            <Link href="/" onClick={handleMenuClose} className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+              <FaBook className="mr-3 text-lg" /> Practice
+            </Link>  
+            <Link href="/compete" onClick={handleMenuClose} className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+              <FaTrophy className="mr-3 text-lg" /> Compete
+            </Link>  
+            <Link onClick={handleSettingsClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+              <FaCog className="mr-2" /> Settings
+            </Link>  
             <Link onClick={handleUserClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
              <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"}  
             </Link>
-            <Link onClick={handleSettingsClick} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-              <FaCog className="mr-2" /> Settings
-            </Link>          
+            {currentUser && (
+              <Link onClick={handleLogOut} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
+                 <FaSignOutAlt className="mr-3 text-lg" /> Log Out
+              </Link>
+            )}                  
             {/* Theme Toggle Icon */}
             <button
               onClick={toggleTheme}

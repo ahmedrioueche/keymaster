@@ -7,12 +7,9 @@ interface TypingAreaProps {
   disabled?: boolean;
   onComplete?: (speed: number) => void;
   onUserTyped?: () => void; 
-  onInputChange?: (inputText: string) => void;
-  inputText?: string; ///input text to display's opponent progress in compete mode
-  type?: 'practice' | 'compete';
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled, inputText, onComplete, onUserTyped, onInputChange, type }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled, onComplete, onUserTyped }) => {
   const { isDarkMode } = useTheme();
   const [userInput, setUserInput] = useState("");
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -58,11 +55,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
   
     return newHeight; // Return the calculated height
   };
-
-  useEffect(() => {
-    console.log("received inputText in typingArea", inputText);
-
-  }, [inputText])
   
   
   // Reset all states and height when textToType changes
@@ -99,15 +91,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
           const speed = calculateSpeed(inputText, elapsedTime);
           setCurrentSpeed(speed);
 
-          if(type === 'compete'){
-            onInputChange? onInputChange(inputText) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
-          }
-
           if (inputText === trimmedTextToType) {
             setIsCompleted(true);
             onComplete?.(currentSpeed);
           }
-        
+
           // Update height dynamically based on new input
           setInputHeight(calculateHeight());
         }

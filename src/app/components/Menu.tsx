@@ -11,10 +11,11 @@ interface MenuProps {
   userTyped: boolean;
   isFinished: boolean;
   language: string;
+  onStop?: () => void;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   topic: string;
   setTopic: React.Dispatch<React.SetStateAction<string>>;
-  typingStats?: TypingStat[]; // Optional array of typing statistics
+  typingStats?: TypingStat[]; 
 }
 
 const Menu: React.FC<MenuProps> = ({
@@ -23,6 +24,7 @@ const Menu: React.FC<MenuProps> = ({
   isFinished,
   language,
   setLanguage,
+  onStop,
   topic,
   setTopic,
   typingStats, 
@@ -81,7 +83,7 @@ const Menu: React.FC<MenuProps> = ({
 
   const handleStop = () => {
     setIsStarted(false);
-    
+    onStop? onStop() : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -239,7 +241,7 @@ const Menu: React.FC<MenuProps> = ({
 
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="custom-scrollbar">
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="custom-scrollbar bg-transparent">
               {typingStats.map((stat, index) => (
                 <div key={index} className="flex justify-between py-1">
                   <p className="text-sm">
