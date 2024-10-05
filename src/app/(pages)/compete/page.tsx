@@ -63,7 +63,6 @@ const CompetePage: React.FC = () => {
   
   const handleJoinRoom = (roomId: string) => {
     console.log("roomId in handleJoinRoom", roomId)
-
     setRoomId(roomId);
   }
 
