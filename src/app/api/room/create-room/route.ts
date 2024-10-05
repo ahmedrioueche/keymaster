@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     const response = await createRoom(roomId);
 
-    return NextResponse.json({room: response, status: 'Room created successfully' });
+    return NextResponse.json({room: response});
   } catch (error) {
     console.error('Error in Pusher route:', error);
     return NextResponse.json({ error: `Message failed to send: ${error}` }, { status: 500 });

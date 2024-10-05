@@ -12,6 +12,7 @@ model User {
   id            Int          @id @default(autoincrement()) // Auto-incrementing primary key
   username      String       @unique
   password      String?
+  createdAt   DateTime @default(now()) 
   rank          Int? // Optional rank
   speed         Int? // Optional speed
   lastEntryDate DateTime? // Optional last entry date (converted to DateTime)
