@@ -12,7 +12,7 @@ interface UserModalProps {
   type?: "practice" | "compete";
 }
 
-const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, type }) => {
+const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   const { currentUser, setCurrentUser, setUserLoggedIn } = useUser();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -206,7 +206,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, type }) => {
           <div className="flex items-center text-light-foreground dark:text-dark-foreground">
             <Image src='/icons/profile.png' height={30} width={30} className="text-3xl mr-3" alt="Profile" />
             <h2 className="text-xl font-bold mt-1 font-dancing">User</h2>
-          </div>
+          </div>    
             <button
               onClick={handleClose}
               className="p-2 rounded-full bg-light-background hover:bg-light-accent dark:hover:bg-dark-secondary transition-colors duration-300 text-gray-700"

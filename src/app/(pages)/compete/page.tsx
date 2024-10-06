@@ -17,7 +17,6 @@ const CompetePage: React.FC = () => {
  // };
   const { currentUser, onSet, userLoggedIn } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars 
   const [opponent, setOpponent] = useState<User | null>();
-  const [textToType, setTextToType] = useState<string>("Press Ready button to start");
   const [isReady, setIsReady] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [countdown, setCountdown] = useState<number>(3); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isCountdownOpen, setIsCountdownOpen] = useState<boolean>(false);
@@ -25,7 +24,6 @@ const CompetePage: React.FC = () => {
   const [language, setLanguage] = useState("english");  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [topic, setTopic] = useState("general");  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [textLength, setTextLength] = useState(100); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [isPromptedGemini, setIsPromptedGemini] = useState<boolean>(false);
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [isFindOpponentOpen, setIsFindOpponentOpen] = useState<boolean>(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -77,7 +75,6 @@ const CompetePage: React.FC = () => {
   const handleOpponentFound = (opponent: User, text: string) => {
     setOpponent(opponent);
     setIsFindOpponentOpen(false);
-    setTextToType(text);
   };
 
   const handleReady = async () => {
