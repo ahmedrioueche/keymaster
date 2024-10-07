@@ -5,7 +5,7 @@ interface TypingAreaProps {
   textToType: string;
   isStarted?: boolean;
   disabled?: boolean;
-  onComplete?: (speed: number) => void;
+  onComplete?: (speed: number, time: number) => void;
   onUserTyped?: () => void; 
   onInputChange?: (inputText: string) => void;
   inputText?: string; ///input text to display's opponent progress in compete mode
@@ -60,7 +60,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
   };
 
   useEffect(() => {
-    console.log("received inputText in typingArea", inputText);
     inputText? setUserInput(inputText) : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
   }, [inputText])
   
@@ -105,7 +104,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
 
           if (inputText === trimmedTextToType) {
             setIsCompleted(true);
-            onComplete?.(currentSpeed);
+            onComplete?.(currentSpeed, elapsedTime);
           }
         
           // Update height dynamically based on new input
@@ -244,7 +243,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
         {/* Percentage progress in the middle */}
         {trimmedTextToType && (
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-sm mt-3">
-            {Math.floor((userInput.length / trimmedTextToType?.length) * 100)}% completed
+            {Math.floor((userInput.length / trimmedTextToType?.length) * 100)}%
           </div>
         )}
       </>

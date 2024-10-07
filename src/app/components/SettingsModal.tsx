@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaSpinner, FaTimes } from 'react-icons/fa';
 import { Settings, User } from "../types/types";
 import Image from 'next/image';
@@ -25,18 +25,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : capitalizeFirstLetter(defaultLanguage));
   const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : capitalizeFirstLetter(defaultMode));
   const [textLength, setTextLength] = useState<number>(userSettings?.textLength? userSettings?.textLength : defaultTextLength);
-  const [isValidTextLength, setIsValidTextLength] = useState<boolean>(userSettings?.soundEffects? userSettings?.soundEffects : true);
-  const [soundEffect, setSoundEffect] = useState<string>("Enabled");
-
-  useEffect(() => {
-    if (currentUser?.settings) {
-      // Set initial values based on the user's current settings
-      setLanguage(currentUser.settings.language || languages[0]);
-      setTypingMode(currentUser.settings.mode === 'manual' ? "Manual" : "Auto");
-      setTextLength(currentUser.settings.textLength || defaultTextLength);
-      setSoundEffect(currentUser.settings.soundEffects ? "Enabled" : "Disabled");
-    }
-  }, [currentUser]);
+  const [soundEffect, setSoundEffect] = useState<string>(userSettings?.soundEffects? "Enabled" : "Disabled");
+  const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
 
   const handleSave = async () => {
     if (!isValidTextLength) return;

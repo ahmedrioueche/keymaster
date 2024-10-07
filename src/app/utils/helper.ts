@@ -1,5 +1,5 @@
 import { apiPromptGemini } from "./apiHelper";
-import { defaultTextLength } from "./settings";
+import { defaultLanguage, defaultTextLength } from "./settings";
 
 export const helperPromptGemini = async (textLength : number, language : string, topic : string) => {
     const prompt = `With no introductions nor conclusions, give a paragraph of exactly
@@ -13,7 +13,24 @@ export const helperPromptGemini = async (textLength : number, language : string,
 }
 
 
-export const competePrompt = `With no introductions nor conclusions, give a paragraph of exactly
+export const getPrompt = (
+    language: string | undefined | null, 
+    maxTextLength: number | undefined | null
+  ) => {  
+    
+    const chosenLanguage = language ?? defaultLanguage; 
+    const chosenTextLength = maxTextLength ?? defaultTextLength;
+  
+    const competePrompt = `With no introductions nor conclusions, give a paragraph of a maximum of
+        ${chosenTextLength} letters (including spaces) if possible, 
+        or an offset of 30 characters max, this is important!
+        in a general topic in ${chosenLanguage} language, do not exceed the required length.`;
+  
+    return competePrompt;
+  };
+
+  export const competePrompt = `With no introductions nor conclusions, give a paragraph of a maximum of
             ${defaultTextLength} letters (including spaces) if possible, 
             or an offset of 30 characters max, this is important!
-            in a general topic in english language, do not exceed the required length.`;
+            in a general topic in ${defaultLanguage} language, do not exceed the required length.`;
+  

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import FindOpponent from "../../components/FindOpponent";
 import CompeteRoom from "../../components/CompeteRoom";
 import { useUser } from "../../context/UserContext";
-import { User } from "../../types/types";
+import { Room, User } from "../../types/types";
 import CountDown from "@/app/components/Countdown";
 import UserModal from "@/app/components/UserModal";
 import Image from 'next/image';
@@ -20,19 +20,20 @@ const CompetePage: React.FC = () => {
   const [isReady, setIsReady] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [countdown, setCountdown] = useState<number>(3); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isCountdownOpen, setIsCountdownOpen] = useState<boolean>(false);
-  const [countdownStart, setCountdownStart] = useState<number>(3);  // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [countdownStart, setCountdownStart] = useState<number>(2);  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [language, setLanguage] = useState("english");  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [topic, setTopic] = useState("general");  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [textLength, setTextLength] = useState(100); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [isFindOpponentOpen, setIsFindOpponentOpen] = useState<boolean>(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const [roomId, setRoomId] = useState('');
+  const [room, setRoom] = useState<Room>();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [opponentModalCloseGracefully, setOpponentModalCloseGracefully] = useState(false);
+
   
   useEffect(() => {
     const checkUserWithDelay = setTimeout(() => {
-      console.log("currentUser", currentUser);
       if (!currentUser) {
         setIsUserModalOpen(true);
       } else if (!opponent) {
@@ -72,14 +73,15 @@ const CompetePage: React.FC = () => {
   }, [onSet]);
 
   // Function to handle opponent found
-  const handleOpponentFound = (opponent: User, text: string) => {
-    setOpponent(opponent);
-    setIsFindOpponentOpen(false);
+  const handleOpponentFound = (opponent: User, room: Room) => {
+    setOpponentModalCloseGracefully(true);
+    setOpponent(opponent);  
+    setRoom(room);
   };
 
   const handleReady = async () => {
     setIsReady(true);
-    setCountdownStart(3); // Reset countdown start value
+    setCountdownStart(2); // Reset countdown start value
     setIsCountdownOpen(true); // Open countdown modal
   };
 
@@ -87,23 +89,28 @@ const CompetePage: React.FC = () => {
     setIsCountdownOpen(false); // Close countdown modal
     setIsStarted(true);
   };
+
   const handleFindOpponentClose = async () => {
     setIsFindOpponentOpen(false); // Close countdown modal
   };
   
-  const handleCreateRoom = (roomId: string) => {
-    console.log("roomId in handleCreateRoom", roomId)
-    setRoomId(roomId);
+  const handleCreateRoom = (room: Room) => {
+    setRoom(room);
   }
   
-  const handleJoinRoom = (roomId: string) => {
-    console.log("roomId in handleJoinRoom", roomId)
-    setRoomId(roomId);
+  const handleJoinRoom = (room: Room) => {
+    room.players.forEach((player : User) => {
+      if(player.username !== currentUser?.username){
+        setOpponent(player);
+      }
+    })
+    setRoom(room);
   }
 
   const handleLoginClick = () => {
     setIsUserModalOpen(true);
   }
+
 
   return (
     <div>
@@ -149,7 +156,15 @@ const CompetePage: React.FC = () => {
         />
       </div>
         ) : (
-          <CompeteRoom roomId={roomId} opponent={opponent? opponent : undefined} currentUser={currentUser} onReady={handleReady} isStarted={isStarted} />
+          room && (
+            <CompeteRoom 
+              room={room} 
+              opponent={opponent ? opponent : undefined} 
+              currentUser={currentUser} 
+              onReady={handleReady} 
+              isStarted={isStarted} 
+            />
+          )
         )}
       </div>
       <CountDown 
@@ -157,13 +172,13 @@ const CompetePage: React.FC = () => {
          isOpen={isCountdownOpen}  
          count={countdown}
       />
-      {!opponent && (
+      {(!opponent || opponentModalCloseGracefully) && (
           <FindOpponent
             isOpen={isFindOpponentOpen} 
             onClose={handleFindOpponentClose}
-            onOpponentFound={(opponent, text) => handleOpponentFound(opponent, text)}
-            onCreateRoom={(roomId) => handleCreateRoom(roomId)}
-            onJoinRoom={(roomId) => handleJoinRoom(roomId)}
+            onOpponentFound={(opponent, room) => handleOpponentFound(opponent, room)}
+            onCreateRoom={(room) => handleCreateRoom(room)}
+            onJoinRoom={(room) => handleJoinRoom(room)}
            />
       )}
       <UserModal
@@ -171,6 +186,7 @@ const CompetePage: React.FC = () => {
         onClose={() => setIsUserModalOpen(false)}
         type="compete"
       />
+      
     </div>
   );
 };

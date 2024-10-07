@@ -43,15 +43,21 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose, user, isNewR
           </button>
         </div>
 
-        <div className='flex flex-col'>
+        <div className='flex flex-col items-center justify-center'>
           <Image src="/storysets/result.svg" alt="Result illustration" className="w-full h-48 object-contain" height={48} width={38}/>
+          
           {isNewRecord && (
             <div className="mt-4 text-center text-light-primary dark:text-dark-primary text-lg font-bold">
               🎉 New Record! 🎉
             </div>
           )}
-          <div className="mt-4 text-light-foreground dark:text-dark-foreground">
-            Speed: {user?.speed ?? 'No speed data available'}
+
+          {/* Centering the speed data */}
+          <div className="mt-6 flex flex-col items-center justify-center text-center text-light-foreground dark:text-dark-foreground">
+            <div className="text-xl font-semibold mb-2">Speed:</div>
+            <div className="text-2xl font-bold text-light-primary dark:text-dark-primary">
+              {user?.speed ? `${user.speed} words per minute` : 'No speed data available'}
+            </div>
           </div>
         </div>
       </div>

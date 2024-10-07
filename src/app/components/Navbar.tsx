@@ -167,8 +167,11 @@ const Navbar: React.FC = () => {
                 <FaUser className="mr-3 text-lg" /> {currentUser? currentUser?.username : "User"} 
                </Link> 
                 {currentUser && (
-                  <Link onClick={handleLogOut} href="/" className="text-light-foreground dark:text-dark-foreground hover:bg-light-secondary dark:hover:bg-dark-secondary px-4 py-2 text-lg rounded flex items-center">
-                    <FaSignOutAlt className="mr-3 text-lg" /> Log Out
+                <Link
+                  href="/"
+                  className="flex items-center w-full p-4 py-2 text-lg font-medium text-light-text dark:text-dark-text hover:text-dark-text dark:hover:text-light-text hover:bg-light-accent dark:hover:bg-dark-accent dark:hover:text-dark-background transition-colors duration-300"
+                  onClick={handleLogOut}
+>                     <FaSignOutAlt className="mr-3 text-lg" /> Log Out
                   </Link>
                 )}    
              

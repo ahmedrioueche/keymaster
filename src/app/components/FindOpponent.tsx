@@ -5,74 +5,82 @@
 import React, { useState, useEffect } from "react";
 import { apiCreateRoom, apiFindOpponent, apiJoinRoom } from "../utils/apiHelper"; // Ensure these functions are implemented in your apiHelper
 import { useUser } from "../context/UserContext";
-import { User } from "../types/types";
+import { Room, SearchPrefs, User } from "../types/types";
 import Image from 'next/image';
 import { FaRocket, FaSearch, FaSpinner, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import CustomizeSearch from "./CustomizeSearch";
+import { defaultLanguage, defaultTextLength } from "../utils/settings";
 
 interface FindOpponentProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpponentFound: (opponent: User, text: string) => void;
-  onCreateRoom?: (roomId : string) => void;
-  onJoinRoom?: (roomId : string) => void;
+  onOpponentFound: (opponent: User, room: Room) => void;
+  onCreateRoom?: (room : Room) => void;
+  onJoinRoom?: (roon : Room) => void;
 }
 
-const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom, onCreateRoom }) => {
+
+const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom, onCreateRoom, onOpponentFound }) => {
   const { currentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [opponent, setOpponent] = useState<User | null>(null);
   const [textToType, setTextToType] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [isReady, setIsReady] = useState(false);
-  const [isCompetitionStarted, setIsCompetitionStarted] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [searching, setSearching] = useState(true);
   const [mode, setMode] = useState<"search" | "join">("search");
   const [roomId, setRoomId] = useState("");
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [isLoading, setIsLoading] = useState<"join" | "create" | "null">("null");
+  const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
+  const [searchPrefs, setSearchPrefs] = useState<SearchPrefs>({prefLanguage: defaultLanguage, prefTextMaxLength: defaultTextLength});  
+  const [customizeSearchVisible, setCustomizeSearchVisible] = useState(false); //eslint-disable-line @typescript-eslint/no-unused-vars
+
   const router = useRouter();
   
   useEffect(() => {
-    if (searching) {
-      const findOpponent = async () => {
-        try {
-          const response = await apiFindOpponent();
-          if (response) {
-            setOpponent(response.opponent);
-            setTextToType(response.text);
-            clearTimeout(timeoutId!);
-          }
-        } catch (error) {
-          console.error("Error finding opponent:", error);
+    let timeoutId: NodeJS.Timeout;
+    let intervalId: ReturnType<typeof setInterval>; 
+  
+    const findOpponent = async () => {
+      try {
+        const response = currentUser ? await apiFindOpponent(currentUser, searchPrefs) : null;
+        console.log("response", response);
+        const result : any = response.response; //eslint-disable-line @typescript-eslint/no-explicit-any
+        if (result && result.status === "success") {
+          setSearching(false);
+          setOpponent(result.opponent);
+          onOpponentFound(result.opponent, result.room)
+          clearTimeout(timeoutId); 
+          clearInterval(intervalId); 
+          setTimeout(()=>{
+            onClose();
+          }, 3000)
+        } else {
+          console.log("Opponent not found, will try again.");
         }
-      };
-
-      findOpponent();
-
+      } catch (error) {
+        console.error("Error finding opponent:", error);
+      }
+    };
+  
+    if (searching) {
+      // Start polling every 5 seconds
+      intervalId = setInterval(findOpponent, 5000); // Adjust the interval as needed
+  
       // Set a timeout to stop searching after 30 seconds
-      const id = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setSearching(false);
         setOpponent(null);
+        clearInterval(intervalId); // Clear the interval on timeout
       }, 30000); // 30 seconds timeout
-
-      setTimeoutId(id);
+  
+      // Initial call to find opponent
+      findOpponent();
     }
-
+  
     return () => {
-      if (timeoutId) clearTimeout(timeoutId); // Clean up timeout on unmount
+      clearTimeout(timeoutId); // Clean up timeout on unmount
+      clearInterval(intervalId); // Clean up interval on unmount
     };
-  }, [searching]);
-
-  const handleReady = () => {
-    setIsReady(true);
-    if (opponent) {
-      setIsCompetitionStarted(true);
-    }
-  };
-
-  //const handleSearchClick = () => {
-  //  setSearching(true);
-  //  setOpponent(null); // Reset opponent when starting search
-  //};
+  }, [searching, currentUser, searchPrefs]);
 
   const handleJoinRoomClick = async () => {
     if (roomId.trim() === "") {
@@ -81,14 +89,13 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
     }
     setIsLoading("join");
     try {
-      const result = await apiJoinRoom(roomId);
+      const result = currentUser? await apiJoinRoom(roomId, currentUser) : null;
       if (result.response.room) {
         // Handle successful room joining
         setOpponent(result.opponent);
         setTextToType(result.text);
-        setIsCompetitionStarted(true);
         if(result.response.room){
-          onJoinRoom? onJoinRoom(result.response.room.roomId) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+          onJoinRoom? onJoinRoom(result.response.room) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
         }
         onClose();
       } else {
@@ -107,9 +114,9 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
       return;
     }
     setIsLoading("create");
-    const result = await apiCreateRoom(roomId);
+    const result = currentUser? await apiCreateRoom(roomId, currentUser) : null;
     if(result.response.room){
-      onCreateRoom? onCreateRoom(result.response.room.roomId) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+      onCreateRoom? onCreateRoom(result.response.room) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
     }
     setIsLoading("null");
     onClose();
@@ -127,6 +134,22 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   const handleClose = () => {
     router.push("/")
     onClose();
+  }
+
+  const handleCustomizeSearch = () => {
+    setIsCustomizeModalOpen(true);
+    setSearching(false);
+  }
+
+  const handleCustomizeSearchSave = (prefs: SearchPrefs) => {
+    setSearchPrefs(prefs);
+    setSearching(true);
+    setIsCustomizeModalOpen(false)
+
+  }
+  const handleCustomizeSearchClose = () => {
+    setIsCustomizeModalOpen(false)
+    setSearching(true);
   }
   
   return (
@@ -151,50 +174,76 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
         </div>
           
         {mode === "search" ? (
-          <>
+        <>
+          <div className="flex flex-col justify-center items-center">
             <div className="flex justify-center flex-row">
-              {searching && <FaSpinner className="animate-spin text-dark-background dark:text-light-background mr-3 mt-1"/>}
+              {searching && <FaSpinner className="animate-spin text-dark-background dark:text-light-background mr-3 mt-1" />}
               <p className="text-lg text-center text-gray-700 dark:text-gray-300">
-                {searching ? `Searching for an opponent...` : opponent ? `Opponent Found: ${opponent.username}` : "No opponent found, please try again later, or invite a friend."}
+                {searching ? (
+                  `Searching for an opponent...`
+                ) : opponent ? (
+                  <>
+                    <span className="text-2xl font-bold text-dark-primary dark:text-light-primary">
+                      Opponent Found: {opponent.username}
+                    </span>
+                  </>
+                ) : (
+                  "No opponent found, please try again later, or invite a friend."
+                )}
               </p>
             </div>
-
-            {opponent ? (
-              <div className="mt-6 flex flex-col items-center">
+            {searching && !opponent && (
+              customizeSearchVisible && (
                 <button
-                  className={`bg-light-secondary dark:bg-dark-seondary text-white px-6 py-2 rounded-lg shadow hover:bg-light-primary dark:hover:bg-dark-primary transition duration-200 ${isReady ? "opacity-50" : ""}`}
-                  onClick={handleReady}
-                  disabled={isReady}
-                >
-                  {isReady ? "Waiting for Opponent..." : "Ready"}
+                    className={`mt-6 bg-light-secondary dark:bg-dark-seondary text-dark-background hover:text-light-background px-6 py-2 rounded-lg shadow hover:bg-light-primary dark:hover:bg-dark-primary transition duration-200`}
+                    onClick={handleCustomizeSearch}
+                  >
+                    Customize Search
                 </button>
+              )
+            )}
+         
+            {opponent ? (
+              <div className="mt-6 flex flex-row items-center">
+                <FaSpinner className="animate-spin text-dark-background dark:text-light-background mr-3 mt-1" />
+                <span className="text-lg text-dark-background dark:text-light-background">Joining Room</span>
               </div>
             ) : (
               !searching && (
-                <div className="mt-6 flex flex-col items-center">
+                <div className="mt-6 flex flex-row justify-center space-x-4"> {/* Flex container with spacing */}
+                <button
+                  className={`bg-light-secondary dark:bg-dark-seondary text-dark-background hover:text-light-background px-6 py-2 rounded-lg shadow hover:bg-light-primary dark:hover:bg-dark-primary transition duration-200`}
+                  onClick={handleTryAgain}
+                >
+                  Try again
+                </button>
+                {customizeSearchVisible && (
                   <button
                     className={`bg-light-secondary dark:bg-dark-seondary text-dark-background hover:text-light-background px-6 py-2 rounded-lg shadow hover:bg-light-primary dark:hover:bg-dark-primary transition duration-200`}
-                    onClick={handleTryAgain}
+                    onClick={handleCustomizeSearch}
                   >
-                    Try again
-                  </button>
-                </div>
+                    Customize Search
+                </button>
+                )}
+              </div>              
               )
             )}
-           
-            {/* Move the Join Room button below the existing buttons */}
-            <div className="flex justify-center">
-              <button
-                className="flex flex-row text-blue-500 text-xl hover:underline hover:text-blue-500 mt-8"
-                onClick={() => handleChangeToJoin()}
-              >
-                <FaRocket className="mr-2 mt-1" size={18}/>
-                <span>Join a Room</span>
-              </button>
-            </div>
-          
-          </>
-        ) : (
+          </div>
+
+          {!opponent && (
+          <div className="flex justify-center">
+            <button
+              className="flex flex-row text-blue-500 text-xl hover:underline hover:text-blue-500 mt-6"
+              onClick={() => handleChangeToJoin()}
+            >
+              <FaRocket className="mr-2 mt-1" size={18} />
+              <span>Join a Room</span>
+            </button>
+          </div>
+          )}
+        
+        </>
+      ) : (
           <>
             <input
               type="text"
@@ -219,7 +268,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
                 </button>
               </div>
               <button
-                className="flex flex-row text-blue-500 text-xl hover:underline hover:text-blue-500 mt-8"
+                className="flex flex-row text-blue-500 text-xl hover:underline hover:text-blue-500 mt-6"
                 onClick={() => setMode("search")}
               >
                 <FaSearch className="mr-2 mt-1" size={18}/>
@@ -229,6 +278,11 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
           </>
         )}
       </div>
+      <CustomizeSearch
+        isOpen={isCustomizeModalOpen}
+        onClose={()=> handleCustomizeSearchClose()}
+        onSave={(prefs)=> handleCustomizeSearchSave(prefs)}
+      />
     </div>
   );
 };

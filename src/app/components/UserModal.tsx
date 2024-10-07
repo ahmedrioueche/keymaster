@@ -5,6 +5,7 @@ import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHel
 import Image from 'next/image';
 import Alert from './Alert';
 import { useUser } from '../context/UserContext';
+import { capitalizeFirstLetter } from '../utils/formater';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -57,7 +58,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     if(response.userData){
       user.id = response.userData.id;
       localStorage.setItem("currentUser", JSON.stringify(response.userData));
-      console.log("currentUser", response.userData)
       setUserLoggedIn(true);
       setCurrentUser(response.userData);
       setUsername('');  
@@ -157,7 +157,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     const getUsers = async () => {
       if(isSignup){
         const response = await apiGetUsers();
-        console.log("response in getUsers in UserModal", response)
         setUsers(response);
       }
     }
@@ -355,30 +354,38 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                   </>
                 )}
               {currentUser && (
-              <div className="mt-6 text-center">
-                <div className="mb-2">
-                  <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" height={48} width={38}/>
-                </div>            
-                <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
-                  Logged in as: <strong>{currentUser.username}</strong>
-                </p>
-                <div className='flex flex-row justify-between mt-5'>
-                  <button
-                    type="button"
-                    className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
-                    onClick={handleChangeUser}
-                  >
-                    {isLoading === "changeUser"? <FaSpinner className="animate-spin" /> : "Change User"} 
-                  </button>
-                  <button
-                    type="button"
-                    className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
-                    onClick={handleLogout}
-                  >
-                    {isLoading === "logout"? <FaSpinner className="animate-spin" /> : "Log Out"} 
-                  </button>
+                <div className="mt-6 flex-col text-center">
+                  <div className="mb-2">
+                    <Image src="/storysets/logged-in.svg" alt="Logged-in" className="w-full h-48 object-contain" height={48} width={38}/>
+                  </div>            
+                  <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
+                    Logged in as: <strong>{currentUser.username}</strong>
+                  </p>
+                  <div className='flex flex-row justify-center text-xl'>
+                    {currentUser.skillLevel && (
+                     <span className='mb-2 mt-2 mr-40'>Skill Level:{capitalizeFirstLetter(currentUser.skillLevel)}</span>
+                    )}
+                    {currentUser.stars && (
+                      <span className='mt-2'>Stars:{currentUser.stars}</span>
+                    )}
+                  </div>
+                  <div className='flex flex-row justify-between mt-5'>
+                    <button
+                      type="button"
+                      className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
+                      onClick={handleChangeUser}
+                    >
+                      {isLoading === "changeUser"? <FaSpinner className="animate-spin" /> : "Change User"} 
+                    </button>
+                    <button
+                      type="button"
+                      className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
+                      onClick={handleLogout}
+                    >
+                      {isLoading === "logout"? <FaSpinner className="animate-spin" /> : "Log Out"} 
+                    </button>
+                  </div>
                 </div>
-              </div>
             )}
               </>
             )}

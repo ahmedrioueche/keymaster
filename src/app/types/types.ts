@@ -7,6 +7,8 @@ export interface User {
   speed?: number;
   lastEntryDate?: string;
   typingStats?: TypingStat[];
+  stars?: number;
+  skillLevel?: string;
   settings?: Settings;
 }
 
@@ -23,4 +25,24 @@ export interface Settings {
   textLength: number;
   soundEffects: boolean;
   difficultyLevel?: 'beginner' | 'intermediate' | 'advanced';
+}
+
+export interface Room {
+  id: number;
+  roomId: string;
+  createdAt: Date;
+  status: string;
+  maxPlayers: number;
+  players: User[];
+  settings?: RoonSettings;
+}
+
+export interface SearchPrefs {
+  prefLanguage: string;
+  prefTextMaxLength: number;
+}
+
+export interface RoonSettings {
+  language: string,
+  textMaxLength: number;
 }

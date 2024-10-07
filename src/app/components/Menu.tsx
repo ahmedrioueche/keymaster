@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { TypingStat } from '../types/types';
+import { categories, languages } from '../utils/text';
 
 interface MenuProps {
   onStart: () => void;
@@ -30,7 +31,7 @@ const Menu: React.FC<MenuProps> = ({
   typingStats, 
 }) => {
   const { isDarkMode } = useTheme();
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTypingStatsCollapsed, setIsTypingStatsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -57,7 +58,6 @@ const Menu: React.FC<MenuProps> = ({
       setIsMobile(newIsMobile);
       if (!newIsMobile) {
         setIsCollapsed(false);
-        setIsTypingStatsCollapsed(false); // Reset typing stats collapse
       }
     };
 
@@ -138,7 +138,7 @@ const Menu: React.FC<MenuProps> = ({
           className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
             isDarkMode
               ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
-              : 'bg-light-primary text-dark-foreground hover:bg-light-background'
+              : 'bg-light-primary text-dark-foreground hover:bg-light-background hover:text-light-foreground'
           }`}
           >
           Start
@@ -185,16 +185,12 @@ const Menu: React.FC<MenuProps> = ({
                   isDarkMode ? 'bg-dark-background' : 'bg-light-background'
                 }`}
               >
-                <option value="English">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Russian">Russian</option>
-                <option value="Italian">Italian</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="Arabic">Arabic</option>
+                {languages.map((language: string) => (
+                  <option key={language} value={language}>
+                    {language}
+                  </option>
+                ))}
+              
               </select>
             </div>
             <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
@@ -209,16 +205,11 @@ const Menu: React.FC<MenuProps> = ({
                   isDarkMode ? 'bg-dark-background' : 'bg-light-background'
                 }`}
               >
-                <option value="General">General</option>
-                <option value="Technology">Technology</option>
-                <option value="Science">Science</option>
-                <option value="Health">Health</option>
-                <option value="Education">Education</option>
-                <option value="Finance">Finance</option>
-                <option value="Travel">Travel</option>
-                <option value="Lifestyle">Lifestyle</option>
-                <option value="Sports">Sports</option>
-                <option value="Entertainment">Entertainment</option>
+               {categories.map((category: string) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
               </select>
             </div>
           </div>

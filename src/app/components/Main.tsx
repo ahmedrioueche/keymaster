@@ -178,7 +178,7 @@ const MainContainer: React.FC = () => {
 }, []);
 
   setTimeout(() => {
-    getUsers();
+    //getUsers();
   }, 30000)
 
   const getUsers = async () => {

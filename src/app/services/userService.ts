@@ -145,6 +145,12 @@ import { defaultTextLength } from "../utils/settings";
           })),
         };
       }
+
+      if(data.stars){
+        updateData.stars = {
+          increment: data.stars,
+        }
+      }
   
       const user = await prisma.user.update({
         where: { id },

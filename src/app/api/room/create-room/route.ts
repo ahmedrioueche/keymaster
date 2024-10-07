@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { roomId } = await req.json();
+    const { roomId, user } = await req.json();
 
-    const response = await createRoom(roomId);
+    const response = await createRoom(roomId, user);
 
     return NextResponse.json({response: response});
   } catch (error) {
