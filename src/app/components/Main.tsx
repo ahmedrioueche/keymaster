@@ -223,7 +223,7 @@ const MainContainer: React.FC = () => {
   return (
     <div
       className={`min-h-screen flex flex-col p-4 sm:p-8 h-full dark:bg-dark-background dark:text-dark-foreground
-          bg-light-background text-light-foreground transition-all duration-500`}
+        bg-light-background text-light-foreground transition-all duration-500`}
     >
       <div className="flex flex-row items-center justify-center mb-6">
         <Image
@@ -237,14 +237,14 @@ const MainContainer: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">
             KeyMaster
           </h1>
-
+  
           {/* Subtitle - Responsive font size */}
           <h2 className="text-xl md:text-3xl font-dancing">
             How fast can you type?
           </h2>
         </div>
       </div>
-
+  
       {/* Main Content Area */}
       <div className="flex flex-col md:flex-row flex-grow">
         {/* Settings and Stats - Full width on small screens, 1/3 width on large screens */}
@@ -261,23 +261,27 @@ const MainContainer: React.FC = () => {
             typingStats={TypingStats}
           />
         </div>
-
-        {/* Typing Area - Always rendered but conditionally enabled */}
-          <div className="w-full md:w-2/3 lg:w-3/4">
-            {(!isSmallScreen || isStarted) && (
+  
+        {/* Typing Area and Leaderboard - Wrapped in a flex container for alignment */}
+        <div className="w-full md:w-2/3 lg:w-3/4 flex flex-col">
+          {/* Typing Area - Always rendered but conditionally enabled */}
+          {(!isSmallScreen || isStarted) && (
+            <div className="flex-grow">
               <TypingArea
                 textToType={textToType}
                 isStarted={isStarted}
                 onComplete={(speed) => handleTextCompletion(speed)}
                 onUserTyped={handleUserTyped}
               />
-            )}
-            {/* Leaderboard - Displayed under the Typing Area */}
-            <div className="bg-light-secondary dark:bg-dark-secondary">
-             <Leaderboard leaderboardData={users} />
             </div>
+          )}
+          {/* Leaderboard - Displayed under the Typing Area */}
+          <div className="bg-light-secondary dark:bg-dark-secondary">
+            <Leaderboard leaderboardData={users} />
           </div>
+        </div>
       </div>
+  
       <UserModal
         isOpen={isUserModalOpen}
         onClose={() => setIsUserModalOpen(false)}
@@ -291,7 +295,7 @@ const MainContainer: React.FC = () => {
         />
       )}
     </div>
-  );
+  );  
 };
 
 export default MainContainer;

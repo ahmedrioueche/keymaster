@@ -32,6 +32,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
   const [searchPrefs, setSearchPrefs] = useState<SearchPrefs>({prefLanguage: defaultLanguage, prefTextMaxLength: defaultTextLength});  
   const [customizeSearchVisible, setCustomizeSearchVisible] = useState(false); //eslint-disable-line @typescript-eslint/no-unused-vars
+  const [status, setStatus] = useState<{title : string, message : string}>({title: '', message:''});
 
   const router = useRouter();
   
@@ -94,16 +95,16 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
         // Handle successful room joining
         setOpponent(result.opponent);
         setTextToType(result.text);
-        if(result.response.room){
+        if(result?.response?.room){
           onJoinRoom? onJoinRoom(result.response.room) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+          onClose();
         }
-        onClose();
       } else {
-        alert("Failed to join the room. Please check the Room ID.");
+        setStatus({title:"join-room", message: "Failed to join the room. Please check the Room ID."})
       }
     } catch (error) {
       console.error("Error joining the room:", error);
-      alert("Error joining the room. Please try again.");
+      setStatus({title:"join-room", message: "Error joining the room. Please try again."})
     }
     setIsLoading("null");
   };
@@ -114,12 +115,20 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
       return;
     }
     setIsLoading("create");
-    const result = currentUser? await apiCreateRoom(roomId, currentUser) : null;
-    if(result.response.room){
-      onCreateRoom? onCreateRoom(result.response.room) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+    try {
+      const result = currentUser? await apiCreateRoom(roomId, currentUser) : null;
+      if(result?.response?.room){
+        onCreateRoom? onCreateRoom(result.response.room) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+        onClose();
+      }
+      else {
+        setStatus({title:"create-room", message:"Room already exists, please choose another Id"})
+      }
+    }
+    catch{
+      setStatus({title:"create-room", message: "Error creating the room. Please try again."})
     }
     setIsLoading("null");
-    onClose();
   }
 
   const handleTryAgain = () => {
@@ -252,6 +261,11 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
               className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white text-dark-background font-stix focus:ring-2 focus:ring-light-secondary focus:outline-none focus:border-transparent"
               placeholder="Room ID"
             />
+            {status && (
+              <div className='text-red-500 dark:text-dark-secondary text-lg mt-2 flex justify-center'>
+                {status.message}
+              </div>
+            )}
             <div className="mt-6 flex flex-col items-center">
               <div className="flex flex-row justify-between">
                 <button
