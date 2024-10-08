@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({response: joinResult});
   } catch (error) {
-    console.error('Error in Pusher route:', error);
-    return NextResponse.json({ error: `Message failed to send: ${error}` }, { status: 500 });
+    console.error('Error joining room route:', error);
+    return NextResponse.json({ error: `Failed to join room: ${error}` }, { status: 500 });
   }
 }

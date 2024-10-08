@@ -225,5 +225,26 @@ export const apiInsertUser = async (user: User): Promise<any> => { // eslint-dis
       }
   }
 
+  export const apiUpdateRoom = async (roomId : string, userId: number | undefined, action: 'joined' | 'left'): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    try {
+        const response = await fetch('/api/room/update-room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({roomId, userId, action}),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to update room in api");
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+    
+      } catch (error) {
+        console.error("Failed to update room in api:", error);
+        
+        return { status: 'error', message: 'An error occurred' };
+      }
+  }
 
   

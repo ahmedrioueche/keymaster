@@ -66,14 +66,21 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
   useEffect(() => {
 
     const updateUser = async (score: number) => {
+      console.log("updateUser")
       if(isWinnerCurrentUser){
+        console.log("updating winner data")
         const response = winner?.user?.id? await apiUpdateUser(winner?.user?.id, {stars: score}) : null
         console.log("response", response);
+        const currentUser = {
+          ...winner?.user,
+          stars: winner?.user?.stars? winner.user.stars + score : score,
+        }
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));       
       }
     }
 
     updateUser(score);
-  }, [])
+  }, [isOpen])
 
   return (
     <div
@@ -116,7 +123,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
             {/* Display user's speed and time */}
             <div className="flex flex-col items-center mt-4">
                 <div className="text-lg text-light-foreground dark:text-dark-foreground text-center">
-                    You completed at <strong>{winner?.speed} words per minute</strong> in <strong>{winner?.time} seconds</strong>.
+                    You completed at {winner?.speed} words per minute in {winner?.time} seconds.
                 </div>
                 <div className="flex flex-row text-lg text-light-foreground dark:text-dark-foreground text-center">
                    <span className='mr-1'>You got +{score} </span>
@@ -137,7 +144,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
                 {playAgainClicked ? (
                   <div className='flex flex-row'>
                     <FaSpinner className="animate-spin mr-3 mt-1"/> 
-                    <span>Waiting for {opponentName}</span> 
+                    <span>Waiting for {opponentName? opponentName : "Opponent"}</span> 
                   </div>
                   ) :
                       <span>Play Again</span>
@@ -155,7 +162,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
             {/* Display opponent's speed and time */}
             <div className="flex flex-col items-center">
                 <div className="flex justify-center mt-4 text-lg text-light-foreground dark:text-dark-foreground text-center">
-                  {opponentName} completed at <strong> {winner?.speed} words per minute </strong> in <strong>{winner?.time} seconds</strong>.
+                  {opponentName} completed at {winner?.speed} words per minute in {winner?.time} seconds.
                 </div>
                 {playAgainStatus && playAgainStatus?.status === "Play Again" && (
                   <div className='flex justify-center text-light-primary dark:text-dark-primary text-xl mt-2'>
@@ -171,7 +178,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
               {playAgainClicked ? (
                 <div className='flex flex-row'>
                   <FaSpinner className="animate-spin mr-3 mt-1"/> 
-                  <span>Waiting for {opponentName}</span> 
+                  <span>Waiting for {opponentName? opponentName : "Opponent"}</span> 
                 </div>
                 ) :
                     <span>Play Again</span>

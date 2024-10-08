@@ -117,6 +117,7 @@
 
   export const updateUser = async (id: number, data: Partial<User>) => {
     try {
+      console.log(`update user with id ${id} and data: ${data}`)
       const updateData: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
         username: data.username,
         speed: data.speed,
@@ -147,6 +148,7 @@
       }
 
       if(data.stars){
+        console.log(`update user stars ${data.stars}`)
         updateData.stars = {
           increment: data.stars,
         }

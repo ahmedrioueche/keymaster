@@ -84,8 +84,9 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   }, [searching, currentUser, searchPrefs]);
 
   const handleJoinRoomClick = async () => {
+    setStatus({title:"", message: ""});
     if (roomId.trim() === "") {
-      alert("Please enter a valid Room ID."); // Simple alert for error
+      setStatus({title:"join-room", message: "Please enter a valid Room ID."})
       return;
     }
     setIsLoading("join");
@@ -110,8 +111,10 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   };
 
   const handleCreateRoomClick = async () => {
+    setStatus({title:"", message: ""});
+
     if (roomId.trim() === "") {
-      alert("Please enter a valid Room ID."); 
+      setStatus({title:"create-room", message: "Please enter a valid Room ID."})
       return;
     }
     setIsLoading("create");

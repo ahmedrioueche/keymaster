@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import TypingArea from "./TypingArea";
 import { Room, User } from "../types/types";
-import { apiPusherSendMessage } from "../utils/apiHelper";
+import { apiPusherSendMessage, apiUpdateRoom } from "../utils/apiHelper";
 import Pusher from "pusher-js";
 import Alert from "./Alert";
 import { useRouter } from "next/navigation";
@@ -219,8 +219,11 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
       const handleCleanup = async () => {
         // Only send "on-leave" message if both users have mounted the component
         if (!isMounted.current && isOpponentMounted ) {
-          console.log("User left the room!!!");
+          //user left, notify other user 
           await apiPusherSendMessage(room.roomId, "on-leave", "user disconnected", JSON.parse(JSON.stringify(currentUser)));
+          //update room data
+          console.log("currentUser that just left", currentUser);
+          await apiUpdateRoom(room.roomId, currentUser?.id, "left");
         }
       };
 

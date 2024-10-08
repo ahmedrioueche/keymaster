@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaSpinner, FaTimes } from 'react-icons/fa';
+import { FaBars, FaSpinner, FaStar, FaTimes } from 'react-icons/fa';
 import { User } from "../types/types";
 import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
 import Image from 'next/image';
@@ -35,9 +35,12 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
   ];
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser");
-    const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
-    if (currentUser && currentUser.username) {
+    if (currentUser) {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    }
+    else {
+      const storedUser = localStorage.getItem("currentUser");
+      const currentUser: User = storedUser ? JSON.parse(storedUser) : null;
       setCurrentUser(currentUser);
     }
 
@@ -361,25 +364,34 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
                   <p className="text-xl text-gray-600 dark:text-gray-300 font-stix mt-1">
                     Logged in as: <strong>{currentUser.username}</strong>
                   </p>
-                  <div className='flex flex-row justify-center text-xl'>
+                  <div className='mt-2 flex flex-col justify-between text-xl text-dark-background dark:text-light-background'>
                     {currentUser.skillLevel && (
-                     <span className='mb-2 mt-2 mr-40'>Skill Level:{capitalizeFirstLetter(currentUser.skillLevel)}</span>
+                      <div className='flex flex-row justify-center'>
+                        <FaBars className='mr-2 mt-1 text-light-primary dark:text-dark-primary'/>
+                        <span className='flex flex-row'>Skill Level: 
+                          <span className='ml-1'>{capitalizeFirstLetter(currentUser.skillLevel)}</span>
+                        </span>
+                      </div>
                     )}
-                    {currentUser.stars && (
-                      <span className='mt-2'>Stars:{currentUser.stars}</span>
-                    )}
+                      <div className='flex flex-row justify-center'>
+                       <FaStar className='mr-2 mt-1 text-light-primary dark:text-dark-primary'/>
+                        <span>
+                          Stars:
+                          <span className='ml-1'>{currentUser.stars}</span>
+                        </span>
+                      </div>
                   </div>
                   <div className='flex flex-row justify-between mt-5'>
                     <button
                       type="button"
-                      className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
+                      className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-primary dark:hover:bg-dark-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 mr-2"
                       onClick={handleChangeUser}
                     >
                       {isLoading === "changeUser"? <FaSpinner className="animate-spin" /> : "Change User"} 
                     </button>
                     <button
                       type="button"
-                      className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-accent dark:hover:bg-dark-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
+                      className="flex justify-center flex-1 px-4 py-3 bg-light-secondary text-dark-background rounded-md font-semibold hover:text-light-background hover:bg-light-primary dark:hover:bg-dark-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-light-secondary dark:ring-dark-secondary focus:ring-offset-2 ml-2"
                       onClick={handleLogout}
                     >
                       {isLoading === "logout"? <FaSpinner className="animate-spin" /> : "Log Out"} 

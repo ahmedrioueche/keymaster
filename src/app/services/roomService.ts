@@ -75,6 +75,69 @@ export const joinRoom = async (roomId: string, user: User) => {
   }
 };
 
+export const updateRoom = async (roomId: string, userId: number, action: 'joined' | 'left') => {
+  try {
+    console.log(`updating room ${roomId} after user of id ${userId} has ${action}`)
+    if (action === 'joined') {
+      const room = await prisma.room.update({
+        where: { roomId: roomId },
+        data: {
+          players: {
+            connect: { id: userId },
+          },
+        },
+        include: {
+          players: true,
+        },
+      });
+
+      return {
+        status: 'success',
+        room: room,
+      };
+    } else if (action === 'left') {
+      const room = await prisma.room.update({
+        where: { roomId: roomId },
+        data: {
+          players: {
+            disconnect: { id: userId },
+          },
+        },
+        include: {
+          players: true,
+        },
+      });
+
+      // Check if the room has no players left
+      if (room.players.length === 1) { // The user leaving would be the last player
+        await prisma.roomSettings.deleteMany({
+          where: {
+            roomId: room.id, 
+          },
+        });
+        await prisma.room.delete({
+          where: { roomId: roomId },
+        });
+        return {
+          status: 'deleted',
+          message: 'Room has been deleted as it has no players left.',
+        };
+      }
+
+      return {
+        status: 'success',
+        room: room,
+      };
+    }
+  } catch (error) {
+    console.error("Error updating room:", error);
+    return {
+      status: 'error',
+      message: 'Failed to update room.',
+    };
+  }
+};
+
 export const getRoomPlayers = async (roomId: string) => {
   try {
     const room = await prisma.room.findUnique({

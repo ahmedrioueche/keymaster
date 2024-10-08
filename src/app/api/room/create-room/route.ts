@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({response: response});
   } catch (error) {
-    console.error('Error in Pusher route:', error);
-    return NextResponse.json({ error: `Message failed to send: ${error}` }, { status: 500 });
+    console.error('Error creating room route:', error);
+    return NextResponse.json({ error: `Failed to create room: ${error}` }, { status: 500 });
   }
 }

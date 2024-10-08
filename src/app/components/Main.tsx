@@ -26,6 +26,8 @@ const MainContainer: React.FC = () => {
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [userUpdated, setUserUpdated] = useState(false);
+
   const userSettings = currentUser?.settings;
   const usertextLength = userSettings?.textLength? userSettings.textLength : null;
   const textLength = usertextLength? usertextLength : defaultTextLength;
@@ -54,7 +56,7 @@ const MainContainer: React.FC = () => {
 
  const handleTextCompletion = async (speed: number) => {
   setIsNewRecord(false); // Track if a new record has been set
-  
+  setUserUpdated(false);
   // Check if the mode is manual or auto
   if (userSettings?.mode === "manual") {
     setIsFinished(true);
@@ -156,9 +158,12 @@ const MainContainer: React.FC = () => {
       }
     }
 
-    updateUser();
+    if(!userUpdated){
+      updateUser();
+      setUserUpdated(true);
+    }
   
-  }, [currentUser])
+  }, [currentUser, userUpdated])
 
   const handleUserTyped = () => {
     setUserTyped(true);
