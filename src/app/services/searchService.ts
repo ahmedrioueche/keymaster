@@ -35,6 +35,7 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
       entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength
     );
 
+
     if (opponentIndex !== -1) {
       const opponentEntry = searchQueue[opponentIndex];
       const opponent = opponentEntry.user;
