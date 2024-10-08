@@ -25,7 +25,8 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   const { currentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [opponent, setOpponent] = useState<User | null>(null);
   const [textToType, setTextToType] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [searching, setSearching] = useState(true);
+  const [isSearchModeAvailable, setIsSearchModeAvailable] = useState(false);//eslint-disable-line @typescript-eslint/no-unused-vars
+  const [searching, setSearching] = useState(isSearchModeAvailable);
   const [mode, setMode] = useState<"search" | "join">("join");
   const [roomId, setRoomId] = useState("");
   const [isLoading, setIsLoading] = useState<"join" | "create" | "null">("null");
@@ -33,7 +34,6 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   const [searchPrefs, setSearchPrefs] = useState<SearchPrefs>({prefLanguage: defaultLanguage, prefTextMaxLength: defaultTextLength});  
   const [customizeSearchVisible, setCustomizeSearchVisible] = useState(false); //eslint-disable-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState<{title : string, message : string}>({title: '', message:''});
-  const [isSearchModeAvailable, setIsSearchModeAvailable] = useState(false);//eslint-disable-line @typescript-eslint/no-unused-vars
   const router = useRouter();
   
   useEffect(() => {
