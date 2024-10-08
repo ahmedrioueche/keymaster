@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 // Structure for holding users in search
 let searchQueue: { user: User; prefs: SearchPrefs; timestamp: number; isSelected: boolean }[] = [];
-const SEARCH_TIMEOUT = 30000;
+const SEARCH_TIMEOUT = 20000;
 let isCreatingRoom = false; // Lock to prevent concurrent room creation
 
 // Function to find an opponent for the user
