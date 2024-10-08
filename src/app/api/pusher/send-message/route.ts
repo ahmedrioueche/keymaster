@@ -14,20 +14,20 @@ export async function POST(req: NextRequest) {
     const { roomId, event, message, user } = await req.json();
     let textToType = roomTextStore.get(roomId); // Check if the text already exists for the room
     // If textToType doesn't exist for this room, fetch it from Gemini
-    if (!textToType) {
-      const result = await getRoomById(roomId);
-      roomSettings = result?.room?.settings;
-      const response = await getGeminiAnswer(getPrompt(roomSettings?.language, roomSettings?.maxTextLength));
-
-      
-      if (response) {
-        textToType = response;
-        roomTextStore.set(roomId, textToType); // Save the text to the room store
-      }
-    }
+    
 
     switch(event){
       case "on-ready": 
+        if (!textToType) {
+          const result = await getRoomById(roomId);
+          roomSettings = result?.room?.settings;
+          const response = await getGeminiAnswer(getPrompt(roomSettings?.language, roomSettings?.maxTextLength));
+    
+          if (response) {
+            textToType = response;
+            roomTextStore.set(roomId, textToType); // Save the text to the room store
+          }
+        }
         // Trigger the 'ready' event to notify that the user is ready
         await pusherServer.trigger(`room-${roomId}`, 'on-ready', {
           user,

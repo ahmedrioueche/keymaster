@@ -26,7 +26,7 @@ const MainContainer: React.FC = () => {
   const [language, setLanguage] = useState("English");
   const [topic, setTopic] = useState("General");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const [userUpdated, setUserUpdated] = useState(false);
+  const [userUpdated, setUserUpdated] = useState(true);
 
   const userSettings = currentUser?.settings;
   const usertextLength = userSettings?.textLength? userSettings.textLength : null;

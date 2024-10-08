@@ -1,54 +1,40 @@
 import { SearchPrefs } from '@/app/types/types';
 import { PrismaClient, User } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 // Structure for holding users in search
-let searchQueue: { user: User; prefs: SearchPrefs; timestamp: number }[] = [];
-const SEARCH_TIMEOUT = 3000; // 3 seconds timeout
+let searchQueue: { user: User; prefs: SearchPrefs; timestamp: number; isSelected: boolean }[] = [];
+const SEARCH_TIMEOUT = 6000;
+let isCreatingRoom = false; // Lock to prevent concurrent room creation
 
 // Function to find an opponent for the user
 export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
-  console.log("Starting findOpponent for user:", user.username);
-  
   try {
     const now = Date.now();
-
-    // Step 1: Add or update the user's search preferences in the database
-    await prisma.search.upsert({
-      where: { userId: user.id },
-      update: {
-        prefLanguage: searchPrefs.prefLanguage,
-        prefTextMaxLength: searchPrefs.prefTextMaxLength,
-      },
-      create: {
-        userId: user.id,
-        prefLanguage: searchPrefs.prefLanguage,
-        prefTextMaxLength: searchPrefs.prefTextMaxLength,
-      },
-    });
+    console.log("searchQueue on top:", searchQueue);
 
     // Step 2: Clean up old entries in the search queue (timeout-based)
-    // Remove any users whose search has timed out
-    searchQueue = searchQueue.filter(entry => now - entry.timestamp <= SEARCH_TIMEOUT);
-    
+    searchQueue = searchQueue.filter(entry => now - entry.timestamp <= SEARCH_TIMEOUT && !entry.isSelected);
+
     // Step 3: Check if the user is already in the search queue
-    const existingEntryIndex = searchQueue.findIndex(entry => entry.user.id === user.id);
+    let existingEntryIndex = searchQueue.findIndex(entry => entry.user.id === user.id);
 
     if (existingEntryIndex !== -1) {
       // Update the timestamp if the user is already in the queue
       searchQueue[existingEntryIndex].timestamp = now;
     } else {
       // Step 4: Add the user to the queue if they're not already there
-      searchQueue.push({ user, prefs: searchPrefs, timestamp: now });
+      searchQueue.push({ user, prefs: searchPrefs, timestamp: now, isSelected: false });
+      existingEntryIndex = searchQueue.length - 1; // Update the index to point to the newly added user
     }
-
-    console.log("Updated searchQueue after cleanup and adding user:", searchQueue);
 
     // Step 5: Attempt to find an opponent
     const opponentIndex = searchQueue.findIndex(entry =>
       entry.user.id !== user.id &&
       entry.prefs.prefLanguage === searchPrefs.prefLanguage &&
-      entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength
+      entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength &&
+      !entry.isSelected
     );
 
     if (opponentIndex !== -1) {
@@ -60,47 +46,67 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
 
       // Step 7: Check if the room already exists
       const existingRoom = await prisma.room.findUnique({ where: { roomId } });
+      console.log("existingRoom", existingRoom);
 
-      if (existingRoom) {
-        // Return the existing room if it already exists
-        console.log(`Existing room found: ${roomId}`);
+      // Locking mechanism to prevent race condition
+      if (existingRoom || isCreatingRoom) {
+        // If a room already exists or a room is being created, mark both users as selected
+        if (existingRoom) {
+          searchQueue[opponentIndex].isSelected = true;
+          searchQueue[existingEntryIndex].isSelected = true;
+
+          console.log(`Existing room found: ${roomId}`);
+          return {
+            status: 'success',
+            room: existingRoom,
+            opponent,
+          };
+        }
+        console.log("A room is currently being created. Please try again later.");
         return {
-          status: 'success',
-          room: existingRoom,
-          opponent,
+          status: 'waiting',
+          message: 'A room is currently being created. Please try again later.',
         };
       }
 
+      // Lock the room creation process
+      isCreatingRoom = true;
+
       // Step 8: Create the room if it doesn't exist
-      const room = await prisma.room.create({
-        data: {
-          roomId,
-          status: 'active',
-          maxPlayers: 2, 
-          players: {
-            connect: [{ id: user.id }, { id: opponent.id }],
-          },
-          settings: {
-            create: {
-              language: searchPrefs.prefLanguage,
-              maxTextLength: searchPrefs.prefTextMaxLength,
+      try {
+        const room = await prisma.room.create({
+          data: {
+            roomId,
+            status: 'active',
+            maxPlayers: 2,
+            players: {
+              connect: [{ id: user.id }, { id: opponent.id }],
+            },
+            settings: {
+              create: {
+                language: searchPrefs.prefLanguage,
+                maxTextLength: searchPrefs.prefTextMaxLength,
+              },
             },
           },
-        },
-        include: { players: true, settings: true },
-      });
+          include: { players: true, settings: true },
+        });
 
-      // Step 9: Remove both users from the queue once they are matched
-      searchQueue.splice(opponentIndex, 1);  // Remove opponent
-      searchQueue.splice(searchQueue.findIndex(entry => entry.user.id === user.id), 1);  // Remove user
+        // Step 9: Mark both users as selected
+        searchQueue[opponentIndex].isSelected = true;
+        searchQueue[existingEntryIndex].isSelected = true;
 
-      console.log(`Room created: ${roomId} with users: ${user.username} and ${opponent.username}`);
+        console.log(`Room created: ${roomId} with users: ${user.username} and ${opponent.username}`);
 
-      return {
-        status: 'success',
-        room,
-        opponent,
-      };
+        return {
+          status: 'success',
+          room,
+          opponent,
+        };
+      } finally {
+        // Unlock the room creation process
+        isCreatingRoom = false;
+      }
     }
 
     // No opponent found, return waiting status
