@@ -1,58 +1,63 @@
 import { SearchPrefs } from '@/app/types/types';
 import { PrismaClient, User } from '@prisma/client';
-
 const prisma = new PrismaClient();
 
-// Structure for holding users in search
-let searchQueue: { user: User; prefs: SearchPrefs; timestamp: number; isSelected: boolean }[] = [];
-const SEARCH_TIMEOUT = 10000;
+const searchQueue: { user: User; prefs: SearchPrefs; timestamp: number }[] = [];
+const SEARCH_TIMEOUT = 30000; 
 
-// Function to find an opponent for the user
 export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
   try {
+    // Step 1: Add user to the Search table
+    await prisma.search.upsert({
+      where: { userId: user.id },
+      update: {
+        prefLanguage: searchPrefs.prefLanguage,
+        prefTextMaxLength: searchPrefs.prefTextMaxLength,
+      },
+      create: {
+        userId: user.id,
+        prefLanguage: searchPrefs.prefLanguage,
+        prefTextMaxLength: searchPrefs.prefTextMaxLength,
+      },
+    });
+
+    // Step 2: Clear old searchers
     const now = Date.now();
-    console.log("searchQueue on top:", searchQueue);
-
-    // Step 2: Clean up old entries in the search queue (timeout-based)
-    searchQueue = searchQueue.filter(entry => now - entry.timestamp <= SEARCH_TIMEOUT && !entry.isSelected);
-
-    // Step 3: Check if the user is already in the search queue
-    let existingEntryIndex = searchQueue.findIndex(entry => entry.user.id === user.id);
-
-    if (existingEntryIndex !== -1) {
-      // Update the timestamp if the user is already in the queue
-      searchQueue[existingEntryIndex].timestamp = now;
-    } else {
-      // Step 4: Add the user to the queue if they're not already there
-      searchQueue.push({ user, prefs: searchPrefs, timestamp: now, isSelected: false });
-      existingEntryIndex = searchQueue.length - 1; // Update the index to point to the newly added user
+    while (searchQueue.length > 0 && now - searchQueue[0].timestamp > SEARCH_TIMEOUT) {
+      searchQueue.shift(); // Remove oldest entry
     }
 
+    // Step 3: Check if user is already in the search queue
+    const existingEntryIndex = searchQueue.findIndex(entry => entry.user.id === user.id);
+    if (existingEntryIndex !== -1) {
+      // Update the timestamp for the existing entry
+      searchQueue[existingEntryIndex].timestamp = now;
+    } else {
+      // Step 4: Add user to the search queue
+      searchQueue.push({ user, prefs: searchPrefs, timestamp: now });
+    }
+    
     // Step 5: Attempt to find an opponent
-    const opponentIndex = searchQueue.findIndex(entry =>
+    const opponentIndex = searchQueue.findIndex((entry) =>
       entry.user.id !== user.id &&
       entry.prefs.prefLanguage === searchPrefs.prefLanguage &&
       entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength
     );
 
-
     if (opponentIndex !== -1) {
       const opponentEntry = searchQueue[opponentIndex];
       const opponent = opponentEntry.user;
 
-      // Mark both users as selected to avoid re-matching
-      searchQueue[opponentIndex].isSelected = true;
-      searchQueue[existingEntryIndex].isSelected = true;
-
-      // Step 6: Create a consistent room ID (sorted to avoid ordering mismatch)
-      const roomId = `room_${[user.id, opponent.id].sort().join('_')}`;
+      // Step 6: Create a consistent room ID
+      const roomId = `room_${[user.id, opponent.id].sort().join('_')}`; // Sort to ensure the same ID for both users
 
       // Step 7: Check if the room already exists
-      const existingRoom = await prisma.room.findUnique({ where: { roomId } });
-      console.log("existingRoom", existingRoom);
+      const existingRoom = await prisma.room.findUnique({
+        where: { roomId },
+      });
 
       if (existingRoom) {
-        console.log(`Existing room found: ${roomId}`);
+        // Return the existing room if it already exists
         return {
           status: 'success',
           room: existingRoom,
@@ -60,12 +65,12 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
         };
       }
 
-      // Step 8: Create the room if it doesn't exist
+      // Create the room for the matched players
       const room = await prisma.room.create({
         data: {
           roomId,
           status: 'active',
-          maxPlayers: 2,
+          maxPlayers: 4,
           players: {
             connect: [{ id: user.id }, { id: opponent.id }],
           },
@@ -79,7 +84,9 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
         include: { players: true, settings: true },
       });
 
-      console.log(`Room created: ${roomId} with users: ${user.username} and ${opponent.username}`);
+      // Remove both users from the queue
+      searchQueue.splice(opponentIndex, 1);
+      searchQueue.splice(searchQueue.findIndex(entry => entry.user.id === user.id), 1);
 
       return {
         status: 'success',
@@ -88,15 +95,12 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
       };
     }
 
-    // No opponent found, return waiting status
-    console.log("No suitable opponent found. User will continue searching.");
+    // If no opponent found, return waiting status
     return {
       status: 'waiting',
       message: 'No suitable opponent found. You will be matched soon.',
     };
-
   } catch (error) {
-    // Log the error for debugging
     console.error("Error finding opponent:", error);
     return {
       status: 'error',
