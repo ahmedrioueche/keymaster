@@ -1,5 +1,6 @@
 import { SearchPrefs } from '@/app/types/types';
 import { PrismaClient, User } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 // Structure for holding users in search
@@ -8,12 +9,11 @@ const SEARCH_TIMEOUT = 10000;
 
 // Function to find an opponent for the user
 export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
-  
   try {
     const now = Date.now();
     console.log("searchQueue on top:", searchQueue);
+
     // Step 2: Clean up old entries in the search queue (timeout-based)
-    // Remove any users whose search has timed out and are not selected
     searchQueue = searchQueue.filter(entry => now - entry.timestamp <= SEARCH_TIMEOUT && !entry.isSelected);
 
     // Step 3: Check if the user is already in the search queue
@@ -32,23 +32,26 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
     const opponentIndex = searchQueue.findIndex(entry =>
       entry.user.id !== user.id &&
       entry.prefs.prefLanguage === searchPrefs.prefLanguage &&
-      entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength 
+      entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength &&
+      !entry.isSelected // Ensure they are not already matched
     );
 
     if (opponentIndex !== -1) {
       const opponentEntry = searchQueue[opponentIndex];
       const opponent = opponentEntry.user;
-      searchQueue[opponentIndex]? searchQueue[opponentIndex].isSelected = true : null;
-      searchQueue[existingEntryIndex]? searchQueue[existingEntryIndex].isSelected = true : null;
-      
+
+      // Mark both users as selected to avoid re-matching
+      searchQueue[opponentIndex].isSelected = true;
+      searchQueue[existingEntryIndex].isSelected = true;
+
       // Step 6: Create a consistent room ID (sorted to avoid ordering mismatch)
       const roomId = `room_${[user.id, opponent.id].sort().join('_')}`;
 
       // Step 7: Check if the room already exists
       const existingRoom = await prisma.room.findUnique({ where: { roomId } });
       console.log("existingRoom", existingRoom);
-      if (existingRoom) {
 
+      if (existingRoom) {
         console.log(`Existing room found: ${roomId}`);
         return {
           status: 'success',
@@ -84,8 +87,6 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
         opponent,
       };
     }
-
-    //console.log("searchQueue on bottom:", searchQueue);
 
     // No opponent found, return waiting status
     console.log("No suitable opponent found. User will continue searching.");
