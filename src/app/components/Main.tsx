@@ -97,7 +97,6 @@ const MainContainer: React.FC = () => {
           }
         }
   
-
         // Update the user object with new stats and best speed
         updatedUser = {
           ...currentUser,
@@ -158,10 +157,10 @@ const MainContainer: React.FC = () => {
       }
     }
 
-    if(!userUpdated){
+   // if(!userUpdated){
       updateUser();
-      setUserUpdated(true);
-    }
+      //setUserUpdated(true);
+    //}
   
   }, [currentUser, userUpdated])
 
