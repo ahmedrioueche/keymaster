@@ -26,14 +26,14 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   const [opponent, setOpponent] = useState<User | null>(null);
   const [textToType, setTextToType] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [searching, setSearching] = useState(true);
-  const [mode, setMode] = useState<"search" | "join">("search");
+  const [mode, setMode] = useState<"search" | "join">("join");
   const [roomId, setRoomId] = useState("");
   const [isLoading, setIsLoading] = useState<"join" | "create" | "null">("null");
   const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
   const [searchPrefs, setSearchPrefs] = useState<SearchPrefs>({prefLanguage: defaultLanguage, prefTextMaxLength: defaultTextLength});  
   const [customizeSearchVisible, setCustomizeSearchVisible] = useState(false); //eslint-disable-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState<{title : string, message : string}>({title: '', message:''});
-
+  const [isSearchModeAvailable, setIsSearchModeAvailable] = useState(false);//eslint-disable-line @typescript-eslint/no-unused-vars
   const router = useRouter();
   
   useEffect(() => {
@@ -185,7 +185,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
           <Image src={mode === "search" ? "/storysets/search.svg" : "/storysets/join.svg"} alt="Add user illustration" className="w-full h-48 object-contain" height={48} width={38} />
         </div>
           
-        {mode === "search" ? (
+        {(mode === "search" && isSearchModeAvailable) ?  (
         <>
           <div className="flex flex-col justify-center items-center">
             <div className="flex justify-center flex-row">
@@ -284,13 +284,16 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
                   {isLoading === "create"? <FaSpinner className="animate-spin"/> : <span>Create Room</span>}
                 </button>
               </div>
-              <button
-                className="flex flex-row text-blue-500 text-xl hover:underline hover:text-blue-500 mt-6"
-                onClick={() => setMode("search")}
-              >
-                <FaSearch className="mr-2 mt-1" size={18}/>
-                <span>Search for Opponent</span>
+              {isSearchModeAvailable && (
+                <button
+                  className="flex flex-row text-blue-500 text-xl hover:underline hover:text-blue-500 mt-6"
+                  onClick={() => setMode("search")}
+                >
+                  <FaSearch className="mr-2 mt-1" size={18}/>
+                  <span>Search for Opponent</span>
               </button>
+              )}
+           
             </div>
           </>
         )}
