@@ -11,6 +11,13 @@ const CountDown: React.FC<CountdownProps> = ({ isOpen, count, onClose }) => {
   const [currentCount, setCurrentCount] = useState<number>(count);
 
   useEffect(() => {
+    if (isOpen) {
+      // Reset count when modal opens
+      setCurrentCount(count);
+    }
+  }, [isOpen, count]);
+  
+  useEffect(() => {
     if (isOpen && currentCount > 0) {
       const timer = setTimeout(() => {
         setCurrentCount((prev) => prev - 1);

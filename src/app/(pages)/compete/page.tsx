@@ -20,7 +20,6 @@ const CompetePage: React.FC = () => {
   const [isReady, setIsReady] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [countdown, setCountdown] = useState<number>(3); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isCountdownOpen, setIsCountdownOpen] = useState<boolean>(false);
-  const [countdownStart, setCountdownStart] = useState<number>(2);  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [language, setLanguage] = useState("english");  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [topic, setTopic] = useState("general");  // eslint-disable-line @typescript-eslint/no-unused-vars
   const [textLength, setTextLength] = useState(100); // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -81,12 +80,13 @@ const CompetePage: React.FC = () => {
 
   const handleReady = async () => {
     setIsReady(true);
-    setCountdownStart(2); // Reset countdown start value
     setIsCountdownOpen(true); // Open countdown modal
   };
 
   const handleCountdownClose = async () => {
+    setIsReady(false);
     setIsCountdownOpen(false); // Close countdown modal
+    setCountdown(3); // Reset countdown start value
     setIsStarted(true);
   };
 

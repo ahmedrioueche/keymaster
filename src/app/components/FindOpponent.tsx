@@ -166,7 +166,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
       <div className="bg-light-background dark:bg-dark-background rounded-lg shadow-lg p-5 w-full sm:w-[90%] max-w-md max-h-[95vh] overflow-y-auto hide-scrollbar">
       <div className="flex justify-between items-center mb-4">
         <div className="flex-grow flex justify-center">
-          <h1 className="text-3xl font-bold mb-4 mt-1 text-light-primary dark:text-dark-primary">
+          <h1 className="text-3xl font-bold mb-4 text-light-primary dark:text-dark-primary">
             {mode === "search" ? <span>Find an Opponent</span> : <span>Join a Room</span>}
           </h1>
         </div>
