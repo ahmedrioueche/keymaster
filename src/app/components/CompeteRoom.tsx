@@ -8,6 +8,7 @@ import Pusher from "pusher-js";
 import Alert from "./Alert";
 import { useRouter } from "next/navigation";
 import WinnerModal from "./WinnerModal";
+import { FaSpinner } from "react-icons/fa";
 
 interface CompeteRoomProps {
   room: Room;
@@ -43,7 +44,9 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   const [isWinnerCurrentUser, setIsWinnerCurrentUser] = useState(false);
   const [playAgain, setPlayAgain] = useState(false);
   const [freezeTimer, setFreezeTimer] = useState(false);
-  
+  const [tie, setTie] = useState<{status: boolean, speed: number, time: number}>(); //eslint-disable-line @typescript-eslint/no-unused-vars
+  const [userRestart, setUserRestart] = useState(false);
+  const [opponentRestart, setOpponentRestart] = useState(false);
   const router = useRouter();
   const isMounted = useRef(false); 
 
@@ -57,7 +60,36 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     console.log("response", response);
     stopTimer();
     setUserSpeed(speed);
+
+    //handle tie
+  //  setTimeout(()=> {
+  //    handleTie()
+  //  }, 2000)
+//
+  //  const handleTie = () => {
+  //    console.log("winner", winner);
+  //    if(!winner?.user){
+  //      setTie({status: true, speed: speed, time: time});
+  //    }
+  //  }
   };
+
+  const handleRestart = async () => {
+    setUserRestart(true);
+    const response = await apiPusherSendMessage(room.roomId, "on-restart", "restart", JSON.parse(JSON.stringify(currentUser)))
+    console.log("response", response)
+  }
+
+  useEffect(() => {
+    if(userRestart && opponentRestart){
+      setTimeout(() => {
+        onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
+        resetTimer();
+        setUserRestart(false);
+        setOpponentRestart(false);
+      }, 2000)
+    }
+  }, [userRestart, opponentRestart])
 
   const handleOpponentComplete = (speed: number) => {
     setOpponentSpeed(speed);
@@ -176,6 +208,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     });
   
     channel.bind('on-win', (data: { user: User, speed: number, time: number }) => {
+      console.log(`${data.user} won!`)
       setWinner({user: data.user, speed: data.speed, time: data.time});
       setIsWinnerCurrentUser(data.user.username === currentUser?.username);
       setIsWinnerModalOpen(true);
@@ -196,7 +229,19 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
       if(data.user.username !== currentUser?.username){
         console.log("Data received on-play-again", data);
         setOpponentPlayAgain(true);
-        setStatus({ status: "Play Again", message: `${data.user.username} wants to play some more!`, bg: 'bg-blue-500' });
+        setStatus({ status: "Play Again", message: `${data.user.username} wants to play some more!` });
+      }
+    });
+
+    channel.bind('on-restart', (data: { user: User }) => {
+      if(data.user.username !== currentUser?.username){
+        console.log("Data received on-restart", data);
+        setOpponentRestart(true);
+        setStatus({ status: "Restart", message: `${data.user.username} wants to restart the game!`, bg: 'bg-blue-500' });
+        setIsAlertOpen(true);
+        setTimeout(() => {
+          setIsAlertOpen(false);
+        }, 4000)
       }
     });
   
@@ -248,59 +293,88 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
       <div className="flex flex-col sm:flex-row flex-grow w-full relative">
         {/* User's side */}
         <div className="w-full sm:w-1/2 flex flex-col items-center sm:pr-4 md:mb-8 mb-0">
-          <div className="flex justify-center items-center w-full mb-4">
-            <h2 className="text-2xl mr-3">{currentUser?.username || "You"}</h2>
-            {!isStarted && (
+          {/* Display Restart button and Timer when the game is started */}
+          {isStarted ? (
+            <div className="flex items-center justify-between w-full mb-4">
+              {/* Restart button on the left */}
               <button
-                className={`bg-light-secondary dark:bg-dark-secondary hover:bg-light-primary dark:hover:bg-dark-primary dark:text-light-background text-dark-background hover:text-light-background py-2 px-4 rounded transition duration-300 ${
-                  userReady ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                onClick={() => {
-                  handleUserReady();
-                }}
-                disabled={userReady}
+                onClick={handleRestart}
+                className={`mt-1 mr-3 px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
               >
-                {userReady ? "Ready!" : "Ready?"}
+                {userRestart ? (
+                  <div className='flex flex-row'>
+                    <FaSpinner className="animate-spin mr-3 mt-1" />
+                    <span>Waiting for {opponent?.username || "Opponent"}</span>
+                  </div>
+                ) : (
+                  <span>Restart</span>
+                )}
               </button>
-            )}
+
+              {/* Player's Name - Centered */}
+              <h2 className="text-2xl mx-auto">{currentUser?.username || "You"}</h2>
+
+              {/* Timer on the right */}
+              <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-5 rounded-lg shadow-md ml-3">
+                <div className="text-1xl font-bold">{timer}s</div>
+              </div>          
           </div>
+          ) : (
+            // When the game hasn't started
+            <div className="flex justify-center items-center mb-4">
+              <h2 className="text-2xl mr-3">{currentUser?.username || "You"}</h2>
+              <button
+                onClick={handleUserReady}
+                className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
+              >
+                {userReady ? (
+                  <div className='flex flex-row'>
+                    <FaSpinner className="animate-spin mr-3 mt-1" />
+                    <span>Waiting for {opponent?.username || "Opponent"}</span>
+                  </div>
+                ) : (
+                  <span>Ready?</span>
+                )}
+              </button>
+            </div>
+          )}
+
           {/* Typing area for user */}
-          <TypingArea
-            textToType={textToType}
-            isStarted={isStarted}
-            onComplete={(speed, time)=> handleComplete(speed, time)}
-            onInputChange={(inputText) => handleUserInputChange(inputText)}
-            type="compete"
-          />
+            <TypingArea
+              textToType={textToType}
+              isStarted={isStarted}
+              onComplete={(speed, time) => handleComplete(speed, time)}
+              onInputChange={(inputText) => handleUserInputChange(inputText)}
+              type="compete"
+            />        
         </div>
-
-        {/* Timer positioned above the line */}
-        {isStarted && (
-          <div className="absolute top-0 right-0 sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 z-10 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md max-w-fit">
-            <div className="text-1xl font-bold">{timer}s</div>
-          </div>
-        )}
-
+  
         {/* Vertical line separator (visible only on larger screens) */}
         <div className="hidden sm:block w-px bg-black dark:bg-white mx-4 relative">
           <div className="absolute left-0 top-0 w-px h-full bg-black dark:bg-white"></div>
         </div>
-
+  
         {/* Opponent's side */}
         <div className="w-full sm:w-1/2 flex flex-col items-center sm:pl-4">
           <div className="flex justify-center items-center w-full mb-4">
             <h2 className="text-2xl mr-3">{opponent?.username || joinedOpponent?.username || "Opponent"}</h2>
             {!isStarted && (
               <button
-                className={`bg-light-secondary dark:bg-dark-secondary dark:text-light-background text-dark-background py-2 px-4 rounded ${
-                  opponentReady ? "bg-light-primary dark:bg-dark-primary" : "opacity-50"
-                } cursor-not-allowed`}
-                disabled
+                onClick={handleUserReady}
+                className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
               >
-                {opponentReady ? "Ready!" : "Ready?"}
+                {opponentReady ? (
+                  <div className='flex flex-row'>
+                    <FaSpinner className="animate-spin mr-3 mt-1" />
+                    <span>Waiting for {currentUser?.username || "Opponent"}</span>
+                  </div>
+                ) : (
+                  <span>Ready?</span>
+                )}
               </button>
             )}
           </div>
+  
           {/* Typing area for opponent */}
           <TypingArea
             textToType={textToType}
@@ -311,26 +385,31 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
             type="compete"
           />
         </div>
+  
         {isAlertOpen && (
-          <Alert 
+          <Alert
             title={status?.status}
             message={status?.message}
             bg={status?.bg}
-            onClose={()=> setIsAlertOpen(false)}
-         />
+            onClose={() => setIsAlertOpen(false)}
+          />
         )}
       </div>
+  
       <WinnerModal
-          isOpen={isWinnerModalOpen}
-          winner={winner}
-          isWinnerCurrentUser={isWinnerCurrentUser}
-          opponentName={opponent?.username}
-          onClose={()=> setIsWinnerModalOpen(false)}
-          onPlayAgain={handlePlayAgain}
-          playAgainStatus={status}
-        />
+        isOpen={isWinnerModalOpen}
+        currentUser={currentUser}
+        opponent={opponent}
+        tie={tie}
+        winner={winner}
+        isWinnerCurrentUser={isWinnerCurrentUser}
+        onClose={() => setIsWinnerModalOpen(false)}
+        onPlayAgain={handlePlayAgain}
+        playAgainStatus={status}
+      />
     </div>
   );
+      
 };
 
 export default CompeteRoom;

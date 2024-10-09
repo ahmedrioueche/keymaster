@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { FaSadCry, FaSpinner, FaStar, FaTimes, FaTrophy } from 'react-icons/fa';
+import { FaBalanceScale, FaSadCry, FaSpinner, FaStar, FaTimes, FaTrophy } from 'react-icons/fa';
 import Confetti from 'react-confetti';
 import useSound from 'use-sound';
 import { User } from '../types/types';
@@ -9,7 +9,9 @@ import { apiUpdateUser } from '../utils/apiHelper';
 
 interface WinnerModalProps {
   isOpen: boolean;
-  opponentName: string | undefined;
+  currentUser: User | null;
+  opponent: User | undefined;
+  tie: {status: boolean, speed: number, time: number} | undefined;
   isWinnerCurrentUser: boolean;
   winner: { user: User, speed: number, time: number } | undefined;
   onClose: () => void;
@@ -17,7 +19,7 @@ interface WinnerModalProps {
   playAgainStatus: {status: string, message: string, bg?: string} | undefined;
 }
 
-const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurrentUser, opponentName, playAgainStatus, onClose, onPlayAgain }) => {
+const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, currentUser, opponent, tie, winner, isWinnerCurrentUser, playAgainStatus, onClose, onPlayAgain }) => {
   const [playCheer] = useSound('/sounds/cheer.mp3');
   const [playLose] = useSound('/sounds/lose.mp3');
   const [showConfetti, setShowConfetti] = useState(false);
@@ -32,13 +34,15 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
   }, [isOpen])
   
   useEffect(() => {
-    if (isOpen) {
+    if(currentUser?.settings?.soundEffects === true){
+      if (isOpen) {
         if(isWinnerCurrentUser)
             playCheer();
         else 
             playLose();
+      }
     }
-
+    
   }, [isOpen, isWinnerCurrentUser, playCheer]);
 
   useEffect(() => {
@@ -65,8 +69,23 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
 
   useEffect(() => {
 
+    const getScore = (speed: number | undefined) => {
+      // Check if speed is valid and greater than 0
+      if (speed !== undefined && speed > 0) {
+        return parseInt((speed / 1.5).toString(), 10);
+      }
+      // Return default score for invalid speed
+      return 20;
+    };
+    
     const updateUser = async (score: number) => {
       console.log("updateUser")
+      if(tie?.status){
+        console.log("updating players data on tie")
+        currentUser?.id? await apiUpdateUser(currentUser?.id, {stars: score}) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+        opponent?.id? await apiUpdateUser(opponent?.id, {stars: score}) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+      }
+
       if(isWinnerCurrentUser){
         console.log("updating winner data")
         const response = winner?.user?.id? await apiUpdateUser(winner?.user?.id, {stars: score}) : null
@@ -79,7 +98,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
       }
     }
 
-    updateUser(score);
+    updateUser(getScore(tie?.status? tie?.speed : winner?.speed));
   }, [isOpen])
 
   return (
@@ -93,18 +112,23 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
           <Confetti width={window.innerWidth} height={window.innerHeight} recycle={true} />
         )}        
         <div className="flex justify-between items-center mb-4">
-          {isWinnerCurrentUser? (
+          {tie?.status? (
             <div className="flex items-center text-light-primary dark:text-dark-primary">
-                <FaTrophy height={30} width={30} className="text-3xl mr-3 " />
-                <h2 className="text-xl font-bold mt-1 font-dancing">Winner!</h2>
+              <FaBalanceScale height={30} width={30} className="text-3xl mr-3" />
+              <h2 className="text-xl font-bold mt-1 font-dancing">Tie!</h2>
+            </div>
+          ) : isWinnerCurrentUser ? (
+            <div className="flex items-center text-light-primary dark:text-dark-primary">
+              <FaTrophy height={30} width={30} className="text-3xl mr-3" />
+              <h2 className="text-xl font-bold mt-1 font-dancing">Winner!</h2>
             </div>
           ) : (
             <div className="flex items-center text-light-primary dark:text-dark-primary">
-                <FaSadCry height={30} width={30} className="text-3xl mr-3 " />
-                <h2 className="text-xl font-bold mt-1 font-dancing">You lost!</h2>
+              <FaSadCry height={30} width={30} className="text-3xl mr-3" />
+              <h2 className="text-xl font-bold mt-1 font-dancing">You lost!</h2>
             </div>
           )}
-        
+          
           <button
             onClick={handleClose}
             className="p-2 rounded-full bg-light-background hover:bg-light-accent dark:hover:bg-dark-secondary transition-colors duration-300 text-gray-700"
@@ -113,8 +137,46 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
           </button>
         </div>
 
+        {tie?.status && (
+            <div className='flex flex-col items-center justify-center'>
+            <Image src="/storysets/tie.svg" alt="Winner illustration" className="w-full h-48 object-contain" height={48} width={38} />
+
+            <h2 className="mt-6 text-3xl font-bold text-light-primary dark:text-dark-primary">Tie!</h2>
+            
+            {/* Display user's speed and time */}
+            <div className="flex flex-col items-center mt-4">
+                <div className="text-lg text-light-foreground dark:text-dark-foreground text-center">
+                    You completed at {tie?.speed} words per minute in {tie?.time} seconds.
+                </div>
+                <div className="flex flex-row text-lg text-light-foreground dark:text-dark-foreground text-center">
+                   <span className='mr-1'>You got +{score} </span>
+                  <FaStar className='mt-1 text-light-primary dark:text-dark-primary'/> 
+                </div>
+                {playAgainStatus && playAgainStatus?.status === "Play Again" && (
+                <div className='flex justify-center text-light-primary dark:text-dark-primary text-xl mt-2'>
+                    {playAgainStatus.message}
+                </div>
+                 )}
+            </div>
+
+                {/* Play Again Button */}
+               <button
+                    onClick={handlePlayAgain}
+                    className={`mt-4 px-4 py-2 rounded-lg ${playAgainClicked? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-primary text-white hover:bg-light-accent dark:bg-dark-primary dark:hover:bg-dark-accent hover:text-light-foreground transition-colors duration-300'} `}
+                >
+                {playAgainClicked ? (
+                  <div className='flex flex-row'>
+                    <FaSpinner className="animate-spin mr-3 mt-1"/> 
+                    <span>Waiting for {opponent?.username? opponent?.username : "Opponent"}</span> 
+                  </div>
+                  ) :
+                      <span>Play Again</span>
+                  }    
+                </button>
+          </div>
+        )}
         {/* If the current user is the winner */}
-        {isWinnerCurrentUser ? (
+        {isWinnerCurrentUser && !tie?.status && (
           <div className='flex flex-col items-center justify-center'>
             <Image src="/storysets/winner.svg" alt="Winner illustration" className="w-full h-48 object-contain" height={48} width={38} />
 
@@ -144,25 +206,26 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
                 {playAgainClicked ? (
                   <div className='flex flex-row'>
                     <FaSpinner className="animate-spin mr-3 mt-1"/> 
-                    <span>Waiting for {opponentName? opponentName : "Opponent"}</span> 
+                    <span>Waiting for {opponent?.username? opponent?.username : "Opponent"}</span> 
                   </div>
                   ) :
                       <span>Play Again</span>
                   }    
                 </button>
-
           </div>
-        ) : (
+        )}
+        
+        {!isWinnerCurrentUser && !tie?.status && (
           /* If the opponent won */
           <div className='flex flex-col items-center justify-center'>
             <Image src="/storysets/sad.svg" alt="Lost illustration" className="w-full h-48 object-contain" height={48} width={38} />
             
-            <h2 className="mt-6 text-2xl font-bold text-light-primary dark:text-dark-primary">{opponentName} Won!</h2>
+            <h2 className="mt-6 text-2xl font-bold text-light-primary dark:text-dark-primary">{opponent?.username} Won!</h2>
             
             {/* Display opponent's speed and time */}
             <div className="flex flex-col items-center">
                 <div className="flex justify-center mt-4 text-lg text-light-foreground dark:text-dark-foreground text-center">
-                  {opponentName} completed at {winner?.speed} words per minute in {winner?.time} seconds.
+                  {winner?.user.username} completed at {winner?.speed} words per minute in {winner?.time} seconds.
                 </div>
                 {playAgainStatus && playAgainStatus?.status === "Play Again" && (
                   <div className='flex justify-center text-light-primary dark:text-dark-primary text-xl mt-2'>
@@ -178,7 +241,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winner, isWinnerCurre
               {playAgainClicked ? (
                 <div className='flex flex-row'>
                   <FaSpinner className="animate-spin mr-3 mt-1"/> 
-                  <span>Waiting for {opponentName? opponentName : "Opponent"}</span> 
+                  <span>Waiting for {opponent?.username? opponent?.username : "Opponent"}</span> 
                 </div>
                 ) :
                     <span>Play Again</span>

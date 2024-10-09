@@ -1,9 +1,7 @@
-// components/FindOpponent.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { apiCreateRoom, apiFindOpponent, apiJoinRoom } from "../utils/apiHelper"; // Ensure these functions are implemented in your apiHelper
+import { apiCreateRoom, apiFindOpponent, apiJoinRoom } from "../utils/apiHelper"; 
 import { useUser } from "../context/UserContext";
 import { Room, SearchPrefs, User } from "../types/types";
 import Image from 'next/image';
@@ -25,9 +23,9 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   const { currentUser } = useUser(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [opponent, setOpponent] = useState<User | null>(null);
   const [textToType, setTextToType] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [isSearchModeAvailable, setIsSearchModeAvailable] = useState(false);//eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isSearchModeAvailable, setIsSearchModeAvailable] = useState(true);//eslint-disable-line @typescript-eslint/no-unused-vars
   const [searching, setSearching] = useState(isSearchModeAvailable);
-  const [mode, setMode] = useState<"search" | "join">("join");
+  const [mode, setMode] = useState<"search" | "join">(isSearchModeAvailable? "search" : "join");
   const [roomId, setRoomId] = useState("");
   const [isLoading, setIsLoading] = useState<"join" | "create" | "null">("null");
   const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
@@ -44,11 +42,10 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
       try {
         const response = currentUser ? await apiFindOpponent(currentUser, searchPrefs) : null;
         console.log("response", response);
-        const result : any = response.response; //eslint-disable-line @typescript-eslint/no-explicit-any
-        if (result && result.status === "success") {
+        if (response && response.status === "success") {
           setSearching(false);
-          setOpponent(result.opponent);
-          onOpponentFound(result.opponent, result.room)
+          setOpponent(response.opponent);
+          onOpponentFound(response.opponent, response.room)
           clearTimeout(timeoutId); 
           clearInterval(intervalId); 
           setTimeout(()=>{
@@ -64,7 +61,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
   
     if (searching) {
       // Start polling every 5 seconds
-      intervalId = setInterval(findOpponent, 5000); // Adjust the interval as needed
+      intervalId = setInterval(findOpponent, 1000); // Adjust the interval as needed
   
       // Set a timeout to stop searching after 30 seconds
       timeoutId = setTimeout(() => {

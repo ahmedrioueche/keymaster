@@ -21,11 +21,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const typingModes = ["Auto", "Manual"];
   const soundEffects = ["Enabled", "Disabled"];
   const userSettings = currentUser?.settings;
+
   // Initialize state with default values
   const [language, setLanguage] = useState<string>(userSettings?.language? capitalizeFirstLetter(userSettings?.language) : capitalizeFirstLetter(defaultLanguage));
   const [typingMode, setTypingMode] = useState<string>(userSettings?.mode? capitalizeFirstLetter(userSettings?.mode) : capitalizeFirstLetter(defaultMode));
   const [textLength, setTextLength] = useState<number>(userSettings?.textLength? userSettings?.textLength : defaultTextLength);
-  const [soundEffect, setSoundEffect] = useState<string>(userSettings?.soundEffects? "Enabled" : "Disabled");
+  const [soundEffect, setSoundEffect] = useState<string>(userSettings?.soundEffects === true? "Enabled" : "Disabled");
   const [isValidTextLength, setIsValidTextLength] = useState<boolean>(true);
 
   const handleSave = async () => {

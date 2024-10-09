@@ -15,7 +15,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose, user, isNewR
   const [playCheer] = useSound('/sounds/cheer.mp3'); // Path to your cheer sound
 
   useEffect(() => {
-    if (isNewRecord && isOpen) {
+    if (isNewRecord && isOpen && (user?.setting?.userEffects === true)) {
       playCheer(); // Play the cheer sound when a new record is set
     }
   }, [isNewRecord, isOpen, playCheer]);

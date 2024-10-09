@@ -9,7 +9,7 @@ interface AlertProps {
 
 const Alert: React.FC<AlertProps> = ({ title, message, bg, onClose }) => {
   return (
-    <div className={`fixed bottom-5 z-1000000 left-1/2 transform -translate-x-1/2 ${bg ? bg : 'bg-red-500'} text-white p-4 px-4 rounded-lg shadow-lg w-8/12 font-stix`}>
+    <div className={`fixed bottom-5 z-1000000 left-1/2 transform -translate-x-1/2 ${bg ? bg : 'bg-red-500'} text-white p-4 px-4 rounded-lg shadow-lg w-9/12 font-stix`}>
       <div className="flex justify-between items-start">
         <div>
           <h4 className="font-bold text-lg">{title}</h4>

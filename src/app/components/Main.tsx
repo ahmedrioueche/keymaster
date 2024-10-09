@@ -162,7 +162,7 @@ const MainContainer: React.FC = () => {
       //setUserUpdated(true);
     //}
   
-  }, [currentUser, userUpdated])
+  }, [currentUser, userUpdated]) 
 
   const handleUserTyped = () => {
     setUserTyped(true);

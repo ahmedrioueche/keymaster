@@ -1,63 +1,84 @@
-import { SearchPrefs } from '@/app/types/types';
-import { PrismaClient, User } from '@prisma/client';
-const prisma = new PrismaClient();
+  import { User, SearchPrefs } from '@/app/types/types';
+  import { PrismaClient } from '@prisma/client';
 
-const searchQueue: { user: User; prefs: SearchPrefs; timestamp: number }[] = [];
-const SEARCH_TIMEOUT = 30000; 
+  const prisma = new PrismaClient();
+  const searchQueue: { user: User; prefs: SearchPrefs; lastPing: number }[] = [];
+  const PING_TIMEOUT = 2000; 
 
-export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
-  try {
-    // Step 1: Add user to the Search table
-    await prisma.search.upsert({
-      where: { userId: user.id },
-      update: {
-        prefLanguage: searchPrefs.prefLanguage,
-        prefTextMaxLength: searchPrefs.prefTextMaxLength,
-      },
-      create: {
-        userId: user.id,
-        prefLanguage: searchPrefs.prefLanguage,
-        prefTextMaxLength: searchPrefs.prefTextMaxLength,
-      },
-    });
-
-    // Step 2: Clear old searchers
+  export const handlePing = async (user: User, searchPrefs: SearchPrefs) => {
     const now = Date.now();
-    while (searchQueue.length > 0 && now - searchQueue[0].timestamp > SEARCH_TIMEOUT) {
-      searchQueue.shift(); // Remove oldest entry
+
+    // Ensure user.id is defined
+    if (!user.id) {
+      throw new Error('User ID is undefined');
     }
 
-    // Step 3: Check if user is already in the search queue
-    const existingEntryIndex = searchQueue.findIndex(entry => entry.user.id === user.id);
+    // Clean up old players who haven't pinged within the PING_TIMEOUT
+    cleanUpQueue(now);
+
+    // Add or update the player in the queue
+    const existingEntryIndex = searchQueue.findIndex((entry) => entry.user.id === user.id);
     if (existingEntryIndex !== -1) {
-      // Update the timestamp for the existing entry
-      searchQueue[existingEntryIndex].timestamp = now;
+      // Update existing player's last ping time and preferences
+      searchQueue[existingEntryIndex].lastPing = now;
+      searchQueue[existingEntryIndex].prefs = searchPrefs;
     } else {
-      // Step 4: Add user to the search queue
-      searchQueue.push({ user, prefs: searchPrefs, timestamp: now });
+      // Add new player to the queue
+      searchQueue.push({
+        user,
+        prefs: searchPrefs,
+        lastPing: now,
+      });
+
+      // Save their search preferences in the database
+      await prisma.search.upsert({
+        where: { userId: user.id },  // Use user.id confidently
+        update: {
+          prefLanguage: searchPrefs.prefLanguage,
+          prefTextMaxLength: searchPrefs.prefTextMaxLength,
+        },
+        create: {
+          userId: user.id,  // Use user.id confidently
+          prefLanguage: searchPrefs.prefLanguage,
+          prefTextMaxLength: searchPrefs.prefTextMaxLength,
+        },
+      });
     }
-    
-    // Step 5: Attempt to find an opponent
-    const opponentIndex = searchQueue.findIndex((entry) =>
-      entry.user.id !== user.id &&
-      entry.prefs.prefLanguage === searchPrefs.prefLanguage &&
-      entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength
+
+    // Attempt to find a match
+    return tryFindMatch(user, searchPrefs);
+  };
+
+  // Cleans up the search queue by removing users who haven't pinged in time
+  const cleanUpQueue = (now: number) => {
+    for (let i = searchQueue.length - 1; i >= 0; i--) {
+      if (now - searchQueue[i].lastPing > PING_TIMEOUT) {
+        searchQueue.splice(i, 1); // Remove player if they haven't pinged within PING_TIMEOUT
+      }
+    }
+  };
+
+  // Tries to find a match for the user based on their search preferences
+  const tryFindMatch = async (user: User, searchPrefs: SearchPrefs) => {
+    const matchIndex = searchQueue.findIndex(
+      (entry) =>
+        entry.user.id !== user.id &&
+        entry.prefs.prefLanguage === searchPrefs.prefLanguage &&
+        entry.prefs.prefTextMaxLength === searchPrefs.prefTextMaxLength
     );
 
-    if (opponentIndex !== -1) {
-      const opponentEntry = searchQueue[opponentIndex];
-      const opponent = opponentEntry.user;
+    if (matchIndex !== -1) {
+      const opponent = searchQueue[matchIndex].user;
 
-      // Step 6: Create a consistent room ID
-      const roomId = `room_${[user.id, opponent.id].sort().join('_')}`; // Sort to ensure the same ID for both users
+      // Create consistent room ID
+      const roomId = `room_${[user.id, opponent.id].sort().join('_')}`;
 
-      // Step 7: Check if the room already exists
+      // Check if the room already exists in the database
       const existingRoom = await prisma.room.findUnique({
         where: { roomId },
       });
 
       if (existingRoom) {
-        // Return the existing room if it already exists
         return {
           status: 'success',
           room: existingRoom,
@@ -65,12 +86,12 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
         };
       }
 
-      // Create the room for the matched players
+      // Create a new room if it doesn't exist
       const room = await prisma.room.create({
         data: {
           roomId,
           status: 'active',
-          maxPlayers: 4,
+          maxPlayers: 2,
           players: {
             connect: [{ id: user.id }, { id: opponent.id }],
           },
@@ -85,8 +106,11 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
       });
 
       // Remove both users from the queue
-      searchQueue.splice(opponentIndex, 1);
-      searchQueue.splice(searchQueue.findIndex(entry => entry.user.id === user.id), 1);
+      searchQueue.splice(matchIndex, 1);
+      searchQueue.splice(
+        searchQueue.findIndex((entry) => entry.user.id === user.id),
+        1
+      );
 
       return {
         status: 'success',
@@ -95,16 +119,5 @@ export const findOpponent = async (user: User, searchPrefs: SearchPrefs) => {
       };
     }
 
-    // If no opponent found, return waiting status
-    return {
-      status: 'waiting',
-      message: 'No suitable opponent found. You will be matched soon.',
-    };
-  } catch (error) {
-    console.error("Error finding opponent:", error);
-    return {
-      status: 'error',
-      message: 'Failed to find an opponent.',
-    };
-  }
-};
+    return null; // No match found yet
+  };
