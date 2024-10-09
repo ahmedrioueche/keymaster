@@ -42,8 +42,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     };
 
     // Call your API to save settings
-    const response = currentUser?.id ? await apiSetSettings(currentUser.id, settings) : null;
-    console.log("response", response)
+    currentUser?.id ? await apiSetSettings(currentUser.id, settings) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
     if (currentUser) {
       const updatedUser: User = {
         ...currentUser,

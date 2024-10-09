@@ -77,7 +77,6 @@ export const joinRoom = async (roomId: string, user: User) => {
 
 export const updateRoom = async (roomId: string, userId: number, action: 'joined' | 'left') => {
   try {
-    console.log(`updating room ${roomId} after user of id ${userId} has ${action}`)
     if (action === 'joined') {
       const room = await prisma.room.update({
         where: { roomId: roomId },
@@ -210,7 +209,6 @@ export const removePlayer = async (roomId: string, user: User) => {
 
     // Check if room is empty
     if (updatedRoom.players.length === 0) {
-      console.log(`Room ${roomId} is empty. Setting up auto-deletion timer.`);
       
       // Set a timer to delete the room after 1 minute if no players join
       setTimeout(async () => {
@@ -221,9 +219,8 @@ export const removePlayer = async (roomId: string, user: User) => {
 
         if (currentRoom && currentRoom.players.length === 0) {
           await deleteRoom(roomId); // Call the deleteRoom function if no players
-          console.log(`Room ${roomId} has been deleted after 1 minute of inactivity.`);
         }
-      }, 60000); // 60000 ms = 1 minute
+      }, 10000); 
     }
 
     return {

@@ -45,7 +45,6 @@ const MainContainer: React.FC = () => {
 
     setIsStarted(true); // Enable the typing area
     setTextToType("Loading Text...");
-    console.log("currentUser", currentUser)
 
     const response = await helperPromptGemini(textLength, language, topic);
     if (response) {
@@ -152,8 +151,7 @@ const MainContainer: React.FC = () => {
     //update the user's data in db
     const updateUser = async () => {
       if(currentUser){
-        const response = currentUser?.id? await apiUpdateUser(currentUser?.id, {...currentUser}) : null;
-        console.log("response", response)
+         currentUser?.id? await apiUpdateUser(currentUser?.id, {...currentUser}) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
       }
     }
 
@@ -187,7 +185,6 @@ const MainContainer: React.FC = () => {
 
   const getUsers = async () => {
     const response = await apiGetUsers();
-    console.log("response", response);
     if(response){
       setUsers(response);
     }
@@ -196,15 +193,12 @@ const MainContainer: React.FC = () => {
   useEffect(() => {
     const callback = (user: User | null) => {
       if (user) {
-        console.log("User has been updated:", user);
         //user has logged in, start now
         if(userLoggedIn){ 
           handleStart();
           setUserLoggedIn(false);
         }
-      } else {
-        console.log("User has been logged out or removed");
-      }
+      } 
     };
 
     // Register callback to get notified when currentUser changes

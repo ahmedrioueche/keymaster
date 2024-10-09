@@ -79,17 +79,13 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, currentUser, opponent
     };
     
     const updateUser = async (score: number) => {
-      console.log("updateUser")
       if(tie?.status){
-        console.log("updating players data on tie")
         currentUser?.id? await apiUpdateUser(currentUser?.id, {stars: score}) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
         opponent?.id? await apiUpdateUser(opponent?.id, {stars: score}) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
       }
 
       if(isWinnerCurrentUser){
-        console.log("updating winner data")
-        const response = winner?.user?.id? await apiUpdateUser(winner?.user?.id, {stars: score}) : null
-        console.log("response", response);
+        winner?.user?.id? await apiUpdateUser(winner?.user?.id, {stars: score}) : null //eslint-disable-line @typescript-eslint/no-unused-expressions
         const currentUser = {
           ...winner?.user,
           stars: winner?.user?.stars? winner.user.stars + score : score,

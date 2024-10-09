@@ -14,22 +14,18 @@ const roomWinners = new Map();
 // Helper function to ensure text generation works with room settings re-fetch
 const generatePromptForRoom = async (roomId: string) => {
   let textToType = roomTextStore.get(roomId);
-  console.log("generatePromptForRoom");
 
   // If no text generated and lock is not set
   if (!textGenerationLocks.get(roomId)) {
-    console.log("textGenerationLocks.get(roomId) doesnt exist");
     try {
       textGenerationLocks.set(roomId, true); // Lock the room for text generation
       
       // Fetch room settings each time
       const result = await getRoomById(roomId);
       roomSettings = result?.room?.settings;
-      console.log("getGeminiAnswer");
 
       // Generate new text based on room settings
       const response = await getGeminiAnswer(getPrompt(roomSettings?.language, roomSettings?.maxTextLength));
-      console.log("response", response);
 
       if (response) {
         textToType = response;
@@ -64,13 +60,11 @@ export async function POST(req: NextRequest) {
         break;
 
       case "on-play-again":
-        console.log("on-play-again")
         await pusherServer.trigger(`room-${roomId}`, 'on-play-again', { user });
         textToType = await generatePromptForRoom(roomId); // Force new text generation
         break;
 
       case "on-restart":
-        console.log("on-restart")
         await pusherServer.trigger(`room-${roomId}`, 'on-restart', { user });
         textToType = await generatePromptForRoom(roomId); // Force new text generation
         break;

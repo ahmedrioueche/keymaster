@@ -41,7 +41,6 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
     const findOpponent = async () => {
       try {
         const response = currentUser ? await apiFindOpponent(currentUser, searchPrefs) : null;
-        console.log("response", response);
         if (response && response.status === "success") {
           setSearching(false);
           setOpponent(response.opponent);
@@ -51,9 +50,7 @@ const FindOpponent: React.FC<FindOpponentProps> = ({ isOpen, onClose, onJoinRoom
           setTimeout(()=>{
             onClose();
           }, 3000)
-        } else {
-          console.log("Opponent not found, will try again.");
-        }
+        } 
       } catch (error) {
         console.error("Error finding opponent:", error);
       }

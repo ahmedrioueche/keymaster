@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
     const { roomId, user } = await req.json();
 
     const joinResult = await joinRoom(roomId, user);
-    console.log("joinResult.status", joinResult.status)
 
     if (joinResult.status === 'success') {
       const updatedRoom = joinResult.room;

@@ -56,8 +56,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   }, [])
 
   const handleComplete = async (speed: number, time: number) => {
-    const response = await apiPusherSendMessage(room.roomId, "on-win", JSON.stringify({speed: speed, time: time}), JSON.parse(JSON.stringify(currentUser)));
-    console.log("response", response);
+    await apiPusherSendMessage(room.roomId, "on-win", JSON.stringify({speed: speed, time: time}), JSON.parse(JSON.stringify(currentUser)));
     stopTimer();
     setUserSpeed(speed);
 
@@ -76,8 +75,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
 
   const handleRestart = async () => {
     setUserRestart(true);
-    const response = await apiPusherSendMessage(room.roomId, "on-restart", "restart", JSON.parse(JSON.stringify(currentUser)))
-    console.log("response", response)
+    await apiPusherSendMessage(room.roomId, "on-restart", "restart", JSON.parse(JSON.stringify(currentUser)))
   }
 
   useEffect(() => {
@@ -96,8 +94,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   };
 
   const handleUserReady = async () => {
-    const response = await apiPusherSendMessage(room.roomId, "on-ready", "ready", JSON.parse(JSON.stringify(currentUser)));
-    console.log("response", response);
+    await apiPusherSendMessage(room.roomId, "on-ready", "ready", JSON.parse(JSON.stringify(currentUser)));
     setUserReady(true);
   };
 
@@ -111,8 +108,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   useEffect(() => {
 
     const sendPlayAgainEvent = async () => {
-      const response = await apiPusherSendMessage(room.roomId, "on-play-again", "user want to play again", JSON.parse(JSON.stringify(currentUser)));
-      console.log("response", response);
+      await apiPusherSendMessage(room.roomId, "on-play-again", "user want to play again", JSON.parse(JSON.stringify(currentUser)));
     }
 
     if(playAgain){
@@ -164,20 +160,13 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   }
 
   useEffect(() => {
-    console.log('Initializing Pusher client...');
     const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '',
     });
   
-    console.log(`Subscribing to channel room-${room.roomId}...`);
     const channel = pusherClient.subscribe(`room-${room.roomId}`);
   
     channel.bind('pusher:subscription_succeeded', () => {
-      console.log(`Successfully subscribed to channel room-${room.roomId}`);
-    });
-  
-    channel.bind('pusher:subscription_error', (error: any) => { //eslint-disable-line @typescript-eslint/no-explicit-any
-      console.error('Subscription error:', error);
     });
   
     channel.bind('on-join', (data: { message: string, user: User, users: User[] }) => {
@@ -208,7 +197,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     });
   
     channel.bind('on-win', (data: { user: User, speed: number, time: number }) => {
-      console.log(`${data.user} won!`)
       setWinner({user: data.user, speed: data.speed, time: data.time});
       setIsWinnerCurrentUser(data.user.username === currentUser?.username);
       setIsWinnerModalOpen(true);
@@ -227,7 +215,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
 
     channel.bind('on-play-again', (data: { user: User }) => {
       if(data.user.username !== currentUser?.username){
-        console.log("Data received on-play-again", data);
         setOpponentPlayAgain(true);
         setStatus({ status: "Play Again", message: `${data.user.username} wants to play some more!` });
       }
@@ -235,7 +222,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
 
     channel.bind('on-restart', (data: { user: User }) => {
       if(data.user.username !== currentUser?.username){
-        console.log("Data received on-restart", data);
         setOpponentRestart(true);
         setStatus({ status: "Restart", message: `${data.user.username} wants to restart the game!`, bg: 'bg-blue-500' });
         setIsAlertOpen(true);
@@ -246,10 +232,8 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     });
   
     return () => {
-      console.log(`Unsubscribing from channel room-${room.roomId}...`);
       channel.unbind_all();
       channel.unsubscribe();
-      console.log('Unsubscribed successfully');
     };
   }, [room.roomId, currentUser]);
   
@@ -267,7 +251,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
           //user left, notify other user 
           await apiPusherSendMessage(room.roomId, "on-leave", "user disconnected", JSON.parse(JSON.stringify(currentUser)));
           //update room data
-          console.log("currentUser that just left", currentUser);
           await apiUpdateRoom(room.roomId, currentUser?.id, "left");
         }
       };
@@ -283,7 +266,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
   }, [opponent]);
 
   const handlePlayAgain = () => {
-    console.log("play again")
     setPlayAgain(true);
   }
 
