@@ -31,7 +31,6 @@ const generateTextForRoom = async (roomId: string) => {
       if (response) {
         textToType = response;
         roomTextStore.set(roomId, textToType); // Save the text to the room store
-        textGenerated = false;
       }
     } catch (error) {
       console.error("Error generating Gemini prompt:", error);
@@ -61,17 +60,18 @@ export async function POST(req: NextRequest) {
         if(!textGenerated){
           textToType = await generateTextForRoom(roomId);
           textGenerated = true;
+          await pusherServer.trigger(`room-${roomId}`, 'on-text-to-type', { textToType });
         }
         break;
 
       case "on-play-again":
         await pusherServer.trigger(`room-${roomId}`, 'on-play-again', { user });
-        textToType = await generateTextForRoom(roomId); // Force new text generation
+        textGenerated = false;
         break;
 
       case "on-restart":
         await pusherServer.trigger(`room-${roomId}`, 'on-restart', { user });
-        textToType = await generateTextForRoom(roomId); // Force new text generation
+        textGenerated = false;
         break;
 
       case "on-text-update":
@@ -85,10 +85,12 @@ export async function POST(req: NextRequest) {
           await pusherServer.trigger(`room-${roomId}`, 'on-win', { speed, time, user });
         }
         textGenerationLocks.set(roomId, false); // Unlock after win
+        textGenerated = false;
         break;
 
       case "on-leave":
         await pusherServer.trigger(`room-${roomId}`, 'on-leave', { user });
+        textGenerated = false;
         break;
     }
 

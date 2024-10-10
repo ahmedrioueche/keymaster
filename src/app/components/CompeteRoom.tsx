@@ -80,6 +80,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
 
   useEffect(() => {
     if(userRestart && opponentRestart){
+      sendReadyEvent();
       setTimeout(() => {
         onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
         resetTimer();
@@ -102,6 +103,8 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
     if(userReady && opponentReady){
       onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
       setTextToType(temptextToType);
+      setUserReady(false);
+      setOpponentReady(false);
     }
   }, [userReady, opponentReady])
 
@@ -115,11 +118,15 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
       setCurrentUserPlayAgain(true)
       sendPlayAgainEvent()
     }
-
   }, [playAgain])
+
+  const sendReadyEvent = async () => {
+    await apiPusherSendMessage(room.roomId, "on-ready", "ready", JSON.parse(JSON.stringify(currentUser)));
+  }
 
   useEffect(() => {
     if(currentUserPlayAgain && opponentPlayAgain){
+      sendReadyEvent();
       setIsWinnerModalOpen(false);
       setStatus({status:"null", message: "null" });
       onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
