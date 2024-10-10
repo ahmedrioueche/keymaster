@@ -11,8 +11,9 @@ let roomSettings: RoomSettings | undefined | null;
 // Mutex implementation
 const textGenerationLocks = new Map(); // Store locks per room
 const roomWinners = new Map();
+let textGenerated = false;
 // Helper function to ensure text generation works with room settings re-fetch
-const generatePromptForRoom = async (roomId: string) => {
+const generateTextForRoom = async (roomId: string) => {
   let textToType = roomTextStore.get(roomId);
 
   // If no text generated and lock is not set
@@ -30,6 +31,7 @@ const generatePromptForRoom = async (roomId: string) => {
       if (response) {
         textToType = response;
         roomTextStore.set(roomId, textToType); // Save the text to the room store
+        textGenerated = false;
       }
     } catch (error) {
       console.error("Error generating Gemini prompt:", error);
@@ -56,17 +58,20 @@ export async function POST(req: NextRequest) {
     switch (event) {
       case "on-ready": 
         await pusherServer.trigger(`room-${roomId}`, 'on-ready', { user });
-        textToType = await generatePromptForRoom(roomId);
+        if(!textGenerated){
+          textToType = await generateTextForRoom(roomId);
+          textGenerated = true;
+        }
         break;
 
       case "on-play-again":
         await pusherServer.trigger(`room-${roomId}`, 'on-play-again', { user });
-        textToType = await generatePromptForRoom(roomId); // Force new text generation
+        textToType = await generateTextForRoom(roomId); // Force new text generation
         break;
 
       case "on-restart":
         await pusherServer.trigger(`room-${roomId}`, 'on-restart', { user });
-        textToType = await generatePromptForRoom(roomId); // Force new text generation
+        textToType = await generateTextForRoom(roomId); // Force new text generation
         break;
 
       case "on-text-update":

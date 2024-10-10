@@ -57,7 +57,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
     };
 
     const response = await apiAuthenticateUser(user);
-    console.log("response", response);
     if(response.userData){
       user.id = response.userData.id;
       localStorage.setItem("currentUser", JSON.stringify(response.userData));
@@ -89,7 +88,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose }) => {
 
     if(!isInsertUserCalled){
       const response = await apiInsertUser(newUser);
-      console.log("response", response);
       if(response.userData){
         newUser.id = response.userData.id;
         localStorage.setItem("currentUser", JSON.stringify(response.userData));
