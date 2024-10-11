@@ -205,7 +205,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ textToType, isStarted, disabled
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto p-6 border-2 rounded-lg border-light-secondary dark:border-dark-secondary mb-3">
+    <div className="relative w-full max-w-5xl mx-auto p-6 border-2 rounded-lg border-light-secondary dark:border-dark-secondary mb-4">
     <div className="absolute top-6 left-6 right-6 bottom-20 pointer-events-none whitespace-pre-wrap font-stix leading-normal">
       {renderText()}
     </div>

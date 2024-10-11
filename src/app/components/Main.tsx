@@ -264,7 +264,7 @@ const MainContainer: React.FC = () => {
         <div className="w-full md:w-2/3 lg:w-3/4 flex flex-col">
           {/* Typing Area - Always rendered but conditionally enabled */}
           {(!isSmallScreen || isStarted) && (
-            <div className="flex-grow">
+            <div className="">
               <TypingArea
                 textToType={textToType}
                 isStarted={isStarted}
