@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SearchPrefs } from '../types/types';
+import { SearchPrefs } from '../services/types/types';
 import { FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 import CustomSelect from './CustomSelect';

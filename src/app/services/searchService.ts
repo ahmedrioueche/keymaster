@@ -1,4 +1,4 @@
-  import { User, SearchPrefs } from '@/app/types/types';
+  import { User, SearchPrefs } from '@/app/services/types/types';
   import { PrismaClient } from '@prisma/client';
 
   const prisma = new PrismaClient();

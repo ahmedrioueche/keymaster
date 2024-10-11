@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import { TypingStat } from '../types/types';
+import { TypingStat } from '../services/types/types';
 import { categories, languages } from '../utils/text';
 
 interface MenuProps {

@@ -288,7 +288,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
               {/* Restart button on the left */}
               <button
                 onClick={handleRestart}
-                className={`mt-1 mr-3 px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
+                className={`mt-1 mr-3 px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}
               >
                 {userRestart ? (
                   <div className='flex flex-row'>

@@ -180,7 +180,7 @@ const MainContainer: React.FC = () => {
 }, []);
 
   setTimeout(() => {
-    //getUsers();
+    getUsers();
   }, 30000)
 
   const getUsers = async () => {
@@ -227,9 +227,9 @@ const MainContainer: React.FC = () => {
         <Image
           src="/storysets/typing.svg"
           alt="KeyMaster"
-          className="w-38 h-38 object-contain mr-4" // Adjust size as needed
-          height={128} // Adjust height to match your design
-          width={128} // Adjust width to match your design
+          className="w-38 h-38 object-contain mr-4" 
+          height={128} 
+          width={128} 
         />
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">

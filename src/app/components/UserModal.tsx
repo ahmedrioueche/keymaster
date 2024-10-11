@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaBars, FaSpinner, FaStar, FaTimes } from 'react-icons/fa';
-import { User } from "../types/types";
+import { User } from "../services/types/types";
 import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
 import Image from 'next/image';
 import Alert from './Alert';
