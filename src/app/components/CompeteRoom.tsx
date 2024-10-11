@@ -314,7 +314,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
               <h2 className="text-2xl mr-3">{currentUser?.username || "You"}</h2>
               <button
                 onClick={handleUserReady}
-                className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
+                className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
               >
                 {userReady ? (
                   <div className='flex flex-row'>
@@ -350,7 +350,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({
             {!isStarted && (
               <button
                 onClick={handleUserReady}
-                className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-background hover:text-dark-foreground transition-colors duration-300'}`}
+                className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}
               >
                 {opponentReady ? (
                   <div className='flex flex-row'>
