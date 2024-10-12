@@ -49,25 +49,25 @@ KeyMaster provides an interactive and engaging typing experience by leveraging G
 
 ## Screenshots
 
-1. ![Home](./km/km_home.png)  
+1. ![Home](public/km/km_home.png)  
    **Home Screen**: Users can select a topic and language, then start typing as Gemini provides a paragraph of the specified length. Performance metrics such as speed, character count, and timer provide real-time feedback.
 
-2. ![Login](./km/km_login.png)  
+2. ![Login](public/km/km_login.png)  
    **Login Screen**: Users must log in to access personalized settings and the leaderboard.
 
-3. ![Signup](./km/km_signup.png)  
+3. ![Signup](public/km/km_signup.png)  
    **Signup Screen**: New users can easily register with a simple form. User data is managed through Supabase and Prisma.
 
-4. ![Competition](./km/km_compete.png)  
+4. ![Competition](public/km/km_compete.png)  
    **Real-time Competition**: Users can compete against friends or other players in typing challenges, with Pusher managing real-time communication.
 
-5. ![Search](./km/km_search.png)  
+5. ![Search](public/km/km_search.png)  
    **Search Functionality**: Users can search for specific games or competitors using a fast and accurate custom search algorithm.
 
-6. ![Room Join](./km/km_join.png)  
+6. ![Room Join](public/km/km_join.png)  
    **Join/Create Rooms**: Users can create rooms or join friends' rooms, with room data managed in a PostgreSQL database.
 
-7. ![Settings](./km/km_settings.png)  
+7. ![Settings](public/km/km_settings.png)  
    **Settings Screen**: Users can configure their preferences, such as language and typing mode, with settings stored in Supabase for persistent user profiles.
 
 ---
