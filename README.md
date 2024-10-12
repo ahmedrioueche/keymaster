@@ -3,7 +3,7 @@
 
 **KeyMaster** is a lightweight, responsive web app designed to enhance typing practice through real-time competition, personalized settings, and a built-in leaderboard. This app is tailored for users looking to improve their typing speed and accuracy in a fun, competitive environment. 
 
-![KeyMaster Home](./km/km_home.png)
+![KeyMaster Home](public/km/km_home.png)
 
 [Live Demo](http://keymaster-type.vercel.app) | [GitHub Repository](https://github.com/ahmedrioueche/keymaster)
 
