@@ -81,5 +81,3 @@ KeyMaster is an engaging typing game that encourages efficiency, competition, an
 ## Links
 
 - **Live Demo**: [KeyMaster](http://keymaster-type.vercel.app)
-- **GitHub Repository**: [KeyMaster Repository](https://github.com/ahmedrioueche/keymaster)
-- **Project Details**: [More Details](./projects/3)
