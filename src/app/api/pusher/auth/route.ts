@@ -1,4 +1,4 @@
-import { pusherServer } from "@/app/utils/pusher";
+import { pusherServer } from "@/lib/pusher";
 import { NextRequest, NextResponse } from "next/server";
 
 // Add this new endpoint for Pusher channel authentication

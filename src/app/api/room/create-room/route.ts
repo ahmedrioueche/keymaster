@@ -1,4 +1,4 @@
-import { createRoom } from '@/app/services/roomService';
+import { createRoom } from '@/services/roomService';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import TypingArea from "./TypingArea";
-import { Room, User } from "../types/types";
-import { apiPusherSendMessage, apiUpdateRoom } from "../utils/apiHelper";
+import { Room, User } from "../lib/types";
+import { apiPusherSendMessage, apiUpdateRoom } from "../lib/apiHelper";
 import Pusher from "pusher-js";
 import Alert from "./Alert";
 import { useRouter } from "next/navigation";

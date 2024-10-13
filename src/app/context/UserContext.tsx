@@ -1,6 +1,6 @@
 "use client"
 import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from "react";
-import { User } from "../types/types";
+import { User } from "../../lib/types";
 
 interface UserContextProps {
   currentUser: User | null;

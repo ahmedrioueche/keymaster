@@ -1,4 +1,4 @@
-import { SearchPrefs, Settings, User } from "../types/types";
+import { SearchPrefs, Settings, User } from "./types";
 
 export const apiPromptGemini = async (prompt: string): Promise<any> => { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { handlePing } from '@/app/services/searchService'; // Import the service
-import { User, SearchPrefs } from '@/app/types/types'; // Import from types
+import { handlePing } from '@/services/searchService'; // Import the service
+import { User, SearchPrefs } from '@/lib/types'; // Import from types
 
 export async function POST(req: NextRequest) {
   try {

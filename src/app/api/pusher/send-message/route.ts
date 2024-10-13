@@ -1,7 +1,7 @@
-import { getGeminiAnswer } from '@/app/services/geminiService';
-import { getRoomById } from '@/app/services/roomService';
-import { getPrompt } from '@/app/utils/helper';
-import { pusherServer } from '@/app/utils/pusher';
+import { getGeminiAnswer } from '@/services/geminiService';
+import { getRoomById } from '@/services/roomService';
+import { getPrompt } from '@/lib/helper';
+import { pusherServer } from '@/lib/pusher';
 import { RoomSettings } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 

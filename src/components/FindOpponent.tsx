@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { apiCreateRoom, apiFindOpponent, apiJoinRoom } from "../utils/apiHelper"; 
-import { useUser } from "../context/UserContext";
-import { Room, SearchPrefs, User } from "../types/types";
+import { apiCreateRoom, apiFindOpponent, apiJoinRoom } from "../lib/apiHelper"; 
+import { useUser } from "../app/context/UserContext";
+import { Room, SearchPrefs, User } from "../lib/types";
 import Image from 'next/image';
 import { FaRocket, FaSearch, FaSpinner, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import CustomizeSearch from "./CustomizeSearch";
-import { defaultLanguage, defaultTextLength } from "../utils/settings";
+import { defaultLanguage, defaultTextLength } from "../lib/settings";
 
 interface FindOpponentProps {
   isOpen: boolean;

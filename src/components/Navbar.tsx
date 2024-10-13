@@ -5,12 +5,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Link from 'next/link';
-import { useTheme } from '../context/ThemeContext'; 
+import { useTheme } from '../app/context/ThemeContext'; 
 import UserModal from './UserModal';
 import { FaBook, FaCog, FaSignOutAlt, FaTrophy, FaUser } from 'react-icons/fa';
 import SettingsModal from './SettingsModal';
 import Image from 'next/image';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../app/context/UserContext';
 
 const Navbar: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();

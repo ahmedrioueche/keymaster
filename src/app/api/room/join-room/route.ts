@@ -1,6 +1,6 @@
-import { joinRoom } from '@/app/services/roomService';
+import { joinRoom } from '@/services/roomService';
 import { NextRequest, NextResponse } from 'next/server';
-import { pusherServer } from '@/app/utils/pusher';
+import { pusherServer } from '@/lib/pusher';
 
 export async function POST(req: NextRequest) {
   try {

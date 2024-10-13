@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FaSpinner, FaTimes } from 'react-icons/fa';
-import { Settings, User } from "../types/types";
+import { Settings, User } from "../lib/types";
 import Image from 'next/image';
-import { apiSetSettings } from '../utils/apiHelper';
-import { defaultLanguage, defaultMode, defaultTextLength, maxTextLength, minTextLength } from '../utils/settings';
-import { useUser } from '../context/UserContext';
-import { capitalizeFirstLetter } from '../utils/formater';
+import { apiSetSettings } from '../lib/apiHelper';
+import { defaultLanguage, defaultMode, defaultTextLength, maxTextLength, minTextLength } from '../lib/settings';
+import { useUser } from '../app/context/UserContext';
+import { capitalizeFirstLetter } from '../lib/formater';
 import CustomSelect from './CustomSelect';
 
 interface SettingsModalProps {

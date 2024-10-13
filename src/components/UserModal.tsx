@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FaBars, FaSpinner, FaStar, FaTimes } from 'react-icons/fa';
-import { User } from "../services/types/types";
-import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../utils/apiHelper';
+import { User } from '../lib/types';;
+import { apiAuthenticateUser, apiGetUsers, apiInsertUser } from '../lib/apiHelper';
 import Image from 'next/image';
 import Alert from './Alert';
-import { useUser } from '../context/UserContext';
-import { capitalizeFirstLetter } from '../utils/formater';
+import { useUser } from '../app/context/UserContext';
+import { capitalizeFirstLetter } from '../lib/formater';
 
 interface UserModalProps {
   isOpen: boolean;

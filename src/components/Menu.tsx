@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../app/context/ThemeContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import { TypingStat } from '../services/types/types';
-import { categories, languages } from '../utils/text';
+import { TypingStat } from '../lib/types';
+import { categories, languages } from '../lib/text';
 
 interface MenuProps {
   onStart: () => void;

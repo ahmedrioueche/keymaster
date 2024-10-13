@@ -1,7 +1,7 @@
-  import { Settings, User } from "../types/types";
-  import prisma from "../utils/prisma";
+  import { Settings, User } from "../lib/types";
+  import prisma from "../lib/prisma";
   import bcrypt from 'bcrypt';
-  import { defaultTextLength } from "../utils/settings";
+  import { defaultTextLength } from "../lib/settings";
 
   export const insertUser = async (user: User) => {
     try {

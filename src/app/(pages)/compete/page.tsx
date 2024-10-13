@@ -3,12 +3,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import FindOpponent from "../../components/FindOpponent";
-import CompeteRoom from "../../components/CompeteRoom";
+import FindOpponent from "../../../components/FindOpponent";
+import CompeteRoom from "../../../components/CompeteRoom";
 import { useUser } from "../../context/UserContext";
-import { Room, User } from "../../types/types";
-import CountDown from "@/app/components/Countdown";
-import UserModal from "@/app/components/UserModal";
+import { Room, User } from "../../../lib/types";
+import CountDown from "@/components/Countdown";
+import UserModal from "@/components/UserModal";
 import Image from 'next/image';
 
 const CompetePage: React.FC = () => {

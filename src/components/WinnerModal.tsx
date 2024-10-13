@@ -3,9 +3,9 @@ import Image from 'next/image';
 import { FaBalanceScale, FaSadCry, FaSpinner, FaStar, FaTimes, FaTrophy } from 'react-icons/fa';
 import Confetti from 'react-confetti';
 import useSound from 'use-sound';
-import { User } from '../services/types/types';
+import { User } from '../lib/types';
 import { useRouter } from 'next/navigation';
-import { apiUpdateUser } from '../utils/apiHelper';
+import { apiUpdateUser } from '../lib/apiHelper';
 
 interface WinnerModalProps {
   isOpen: boolean;

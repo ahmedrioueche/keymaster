@@ -1,4 +1,4 @@
-import { updateRoom } from '@/app/services/roomService';
+import { updateRoom } from '@/services/roomService';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {

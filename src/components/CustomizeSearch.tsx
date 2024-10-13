@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { SearchPrefs } from '../services/types/types';
+import { SearchPrefs } from '../lib/types';
 import { FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 import CustomSelect from './CustomSelect';
-import { languages } from '../utils/text';
-import { maxTextLength, minTextLength } from '../utils/settings';
+import { languages } from '../lib/text';
+import { maxTextLength, minTextLength } from '../lib/settings';
 
 interface CustomizeSearchProps {
     isOpen: boolean;

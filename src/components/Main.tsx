@@ -4,14 +4,14 @@ import React, { useEffect, useState } from "react";
 import TypingArea from "./TypingArea"; 
 import Menu from "./Menu"; 
 import Leaderboard from "./Leaderboard"; 
-import { apiGetUsers, apiUpdateUser } from "../utils/apiHelper";
-import { TypingStat, User } from "../types/types";
+import { apiGetUsers, apiUpdateUser } from "../lib/apiHelper";
+import { TypingStat, User } from "../lib/types";
 import UserModal from "./UserModal";
 import Image from 'next/image';
 import ResultModal from "./ResultModal";
-import { useUser } from "../context/UserContext";
-import { defaultTextLength } from "../utils/settings";
-import { helperPromptGemini } from "../utils/helper";
+import { useUser } from "../app/context/UserContext";
+import { defaultTextLength } from "../lib/settings";
+import { helperPromptGemini } from "../lib/helper";
 
 const MainContainer: React.FC = () => {
   const {currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn} = useUser();
