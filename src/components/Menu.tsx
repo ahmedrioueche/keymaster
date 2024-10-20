@@ -51,6 +51,7 @@ const Menu: React.FC<MenuProps> = ({
     }
   };
 
+  console.log("typingStats", typingStats);
 
   useEffect(() => {
     const handleResize = () => {
@@ -236,7 +237,7 @@ const Menu: React.FC<MenuProps> = ({
               {typingStats.map((stat, index) => (
                 <div key={index} className="flex justify-between py-1">
                   <p className="text-sm">
-                    Recorded Speed: {stat.speed} WPM on {new Date(stat.date).toLocaleDateString()} {new Date(stat.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    Recorded Speed: {stat.speed} WPM on {stat.date}
                   </p>
                 </div>
               ))}

@@ -64,6 +64,7 @@ const MainContainer: React.FC = () => {
   }
 
   const date = new Date().toLocaleString();
+  console.log("date", date);
   let updatedUser: User;
 
   setUsers((prevUsers) => {
@@ -115,7 +116,7 @@ const MainContainer: React.FC = () => {
           lastEntryDate: date,
           typingStats: [newEntry],
         };
-
+        console.log("newEntry", newEntry)
         // Add the new user to the users array
         updatedUsers.push(updatedUser);
       }

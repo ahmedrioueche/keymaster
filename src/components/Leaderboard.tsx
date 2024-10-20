@@ -39,7 +39,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ leaderboardData }) => {
         </thead>
         <tbody>
           {sortedLeaderboardData.map((player: User, index: number) => (
-            <tr className="hover:scale-105 transition duration-500" key={player.id}>
+            <tr key={player.id}>
               <td className="border-b py-2 px-5">{index + 1}</td> {/* Rank based on index + 1 */}
               <td className="border-b py-2 px-4">{player.username}</td>
               <td className="border-b py-2 px-4">{player.speed}</td>
