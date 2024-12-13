@@ -1,13 +1,11 @@
-import { Settings, User } from "../lib/types";
-import prisma from "../lib/prisma";
-import bcrypt from "bcrypt";
-import { defaultTextLength } from "../lib/settings";
+import { Settings, User } from '../lib/types';
+import prisma from '../lib/prisma';
+import bcrypt from 'bcrypt';
+import { defaultTextLength } from '../lib/settings';
 
 export const insertUser = async (user: User) => {
   try {
-    const hashedPassword = user.password
-      ? await bcrypt.hash(user.password, 10)
-      : null;
+    const hashedPassword = user.password ? await bcrypt.hash(user.password, 10) : null;
 
     // Insert user into the database
     const newUser = await prisma.user.create({
@@ -26,8 +24,8 @@ export const insertUser = async (user: User) => {
         },
         settings: {
           create: {
-            language: "english",
-            mode: "manual",
+            language: 'english',
+            mode: 'manual',
             textLength: defaultTextLength,
             soundEffects: true,
           },
@@ -45,13 +43,10 @@ export const insertUser = async (user: User) => {
       },
     });
 
-    console.log(
-      "User and settings inserted successfully:",
-      insertedUserWithSettings
-    );
+    console.log('User and settings inserted successfully:', insertedUserWithSettings);
     return insertedUserWithSettings;
   } catch (error) {
-    console.error("Error inserting user:", error);
+    console.error('Error inserting user:', error);
     throw error;
   }
 };
@@ -70,23 +65,20 @@ export const authenticateUser = async (user: User) => {
 
     // Check if the user exists
     if (!existingUser) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
     // Compare the provided password with the hashed password in the database
-    const isPasswordValid =
-      user.password && existingUser.password
-        ? await bcrypt.compare(user.password, existingUser.password)
-        : null;
+    const isPasswordValid = user.password && existingUser.password ? await bcrypt.compare(user.password, existingUser.password) : null;
 
     if (!isPasswordValid) {
-      throw new Error("Invalid password");
+      throw new Error('Invalid password');
     }
 
     // If authentication is successful, return the user data (omit password for security)
     const { password, ...userData } = existingUser; //eslint-disable-line @typescript-eslint/no-unused-vars
     return userData;
   } catch (error) {
-    console.error("Error authenticating user:", error);
+    console.error('Error authenticating user:', error);
     throw error; // Rethrow the error to be handled by the calling function
   }
 };
@@ -100,7 +92,7 @@ export const getUsers = async () => {
     });
     return users;
   } catch (error) {
-    console.error("Error getting users:", error);
+    console.error('Error getting users:', error);
     throw error;
   }
 };
@@ -118,16 +110,14 @@ export const getUserById = async (id: number) => {
 
     return user;
   } catch (error) {
-    console.error("Error getting user by ID:", error);
+    console.error('Error getting user by ID:', error);
     throw error;
   }
 };
 
 export const updateUser = async (id: number, data: Partial<User>) => {
   try {
-    console.log("data", data);
-    const updateData: any = {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
+    const updateData: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ = {
       username: data.username,
       speed: data.speed,
       rank: data.rank,
@@ -173,7 +163,7 @@ export const updateUser = async (id: number, data: Partial<User>) => {
 
     return user;
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error('Error updating user:', error);
     throw error;
   }
 };
@@ -186,11 +176,8 @@ export const setSettings = async (id: number, settings: Partial<Settings>) => {
     if (settings.language) updateData.language = settings.language;
     if (settings.mode) updateData.mode = settings.mode;
     if (settings.textLength) updateData.textLength = settings.textLength;
-    if (settings.soundEffects !== undefined)
-      updateData.soundEffects = settings.soundEffects; // boolean can be false
-    if (settings.difficultyLevel)
-      updateData.difficultyLevel = settings.difficultyLevel;
-    console.log("updateData", updateData);
+    if (settings.soundEffects !== undefined) updateData.soundEffects = settings.soundEffects; // boolean can be false
+    if (settings.difficultyLevel) updateData.difficultyLevel = settings.difficultyLevel;
     // Use upsert to either update or create settings in the database
     const upsertedSettings = await prisma.settings.upsert({
       where: { userId: id }, // Assuming userId is the foreign key in settings
@@ -201,10 +188,10 @@ export const setSettings = async (id: number, settings: Partial<Settings>) => {
       },
     });
 
-    console.log("Settings updated or created successfully:", upsertedSettings);
+    console.log('Settings updated or created successfully:', upsertedSettings);
     return upsertedSettings;
   } catch (error) {
-    console.error("Error setting settings:", error);
+    console.error('Error setting settings:', error);
     throw error;
   }
 };

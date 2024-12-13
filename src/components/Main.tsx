@@ -1,40 +1,35 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import TypingArea from "./TypingArea";
-import Menu from "./Menu";
-import Leaderboard from "./Leaderboard";
-import { apiGetUsers, apiUpdateUser } from "../lib/apiHelper";
-import { TypingStat, User } from "../lib/types";
-import UserModal from "./UserModal";
-import Image from "next/image";
-import ResultModal from "./ResultModal";
-import { useUser } from "../app/context/UserContext";
-import { defaultTextLength } from "../lib/settings";
-import { helperPromptGemini } from "../lib/helper";
+import React, { useEffect, useState } from 'react';
+import TypingArea from './TypingArea';
+import Menu from './Menu';
+import Leaderboard from './Leaderboard';
+import { apiGetUsers, apiUpdateUser } from '../lib/apiHelper';
+import { TypingStat, User } from '../lib/types';
+import UserModal from './UserModal';
+import Image from 'next/image';
+import ResultModal from './ResultModal';
+import { useUser } from '../app/context/UserContext';
+import { defaultTextLength } from '../lib/settings';
+import { helperPromptGemini } from '../lib/helper';
 
 const MainContainer: React.FC = () => {
-  const { currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn } =
-    useUser();
+  const { currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn } = useUser();
   const [users, setUsers] = useState<User[]>([]);
-  const [textToType, setTextToType] = useState(
-    'Press "Start" button to start typing'
-  );
+  const [textToType, setTextToType] = useState('Press "Start" button to start typing');
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [userTyped, setUserTyped] = useState(false);
   const [isNewRecord, setIsNewRecord] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [language, setLanguage] = useState("English");
-  const [topic, setTopic] = useState("General");
+  const [language, setLanguage] = useState('English');
+  const [topic, setTopic] = useState('General');
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [userUpdated, setUserUpdated] = useState(true);
 
   const userSettings = currentUser?.settings;
-  const usertextLength = userSettings?.textLength
-    ? userSettings.textLength
-    : null;
+  const usertextLength = userSettings?.textLength ? userSettings.textLength : null;
   const textLength = usertextLength ? usertextLength : defaultTextLength;
 
   useEffect(() => {
@@ -43,7 +38,7 @@ const MainContainer: React.FC = () => {
 
   const handleStart = async () => {
     setIsStarted(true); // Enable the typing area
-    setTextToType("Loading Text...");
+    setTextToType('Loading Text...');
 
     const response = await helperPromptGemini(textLength, language, topic);
     if (response) {
@@ -55,14 +50,13 @@ const MainContainer: React.FC = () => {
     setIsNewRecord(false); // Track if a new record has been set
     setUserUpdated(false);
     // Check if the mode is manual or auto
-    if (userSettings?.mode === "manual") {
+    if (userSettings?.mode === 'manual') {
       setIsFinished(true);
     } else {
       handleStart(); // Continue to the next typing session if in auto mode
     }
 
     const date = new Date();
-    console.log("date", date);
     let updatedUser: User;
 
     setUsers((prevUsers) => {
@@ -75,9 +69,7 @@ const MainContainer: React.FC = () => {
         }, 3000);
 
         // Find the current user in the users list
-        const existingUserIndex = updatedUsers.findIndex(
-          (user) => user.username === currentUser.username
-        );
+        const existingUserIndex = updatedUsers.findIndex((user) => user.username === currentUser.username);
 
         // If user exists, proceed with the update
         if (existingUserIndex > -1) {
@@ -85,10 +77,7 @@ const MainContainer: React.FC = () => {
           const newEntry: TypingStat = { speed, date };
 
           // Append the new entry to their typingStats
-          const updatedTypingStats = [
-            ...(currentUser.typingStats || []),
-            newEntry,
-          ];
+          const updatedTypingStats = [...(currentUser.typingStats || []), newEntry];
 
           // Determine if the current speed is a new record (personal best)
           if (currentUser?.speed) {
@@ -101,9 +90,7 @@ const MainContainer: React.FC = () => {
           updatedUser = {
             ...currentUser,
             typingStats: updatedTypingStats,
-            speed: currentUser.speed
-              ? Math.max(currentUser.speed, speed)
-              : speed, // Ensure the speed is the highest value
+            speed: currentUser.speed ? Math.max(currentUser.speed, speed) : speed, // Ensure the speed is the highest value
             lastEntryDate: date,
           };
 
@@ -113,6 +100,7 @@ const MainContainer: React.FC = () => {
           // If the user does not exist in the list, create a new user
           const newEntry: TypingStat = { speed, date };
           updatedUser = {
+            id: currentUser.id,
             username: currentUser.username,
             speed,
             lastEntryDate: date,
@@ -123,22 +111,15 @@ const MainContainer: React.FC = () => {
         }
 
         // Sort and rank users based on their best speed
-        const rankedUsers = updatedUsers
-          .sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0))
-          .map((user, index) => ({ ...user, rank: index + 1 }));
+        const rankedUsers = updatedUsers.sort((a, b) => (b.speed ?? 0) - (a.speed ?? 0)).map((user, index) => ({ ...user, rank: index + 1 }));
 
         // Find the updated current user in rankedUsers to get their new rank
-        const updatedCurrentUser = rankedUsers.find(
-          (user) => user.username === currentUser.username
-        );
+        const updatedCurrentUser = rankedUsers.find((user) => user.username === currentUser.username);
 
         if (updatedCurrentUser) {
           // Update the current user state with the new rank and updated stats
           setCurrentUser(updatedCurrentUser);
-          localStorage.setItem(
-            "currentUser",
-            JSON.stringify(updatedCurrentUser)
-          );
+          localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
         }
 
         return rankedUsers;
@@ -151,11 +132,8 @@ const MainContainer: React.FC = () => {
   useEffect(() => {
     //update the user's data in db
     const updateUser = async () => {
-      console.log("currentUser in updateUser", currentUser);
       if (currentUser) {
-        currentUser?.id
-          ? await apiUpdateUser(currentUser?.id, { ...currentUser })
-          : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
+        currentUser?.id ? await apiUpdateUser(currentUser?.id, { ...currentUser }) : null; //eslint-disable-line @typescript-eslint/no-unused-expressions
       }
     };
 
@@ -174,11 +152,11 @@ const MainContainer: React.FC = () => {
       setIsSmallScreen(window.innerWidth <= 768);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     handleResize();
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -210,7 +188,7 @@ const MainContainer: React.FC = () => {
   }, [onSet]);
 
   const handleStop = () => {
-    if (userSettings?.mode === "auto") {
+    if (userSettings?.mode === 'auto') {
     }
   };
 
@@ -222,22 +200,12 @@ const MainContainer: React.FC = () => {
         bg-light-background text-light-foreground transition-all duration-500`}
     >
       <div className="flex flex-row items-center justify-center mb-6">
-        <Image
-          src="/storysets/typing.svg"
-          alt="KeyMaster"
-          className="w-38 h-38 object-contain mr-4"
-          height={128}
-          width={128}
-        />
+        <Image src="/storysets/typing.svg" alt="KeyMaster" className="w-38 h-38 object-contain mr-4" height={128} width={128} />
         <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">
-            KeyMaster
-          </h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">KeyMaster</h1>
 
           {/* Subtitle - Responsive font size */}
-          <h2 className="text-xl md:text-3xl font-dancing">
-            How fast can you type?
-          </h2>
+          <h2 className="text-xl md:text-3xl font-dancing">How fast can you type?</h2>
         </div>
       </div>
 
@@ -245,17 +213,7 @@ const MainContainer: React.FC = () => {
       <div className="flex flex-col md:flex-row flex-grow">
         {/* Settings and Stats - Full width on small screens, 1/3 width on large screens */}
         <div className="w-full md:w-1/3 mb-8 md:mb-0 md:mr-4">
-          <Menu
-            onStart={handleStart}
-            userTyped={userTyped}
-            isFinished={isFinished}
-            language={language}
-            onStop={handleStop}
-            setLanguage={setLanguage}
-            topic={topic}
-            setTopic={setTopic}
-            typingStats={TypingStats}
-          />
+          <Menu onStart={handleStart} userTyped={userTyped} isFinished={isFinished} language={language} onStop={handleStop} setLanguage={setLanguage} topic={topic} setTopic={setTopic} typingStats={TypingStats} />
         </div>
 
         {/* Typing Area and Leaderboard - Wrapped in a flex container for alignment */}
@@ -263,12 +221,7 @@ const MainContainer: React.FC = () => {
           {/* Typing Area - Always rendered but conditionally enabled */}
           {(!isSmallScreen || isStarted) && (
             <div className="">
-              <TypingArea
-                textToType={textToType}
-                isStarted={isStarted}
-                onComplete={(speed) => handleTextCompletion(speed)}
-                onUserTyped={handleUserTyped}
-              />
+              <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed) => handleTextCompletion(speed)} onUserTyped={handleUserTyped} />
             </div>
           )}
           {/* Leaderboard - Displayed under the Typing Area */}
@@ -278,18 +231,8 @@ const MainContainer: React.FC = () => {
         </div>
       </div>
 
-      <UserModal
-        isOpen={isUserModalOpen}
-        onClose={() => setIsUserModalOpen(false)}
-      />
-      {currentUser && (
-        <ResultModal
-          isOpen={isResultModalOpen}
-          onClose={() => setIsResultModalOpen(false)}
-          user={currentUser}
-          isNewRecord={isNewRecord}
-        />
-      )}
+      <UserModal isOpen={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} />
+      {currentUser && <ResultModal isOpen={isResultModalOpen} onClose={() => setIsResultModalOpen(false)} user={currentUser} isNewRecord={isNewRecord} />}
     </div>
   );
 };

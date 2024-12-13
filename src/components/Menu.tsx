@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../app/context/ThemeContext';
@@ -16,20 +16,10 @@ interface MenuProps {
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   topic: string;
   setTopic: React.Dispatch<React.SetStateAction<string>>;
-  typingStats?: TypingStat[]; 
+  typingStats?: TypingStat[];
 }
 
-const Menu: React.FC<MenuProps> = ({
-  onStart,
-  userTyped,
-  isFinished,
-  language,
-  setLanguage,
-  onStop,
-  topic,
-  setTopic,
-  typingStats, 
-}) => {
+const Menu: React.FC<MenuProps> = ({ onStart, userTyped, isFinished, language, setLanguage, onStop, topic, setTopic, typingStats }) => {
   const { isDarkMode } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTypingStatsCollapsed, setIsTypingStatsCollapsed] = useState(true);
@@ -82,12 +72,12 @@ const Menu: React.FC<MenuProps> = ({
 
   const handleStop = () => {
     setIsStarted(false);
-    onStop? onStop() : null;  // eslint-disable-line @typescript-eslint/no-unused-expressions
+    onStop ? onStop() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  }
+  };
 
   useEffect(() => {
     if (userTyped) {
@@ -115,56 +105,30 @@ const Menu: React.FC<MenuProps> = ({
       setIsStarted(false);
     }
   }, [isFinished]);
-  
+
   // Calculate overall speed from typing stats
-  const averageSpeed =
-    typingStats && typingStats.length > 0
-      ? typingStats.reduce((sum, stat) => sum + stat.speed, 0) / typingStats.length
-      : 0;
+  const averageSpeed = typingStats && typingStats.length > 0 ? typingStats.reduce((sum, stat) => sum + stat.speed, 0) / typingStats.length : 0;
 
   return (
-    <div
-      className={`w-full max-w-4xl mx-auto transition-all duration-300 ${
-        isDarkMode
-          ? 'bg-dark-secondary text-dark-foreground'
-          : 'bg-light-secondary text-light-foreground'
-      } rounded-lg shadow-md overflow-hidden`}
-    >
+    <div className={`w-full max-w-4xl mx-auto transition-all duration-300 ${isDarkMode ? 'bg-dark-secondary text-dark-foreground' : 'bg-light-secondary text-light-foreground'} rounded-lg shadow-md overflow-hidden`}>
       <div className="flex justify-between items-center p-4 py-3">
-        {!isStarted? (
-          <button
-          onClick={handleStart}
-          className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
-            isDarkMode
-              ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
-              : 'bg-light-primary text-dark-foreground hover:bg-light-background hover:text-light-foreground'
-          }`}
-          >
-          Start
+        {!isStarted ? (
+          <button onClick={handleStart} className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${isDarkMode ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background' : 'bg-light-primary text-dark-foreground hover:bg-light-background hover:text-light-foreground'}`}>
+            Start
           </button>
         ) : (
-          <button
-          onClick={handleStop}
-          className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${
-            isDarkMode
-              ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background'
-              : 'bg-light-primary text-dark-foreground hover:bg-dark-background'
-          }`}
-        >
-          Stop
-        </button>
+          <button onClick={handleStop} className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-300 ${isDarkMode ? 'bg-dark-primary text-dark-foreground hover:bg-dark-background' : 'bg-light-primary text-dark-foreground hover:bg-dark-background'}`}>
+            Stop
+          </button>
         )}
-       
+
         {timerVisible && (
           <div className="flex-1 flex justify-center">
             <p className="text-lg font-bold">{formatTimeElapsed()}</p>
           </div>
         )}
         {isMobile && (
-          <button
-            onClick={toggleCollapse}
-            className="text-light-foreground dark:text-dark-foreground focus:outline-none"
-          >
+          <button onClick={toggleCollapse} className="text-light-foreground dark:text-dark-foreground focus:outline-none">
             {isCollapsed ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
           </button>
         )}
@@ -176,39 +140,24 @@ const Menu: React.FC<MenuProps> = ({
               <label htmlFor="language" className="block text-xs mb-1 font-bold">
                 Language
               </label>
-              <select
-                id="language"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className={`w-full p-1 text-sm rounded ${
-                  isDarkMode ? 'bg-dark-background' : 'bg-light-background'
-                }`}
-              >
+              <select id="language" value={language} onChange={(e) => setLanguage(e.target.value)} className={`w-full p-1 text-sm rounded ${isDarkMode ? 'bg-dark-background' : 'bg-light-background'}`}>
                 {languages.map((language: string) => (
                   <option key={language} value={language}>
                     {language}
                   </option>
                 ))}
-              
               </select>
             </div>
             <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
               <label htmlFor="topic" className="block text-xs mb-1 font-bold">
                 Topic
               </label>
-              <select
-                id="topic"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className={`w-full p-1 text-sm rounded ${
-                  isDarkMode ? 'bg-dark-background' : 'bg-light-background'
-                }`}
-              >
-               {categories.map((category: string) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
+              <select id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`w-full p-1 text-sm rounded ${isDarkMode ? 'bg-dark-background' : 'bg-light-background'}`}>
+                {categories.map((category: string) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -217,12 +166,9 @@ const Menu: React.FC<MenuProps> = ({
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold mb-2 font-stix">Typing Stats</h2>
               {typingStats && typingStats.length > 0 && (
-              <button
-                onClick={() => setIsTypingStatsCollapsed(!isTypingStatsCollapsed)}
-                className="text-light-foreground dark:text-dark-foreground focus:outline-none mb-2"
-              >
-                {isTypingStatsCollapsed ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-              </button>
+                <button onClick={() => setIsTypingStatsCollapsed(!isTypingStatsCollapsed)} className="text-light-foreground dark:text-dark-foreground focus:outline-none mb-2">
+                  {isTypingStatsCollapsed ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                </button>
               )}
             </div>
 
@@ -231,16 +177,16 @@ const Menu: React.FC<MenuProps> = ({
 
             {/* Show detailed stats if not collapsed */}
             {!isTypingStatsCollapsed && typingStats && (
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="custom-scrollbar bg-transparent">
-              {typingStats.map((stat, index) => (
-                <div key={index} className="flex justify-between py-1">
-                  <p className="text-sm">
-                    Recorded Speed: {stat.speed} WPM on {stat.date}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
+              <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="custom-scrollbar bg-transparent">
+                {typingStats.map((stat, index) => (
+                  <div key={index} className="flex justify-between py-1">
+                    <p className="text-sm">
+                      Recorded Speed: {stat.speed} WPM on {stat.date.toDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
