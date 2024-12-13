@@ -1,11 +1,10 @@
-  
 export interface User {
   id?: number;
   username: string;
   password?: string;
   rank?: number;
   speed?: number;
-  lastEntryDate?: string;
+  lastEntryDate?: Date;
   typingStats?: TypingStat[];
   stars?: number;
   skillLevel?: string;
@@ -16,15 +15,15 @@ export interface TypingStat {
   id?: number;
   speed: number;
   accuracy?: number;
-  date: string;
+  date: Date;
 }
 
 export interface Settings {
   language: string;
-  mode: 'auto' | 'manual';
+  mode: "auto" | "manual";
   textLength: number;
   soundEffects: boolean;
-  difficultyLevel?: 'beginner' | 'intermediate' | 'advanced';
+  difficultyLevel?: "beginner" | "intermediate" | "advanced";
 }
 
 export interface Room {
@@ -43,6 +42,6 @@ export interface SearchPrefs {
 }
 
 export interface RoonSettings {
-  language: string,
+  language: string;
   textMaxLength: number;
 }

@@ -51,8 +51,6 @@ const Menu: React.FC<MenuProps> = ({
     }
   };
 
-  console.log("typingStats", typingStats);
-
   useEffect(() => {
     const handleResize = () => {
       const newIsMobile = window.innerWidth <= 640;
