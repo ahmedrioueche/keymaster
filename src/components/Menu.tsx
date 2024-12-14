@@ -81,6 +81,7 @@ const Menu: React.FC<MenuProps> = ({ onStart, userTyped, isFinished, language, s
 
   useEffect(() => {
     if (userTyped) {
+      console.log('userTyped', userTyped);
       setTimeElapsed(0); // Reset the timer when the user starts
       handleTypingStart(); // Start the timer on the first keypress
     }

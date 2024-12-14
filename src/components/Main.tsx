@@ -49,6 +49,7 @@ const MainContainer: React.FC = () => {
   const handleTextCompletion = async (speed: number) => {
     setIsNewRecord(false); // Track if a new record has been set
     setUserUpdated(false);
+    setUserTyped(false);
     // Check if the mode is manual or auto
     if (userSettings?.mode === 'manual') {
       setIsFinished(true);
@@ -144,6 +145,7 @@ const MainContainer: React.FC = () => {
   }, [currentUser, userUpdated]);
 
   const handleUserTyped = () => {
+    console.log('user typed');
     setUserTyped(true);
   };
 
