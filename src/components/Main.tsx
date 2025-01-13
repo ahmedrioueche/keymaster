@@ -11,7 +11,7 @@ import Image from 'next/image';
 import ResultModal from './ResultModal';
 import { useUser } from '../app/context/UserContext';
 import { defaultTextLength } from '../lib/settings';
-import { helperPromptGemini } from '../lib/helper';
+import { promptGemini } from '../lib/helper';
 
 const MainContainer: React.FC = () => {
   const { currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn } = useUser();
@@ -39,10 +39,13 @@ const MainContainer: React.FC = () => {
   const handleStart = async () => {
     setIsStarted(true); // Enable the typing area
     setTextToType('Loading Text...');
-
-    const response = await helperPromptGemini(textLength, language, topic);
-    if (response) {
-      setTextToType(response);
+    try {
+      const response = await promptGemini(textLength, language, topic);
+      if (response) {
+        setTextToType(response);
+      }
+    } catch (e) {
+      console.log('Error: ', e);
     }
   };
 
