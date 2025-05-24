@@ -11,7 +11,7 @@ let roomSettings: RoomSettings | undefined | null;
 // Mutex implementation
 const textGenerationLocks = new Map(); // Store locks per room
 const roomWinners = new Map();
-let textGenerated = false;
+
 // Helper function to ensure text generation works with room settings re-fetch
 const generateTextForRoom = async (roomId: string) => {
   let textToType = roomTextStore.get(roomId);
