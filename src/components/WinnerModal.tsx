@@ -192,13 +192,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, currentUser, opponent
 
             <h2 className="mt-6 text-2xl font-bold text-light-primary dark:text-dark-primary">{opponent?.username} Won!</h2>
 
-            {/* Display opponent's speed and time */}
-            <div className="flex flex-col items-center">
-              <div className="flex justify-center mt-4 text-lg text-light-foreground dark:text-dark-foreground text-center">
-                {winner?.user.username} completed at {winner?.speed} words per minute in {winner?.time} seconds.
-              </div>
-              {playAgainStatus && playAgainStatus?.status === 'Play Again' && <div className="flex justify-center text-light-secondary dark:text-dark-secondary text-xl mt-2">{playAgainStatus.message}</div>}
-            </div>
+        
             {/* Play Again Button */}
             <button onClick={handlePlayAgain} className={`mt-4 px-4 py-2 rounded-lg ${playAgainClicked ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-primary text-white hover:bg-light-accent dark:bg-dark-primary dark:hover:bg-dark-accent hover:text-light-foreground transition-colors duration-300'} `}>
               {playAgainClicked ? (
@@ -210,6 +204,13 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, currentUser, opponent
                 <span>Play Again</span>
               )}
             </button>
+                {/* Display opponent's speed and time */}
+                <div className="flex flex-col items-center">
+              <div className="flex justify-center mt-4 text-lg text-light-foreground dark:text-dark-foreground text-center">
+                {winner?.user.username} completed at {winner?.speed} words per minute in {winner?.time} seconds.
+              </div>
+              {playAgainStatus && playAgainStatus?.status === 'Play Again' && <div className="flex justify-center text-light-secondary dark:text-dark-secondary text-xl mt-2">{playAgainStatus.message}</div>}
+            </div>
           </div>
         )}
       </div>

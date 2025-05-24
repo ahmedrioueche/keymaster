@@ -39,6 +39,8 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
   const [tie] = useState<{ status: boolean; speed: number; time: number }>();
   const [userRestart, setUserRestart] = useState(false);
   const [opponentRestart, setOpponentRestart] = useState(false);
+  const [userScore, setUserScore] = useState(0);
+  const [opponentScore, setOpponentScore] = useState(0);
   const router = useRouter();
   const isMounted = useRef(false);
 
@@ -54,6 +56,8 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
 
   const handleRestart = async () => {
     setUserRestart(true);
+    setUserScore(0);
+    setOpponentScore(0);
     await apiPusherSendMessage(room.roomId, 'on-restart', 'restart', JSON.parse(JSON.stringify(currentUser)));
   };
 
@@ -253,6 +257,16 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
     setPlayAgain(true);
   };
 
+  useEffect(() => {
+    if (winner) {
+      if (winner.user.username === currentUser?.username) {
+        setUserScore(prev => prev + 1);
+      } else {
+        setOpponentScore(prev => prev + 1);
+      }
+    }
+  }, [winner, currentUser?.username]);
+
   return (
     <div className="min-h-screen flex flex-col p-4 sm:p-8 h-full">
       {/* Competition area - Split screen */}
@@ -301,6 +315,11 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
 
           {/* Typing area for user */}
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" />
+          
+          {/* Add score display for user */}
+          <div className="absolute bottom-4 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
+            <div className="text-lg font-bold">Score: {userScore}</div>
+          </div>
         </div>
 
         {/* Vertical line separator (visible only on larger screens) */}
@@ -328,6 +347,11 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
 
           {/* Typing area for opponent */}
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={handleOpponentComplete} inputText={opponentInputText} disabled={true} type="compete" />
+          
+          {/* Add score display for opponent */}
+          <div className="absolute bottom-4 right-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
+            <div className="text-lg font-bold">Score: {opponentScore}</div>
+          </div>
         </div>
 
         {isAlertOpen && <Alert title={status?.status} message={status?.message} bg={status?.bg} onClose={() => setIsAlertOpen(false)} />}
