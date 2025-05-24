@@ -108,7 +108,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
       setIsWinnerModalOpen(false);
       setStatus({ status: 'null', message: 'null' });
       onReady ? onReady() : null; // eslint-disable-line @typescript-eslint/no-unused-expressions
-      setTextToType(tempTextToType);
       setPlayAgain(false);
       setCurrentUserPlayAgain(false);
       setOpponentPlayAgain(false);
@@ -173,6 +172,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
     channel.bind('on-text-to-type', (data: { textToType: string }) => {
       console.log('on text to type:', data);
       setTempTextToType(data.textToType);
+      setTextToType(data.textToType);
     });
 
     channel.bind('on-text-update', (data: { message: string; messageType: string; user: User }) => {

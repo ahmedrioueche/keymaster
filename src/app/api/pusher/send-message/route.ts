@@ -74,6 +74,12 @@ export async function POST(req: NextRequest) {
         roomWinners.delete(roomId);
         textGenerationLocks.delete(roomId);
         await pusherServer.trigger(`room-${roomId}`, 'on-play-again', { user });
+        
+        // Generate new text immediately
+        textToType = await generateTextForRoom(roomId);
+        if (textToType) {
+          await pusherServer.trigger(`room-${roomId}`, 'on-text-to-type', { textToType });
+        }
         break;
 
       case 'on-restart':
@@ -82,6 +88,12 @@ export async function POST(req: NextRequest) {
         roomWinners.delete(roomId);
         textGenerationLocks.delete(roomId);
         await pusherServer.trigger(`room-${roomId}`, 'on-restart', { user });
+        
+        // Generate new text immediately
+        textToType = await generateTextForRoom(roomId);
+        if (textToType) {
+          await pusherServer.trigger(`room-${roomId}`, 'on-text-to-type', { textToType });
+        }
         break;
 
       case 'on-text-update':
