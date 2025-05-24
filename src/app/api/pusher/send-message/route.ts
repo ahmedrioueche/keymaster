@@ -58,22 +58,30 @@ export async function POST(req: NextRequest) {
       case 'on-ready':
         console.log('on ready');
         await pusherServer.trigger(`room-${roomId}`, 'on-ready', { user });
-        if (!textGenerated) {
+
+        // Generate new text only if not already exists for this room
+        if (!roomTextStore.has(roomId)) {
           textToType = await generateTextForRoom(roomId);
           console.log('textToType', textToType);
-          textGenerated = true;
+          roomTextStore.set(roomId, textToType);
           await pusherServer.trigger(`room-${roomId}`, 'on-text-to-type', { textToType });
         }
         break;
 
       case 'on-play-again':
+        // Clear existing data for new game
+        roomTextStore.delete(roomId);
+        roomWinners.delete(roomId);
+        textGenerationLocks.delete(roomId);
         await pusherServer.trigger(`room-${roomId}`, 'on-play-again', { user });
-        textGenerated = false;
         break;
 
       case 'on-restart':
+        // Clear existing data for restart
+        roomTextStore.delete(roomId);
+        roomWinners.delete(roomId);
+        textGenerationLocks.delete(roomId);
         await pusherServer.trigger(`room-${roomId}`, 'on-restart', { user });
-        textGenerated = false;
         break;
 
       case 'on-text-update':
@@ -86,20 +94,22 @@ export async function POST(req: NextRequest) {
           roomWinners.set(roomId, { speed, time, user });
           await pusherServer.trigger(`room-${roomId}`, 'on-win', { speed, time, user });
         }
-        textGenerationLocks.set(roomId, false); // Unlock after win
-        textGenerated = false;
+        textGenerationLocks.delete(roomId); // Release the lock
         break;
 
       case 'on-leave':
+        // Clean up room data when user leaves
+        roomTextStore.delete(roomId);
+        roomWinners.delete(roomId);
+        textGenerationLocks.delete(roomId);
         await pusherServer.trigger(`room-${roomId}`, 'on-leave', { user });
-        textGenerated = false;
         break;
+
+      default:
+        console.warn(`Unknown event type: ${event}`);
     }
 
-    if (textToType) {
-      await pusherServer.trigger(`room-${roomId}`, 'on-text-to-type', { textToType });
-      return NextResponse.json({ status: 'Message sent' });
-    }
+    return NextResponse.json({ status: 'Message sent' });
   } catch (error) {
     console.error('Error in Pusher route:', error);
     return NextResponse.json({ error: `Message failed to send: ${error}` }, { status: 500 });
