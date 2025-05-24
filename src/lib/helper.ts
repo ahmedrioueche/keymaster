@@ -32,7 +32,7 @@ export const competePrompt = `With no introductions nor conclusions, give a para
             in a general topic in ${defaultLanguage} language, do not exceed the required length.`;
 
 export const cleanTextToType = (text: string | null) => {
-  const cleanedText = text && text.trimEnd() ? text.trimEnd() : null;
+  const cleanedText = text && text?.trimEnd() ? text?.trimEnd() : null;
 
   if (!cleanedText) return null;
 

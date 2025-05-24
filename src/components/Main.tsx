@@ -12,6 +12,7 @@ import ResultModal from './ResultModal';
 import { useUser } from '../app/context/UserContext';
 import { defaultTextLength } from '../lib/settings';
 import { promptGemini } from '../lib/helper';
+import { APP_DATA } from '@/constants/data';
 
 const MainContainer: React.FC = () => {
   const { currentUser, setCurrentUser, onSet, userLoggedIn, setUserLoggedIn } = useUser();
@@ -207,29 +208,23 @@ const MainContainer: React.FC = () => {
       <div className="flex flex-row items-center justify-center mb-6">
         <Image src="/storysets/typing.svg" alt="KeyMaster" className="w-38 h-38 object-contain mr-4" height={128} width={128} />
         <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 font-dancing">KeyMaster</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-dancing">{APP_DATA.title}</h1>
 
-          {/* Subtitle - Responsive font size */}
-          <h2 className="text-xl md:text-3xl font-dancing">How fast can you type?</h2>
+          <h2 className="text-xl md:text-2xl font-dancing mb-4">{APP_DATA.subTitle}</h2>
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex flex-col md:flex-row flex-grow">
-        {/* Settings and Stats - Full width on small screens, 1/3 width on large screens */}
         <div className="w-full md:w-1/3 mb-8 md:mb-0 md:mr-4">
           <Menu onStart={handleStart} userTyped={userTyped} isFinished={isFinished} language={language} onStop={handleStop} setLanguage={setLanguage} topic={topic} setTopic={setTopic} typingStats={TypingStats} />
         </div>
 
-        {/* Typing Area and Leaderboard - Wrapped in a flex container for alignment */}
         <div className="w-full flex flex-col">
-          {/* Typing Area - Always rendered but conditionally enabled */}
           {(!isSmallScreen || isStarted) && (
             <div className="">
               <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed) => handleTextCompletion(speed)} onUserTyped={handleUserTyped} />
             </div>
           )}
-          {/* Leaderboard - Displayed under the Typing Area */}
           <div className="w-full flex flex-col bg-light-secondary dark:bg-dark-secondary">
             <Leaderboard leaderboardData={users} />
           </div>
