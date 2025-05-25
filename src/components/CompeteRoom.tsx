@@ -279,8 +279,28 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
             <div className="sm:hidden bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
               <div className="text-lg font-bold">{userScore}</div>
             </div>
-            {/* Empty div for desktop spacing */}
-            <div className="hidden sm:block w-[52px]"></div>
+
+            {/* Desktop layout: Restart button, name, and timer */}
+            {isStarted ? (
+              <>
+                {/* Desktop restart button */}
+                <button disabled={userRestart} onClick={handleRestart} className={`hidden sm:block px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+                  {userRestart ? (
+                    <div className="flex flex-row">
+                      <FaSpinner className="animate-spin mr-3 mt-1" />
+                      <span>Waiting...</span>
+                    </div>
+                  ) : (
+                    <span>Restart</span>
+                  )}
+                </button>
+
+                {/* Empty div for mobile spacing */}
+                <div className="sm:hidden w-[52px]"></div>
+              </>
+            ) : (
+              <div className="w-[52px]"></div>
+            )}
 
             {/* Player's Name */}
             <h2 className="text-2xl">{currentUser?.username || 'You'}</h2>
@@ -304,24 +324,8 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
             )}
           </div>
 
-          {/* Restart button for desktop */}
-          {isStarted && (
-            <div className="hidden sm:block w-full mb-4">
-              <button disabled={userRestart} onClick={handleRestart} className={`px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
-                {userRestart ? (
-                  <div className="flex flex-row">
-                    <FaSpinner className="animate-spin mr-3 mt-1" />
-                    <span>Waiting for {opponent?.username || 'Opponent'}</span>
-                  </div>
-                ) : (
-                  <span>Restart</span>
-                )}
-              </button>
-            </div>
-          )}
-
           {/* Typing area for user */}
-          <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" disabled={!isStarted || userRestart || opponentRestart || !userReady || !opponentReady} />
+          <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" disabled={!opponentReady} />
           
           {/* score display for user (desktop only) */}
           <div className="hidden sm:block absolute bottom-12 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
