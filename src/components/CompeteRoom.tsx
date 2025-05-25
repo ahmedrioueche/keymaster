@@ -322,7 +322,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
                 )}
               </button>
             )}
-          </div>
+          </div>  
 
           {/* Typing area for user */}
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete"/>

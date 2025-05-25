@@ -168,7 +168,6 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, currentUser, opponent
                 <span className="mr-1">You got +{score} </span>
                 <FaStar className="mt-1 text-light-primary dark:text-dark-primary" />
               </div>
-              {playAgainStatus && playAgainStatus?.status === 'Play Again' && <div className="flex justify-center text-light-primary dark:text-dark-primary text-xl mt-2">{playAgainStatus.message}</div>}
             </div>
 
             {/* Play Again Button */}
@@ -182,6 +181,8 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, currentUser, opponent
                 <span>Play Again</span>
               )}
             </button>
+            {playAgainStatus && playAgainStatus?.status === 'Play Again' && <div className="flex justify-center text-light-secondary dark:text-dark-secondary text-xl mt-2">{playAgainStatus.message}</div>}
+
           </div>
         )}
 
