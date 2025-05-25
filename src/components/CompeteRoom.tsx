@@ -273,19 +273,39 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
       <div className="flex flex-col sm:flex-row flex-grow w-full relative">
         {/* User's side */}
         <div className="w-full sm:w-1/2 flex flex-col items-center sm:pr-4 md:mb-8 mb-0">
-          {/* Display Restart button and Timer when the game is started */}
-          {isStarted ? (
-            <div className="flex items-center justify-between w-full mb-4">
-              {/* Score and Name container for mobile */}
-              <div className="flex items-center sm:hidden">
-                <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md mr-3">
-                  <div className="text-lg font-bold">{userScore}</div>
-                </div>
-                <h2 className="text-2xl">{currentUser?.username || 'You'}</h2>
-              </div>
+          {/* Display header with score, name, and timer */}
+          <div className="flex items-center justify-between w-full mb-4">
+            {/* Score */}
+            <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
+              <div className="text-lg font-bold">{userScore}</div>
+            </div>
 
-              {/* Desktop layout */}
-              <button disabled={userRestart} onClick={handleRestart} className={`hidden sm:block mt-1 mr-3 px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+            {/* Player's Name */}
+            <h2 className="text-2xl">{currentUser?.username || 'You'}</h2>
+
+            {/* Timer or Ready Button */}
+            {isStarted ? (
+              <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-5 rounded-lg shadow-md">
+                <div className="text-1xl font-bold">{timer}s</div>
+              </div>
+            ) : (
+              <button disabled={userReady} onClick={handleUserReady} className={`px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+                {userReady ? (
+                  <div className="flex flex-row">
+                    <FaSpinner className="animate-spin mr-3 mt-1" />
+                    <span>Waiting...</span>
+                  </div>
+                ) : (
+                  <span>Ready?</span>
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Restart button for desktop */}
+          {isStarted && (
+            <div className="hidden sm:block w-full mb-4">
+              <button disabled={userRestart} onClick={handleRestart} className={`px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
                 {userRestart ? (
                   <div className="flex flex-row">
                     <FaSpinner className="animate-spin mr-3 mt-1" />
@@ -295,86 +315,21 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
                   <span>Restart</span>
                 )}
               </button>
-
-              {/* Player's Name - Centered (desktop only) */}
-              <h2 className="hidden sm:block text-2xl mx-auto">{currentUser?.username || 'You'}</h2>
-
-              {/* Timer on the right */}
-              <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-5 rounded-lg shadow-md ml-3">
-                <div className="text-1xl font-bold">{timer}s</div>
-              </div>
-            </div>
-          ) : (
-            // When the game hasn't started
-            <div className="flex justify-between items-center mb-4">
-              {/* Score for mobile */}
-              <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md mr-3 sm:hidden">
-                <div className="text-lg font-bold">{userScore}</div>
-              </div>
-              <h2 className="text-2xl mr-3">{currentUser?.username || 'You'}</h2>
-              <button disabled={userReady} onClick={handleUserReady} className={`mt-1 ml-1 px-4 py-2 rounded-lg ${userReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
-                {userReady ? (
-                  <div className="flex flex-row">
-                    <FaSpinner className="animate-spin mr-3 mt-1" />
-                    <span>Waiting for {opponent?.username || 'Opponent'}</span>
-                  </div>
-                ) : (
-                  <span>Ready?</span>
-                )}
-              </button>
             </div>
           )}
 
           {/* Typing area for user */}
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" />
           
-          {/* Add score display for user (desktop only) */}
+          {/* score display for user (desktop only) */}
           <div className="hidden sm:block absolute bottom-12 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
             <div className="text-lg font-bold">Score: {userScore}</div>
           </div>
 
-        
-        </div>
-
-        {/* Vertical line separator (visible only on larger screens) */}
-        <div className="hidden sm:block w-px bg-black dark:bg-white mx-4 relative">
-          <div className="absolute left-0 top-0 w-px h-full bg-black dark:bg-white"></div>
-        </div>
-
-        {/* Opponent's side */}
-        <div className="w-full sm:w-1/2 flex flex-col items-center sm:pl-4">
-          <div className="flex justify-center items-center w-full mb-4">
-            {/* Score for mobile */}
-            <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md mr-3 sm:hidden">
-              <div className="text-lg font-bold">{opponentScore}</div>
-            </div>
-            <h2 className="text-2xl mr-3">{opponent?.username || joinedOpponent?.username || 'Opponent'}</h2>
-            {!isStarted && (
-              <button disabled={opponentReady} onClick={handleUserReady} className={`mt-1 ml-1 px-4 py-2 rounded-lg ${opponentReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
-                {opponentReady ? (
-                  <div className="flex flex-row">
-                    <FaSpinner className="animate-spin mr-3 mt-1" />
-                    <span>Waiting for {currentUser?.username || 'Opponent'}</span>
-                  </div>
-                ) : (
-                  <span>Ready?</span>
-                )}
-              </button>
-            )}
-          </div>
-
-          {/* Typing area for opponent */}
-          <TypingArea textToType={textToType} isStarted={isStarted} onComplete={handleOpponentComplete} inputText={opponentInputText} disabled={true} type="compete" />
-          
-          {/* score display for opponent (desktop only) */}
-          <div className="hidden sm:block absolute bottom-12 right-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
-            <div className="text-lg font-bold">Score: {opponentScore}</div>
-          </div>
-
-            {/* Mobile restart button at bottom */}
-            {isStarted && (
+          {/* Mobile restart button at bottom */}
+          {isStarted && (
             <div className="sm:hidden w-full mt-4">
-              <button  disabled={userRestart} onClick={handleRestart} className={`w-full px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+              <button disabled={userRestart} onClick={handleRestart} className={`w-full px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
                 {userRestart ? (
                   <div className="flex flex-row justify-center">
                     <FaSpinner className="animate-spin mr-3 mt-1" />
@@ -386,6 +341,49 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
               </button>
             </div>
           )}
+        </div>
+
+        {/* Vertical line separator (visible only on larger screens) */}
+        <div className="hidden sm:block w-px bg-black dark:bg-white mx-4 relative">
+          <div className="absolute left-0 top-0 w-px h-full bg-black dark:bg-white"></div>
+        </div>
+
+        {/* Opponent's side */}
+        <div className="w-full sm:w-1/2 flex flex-col items-center sm:pl-4">
+          {/* Opponent header with score and name */}
+          <div className="flex items-center justify-between w-full mb-4">
+            {/* Score */}
+            <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
+              <div className="text-lg font-bold">{opponentScore}</div>
+            </div>
+
+            {/* Opponent's Name */}
+            <h2 className="text-2xl">{opponent?.username || joinedOpponent?.username || 'Opponent'}</h2>
+
+            {/* Ready Button (only when not started) */}
+            {!isStarted ? (
+              <button disabled={opponentReady} onClick={handleUserReady} className={`px-4 py-2 rounded-lg ${opponentReady ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+                {opponentReady ? (
+                  <div className="flex flex-row">
+                    <FaSpinner className="animate-spin mr-3 mt-1" />
+                    <span>Waiting...</span>
+                  </div>
+                ) : (
+                  <span>Ready?</span>
+                )}
+              </button>
+            ) : (
+              <div className="w-[76px]"></div> // Placeholder to maintain spacing
+            )}
+          </div>
+
+          {/* Typing area for opponent */}
+          <TypingArea textToType={textToType} isStarted={isStarted} onComplete={handleOpponentComplete} inputText={opponentInputText} disabled={true} type="compete" />
+          
+          {/* score display for opponent (desktop only) */}
+          <div className="hidden sm:block absolute bottom-12 right-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
+            <div className="text-lg font-bold">Score: {opponentScore}</div>
+          </div>
         </div>
 
         {isAlertOpen && <Alert title={status?.status} message={status?.message} bg={status?.bg} onClose={() => setIsAlertOpen(false)} />}
