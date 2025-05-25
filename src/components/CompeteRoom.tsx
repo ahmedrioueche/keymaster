@@ -317,7 +317,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" />
           
           {/* Add score display for user */}
-          <div className="absolute bottom-4 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
+          <div className="absolute bottom-6 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
             <div className="text-lg font-bold">Score: {userScore}</div>
           </div>
         </div>
@@ -349,7 +349,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={handleOpponentComplete} inputText={opponentInputText} disabled={true} type="compete" />
           
           {/* Add score display for opponent */}
-          <div className="absolute bottom-4 right-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
+          <div className="absolute bottom-6 right-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
             <div className="text-lg font-bold">Score: {opponentScore}</div>
           </div>
         </div>
