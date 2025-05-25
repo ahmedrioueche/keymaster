@@ -306,7 +306,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
             </div>
           ) : (
             // When the game hasn't started
-            <div className="flex justify-center items-center mb-4">
+            <div className="flex justify-between items-center mb-4">
               {/* Score for mobile */}
               <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md mr-3 sm:hidden">
                 <div className="text-lg font-bold">{userScore}</div>
@@ -333,21 +333,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
             <div className="text-lg font-bold">Score: {userScore}</div>
           </div>
 
-          {/* Mobile restart button at bottom */}
-          {isStarted && (
-            <div className="sm:hidden w-full mt-4">
-              <button  disabled={userRestart} onClick={handleRestart} className={`w-full px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
-                {userRestart ? (
-                  <div className="flex flex-row justify-center">
-                    <FaSpinner className="animate-spin mr-3 mt-1" />
-                    <span>Waiting for {opponent?.username || 'Opponent'}</span>
-                  </div>
-                ) : (
-                  <span>Restart</span>
-                )}
-              </button>
-            </div>
-          )}
+        
         </div>
 
         {/* Vertical line separator (visible only on larger screens) */}
@@ -380,10 +366,26 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
           {/* Typing area for opponent */}
           <TypingArea textToType={textToType} isStarted={isStarted} onComplete={handleOpponentComplete} inputText={opponentInputText} disabled={true} type="compete" />
           
-          {/* Add score display for opponent (desktop only) */}
+          {/* score display for opponent (desktop only) */}
           <div className="hidden sm:block absolute bottom-12 right-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
             <div className="text-lg font-bold">Score: {opponentScore}</div>
           </div>
+
+            {/* Mobile restart button at bottom */}
+            {isStarted && (
+            <div className="sm:hidden w-full mt-4">
+              <button  disabled={userRestart} onClick={handleRestart} className={`w-full px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+                {userRestart ? (
+                  <div className="flex flex-row justify-center">
+                    <FaSpinner className="animate-spin mr-3 mt-1" />
+                    <span>Waiting for {opponent?.username || 'Opponent'}</span>
+                  </div>
+                ) : (
+                  <span>Restart</span>
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         {isAlertOpen && <Alert title={status?.status} message={status?.message} bg={status?.bg} onClose={() => setIsAlertOpen(false)} />}
