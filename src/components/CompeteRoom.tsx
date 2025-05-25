@@ -275,10 +275,12 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
         <div className="w-full sm:w-1/2 flex flex-col items-center sm:pr-4 md:mb-8 mb-0">
           {/* Display header with score, name, and timer */}
           <div className="flex items-center justify-between w-full mb-4">
-            {/* Score */}
-            <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
+            {/* Score (mobile only) */}
+            <div className="sm:hidden bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
               <div className="text-lg font-bold">{userScore}</div>
             </div>
+            {/* Empty div for desktop spacing */}
+            <div className="hidden sm:block w-[52px]"></div>
 
             {/* Player's Name */}
             <h2 className="text-2xl">{currentUser?.username || 'You'}</h2>
@@ -325,22 +327,6 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
           <div className="hidden sm:block absolute bottom-12 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
             <div className="text-lg font-bold">Score: {userScore}</div>
           </div>
-
-          {/* Mobile restart button at bottom */}
-          {isStarted && (
-            <div className="sm:hidden w-full mt-4">
-              <button disabled={userRestart} onClick={handleRestart} className={`w-full px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
-                {userRestart ? (
-                  <div className="flex flex-row justify-center">
-                    <FaSpinner className="animate-spin mr-3 mt-1" />
-                    <span>Waiting for {opponent?.username || 'Opponent'}</span>
-                  </div>
-                ) : (
-                  <span>Restart</span>
-                )}
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Vertical line separator (visible only on larger screens) */}
@@ -352,10 +338,12 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
         <div className="w-full sm:w-1/2 flex flex-col items-center sm:pl-4">
           {/* Opponent header with score and name */}
           <div className="flex items-center justify-between w-full mb-4">
-            {/* Score */}
-            <div className="bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
+            {/* Score (mobile only) */}
+            <div className="sm:hidden bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-1 px-3 rounded-lg shadow-md">
               <div className="text-lg font-bold">{opponentScore}</div>
             </div>
+            {/* Empty div for desktop spacing */}
+            <div className="hidden sm:block w-[52px]"></div>
 
             {/* Opponent's Name */}
             <h2 className="text-2xl">{opponent?.username || joinedOpponent?.username || 'Opponent'}</h2>
@@ -385,6 +373,22 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
             <div className="text-lg font-bold">Score: {opponentScore}</div>
           </div>
         </div>
+
+        {/* Mobile restart button at bottom */}
+        {isStarted && (
+          <div className="sm:hidden w-full mt-4">
+            <button disabled={userRestart} onClick={handleRestart} className={`w-full px-4 py-2 rounded-lg ${userRestart ? 'disabled bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background opacity-70 cursor-auto' : 'bg-light-secondary hover:bg-light-primary dark:bg-dark-secondary dark:hover:bg-dark-primary text-dark-foreground transition-colors duration-300'}`}>
+              {userRestart ? (
+                <div className="flex flex-row justify-center">
+                  <FaSpinner className="animate-spin mr-3 mt-1" />
+                  <span>Waiting for {opponent?.username || 'Opponent'}</span>
+                </div>
+              ) : (
+                <span>Restart</span>
+              )}
+            </button>
+          </div>
+        )}
 
         {isAlertOpen && <Alert title={status?.status} message={status?.message} bg={status?.bg} onClose={() => setIsAlertOpen(false)} />}
       </div>
