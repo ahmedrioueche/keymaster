@@ -321,7 +321,7 @@ const CompeteRoom: React.FC<CompeteRoomProps> = ({ room, currentUser, opponent, 
           )}
 
           {/* Typing area for user */}
-          <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" />
+          <TypingArea textToType={textToType} isStarted={isStarted} onComplete={(speed, time) => handleComplete(speed, time)} onInputChange={(inputText) => handleUserInputChange(inputText)} type="compete" disabled={!isStarted || userRestart || opponentRestart || !userReady || !opponentReady} />
           
           {/* score display for user (desktop only) */}
           <div className="hidden sm:block absolute bottom-12 left-4 bg-light-secondary dark:bg-dark-secondary text-dark-background dark:text-light-background py-2 px-4 rounded-lg shadow-md">
