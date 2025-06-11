@@ -11,6 +11,7 @@ import CountDown from '@/components/Countdown';
 import UserModal from '@/components/UserModal';
 import Image from 'next/image';
 import { APP_DATA } from '@/constants/data';
+import { useRouter } from 'next/navigation';
 
 const CompetePage: React.FC = () => {
   const { currentUser, onSet, userLoggedIn } = useUser();
@@ -23,6 +24,7 @@ const CompetePage: React.FC = () => {
   const [room, setRoom] = useState<Room>();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [opponentModalCloseGracefully, setOpponentModalCloseGracefully] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const checkUserWithDelay = setTimeout(() => {
@@ -43,7 +45,7 @@ const CompetePage: React.FC = () => {
   }, [isUserLoggedIn]);
 
   const handleUserModalClose = () => {
-    if (!currentUser) setIsUserModalOpen(true);
+    if (!currentUser) router.push('/');
     else setIsUserModalOpen(false);
   };
 
